@@ -266,8 +266,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     //[self.view addGestureRecognizer:self.lpgr];
 #pragma mark- add labels
     
-    self.playerHealth = 3.0;
-    self.playerHealthMax = 3.0;
     self.playerHealthLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
     self.playerHealthLabel.name = @"playerHealthLabel";
     self.playerHealthLabel.text = @"Player Health: 10.0";
@@ -294,7 +292,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.attackMPLabel.text = @"Adagio MP: 3.0";
     self.attackMPLabel.fontSize = 20.0f;
     self.attackMPLabel.zPosition =1.0f;
-    self.attackMPLabel.position = CGPointMake(self.frame.size.width*0.50, self.frame.size.height*0.9 - +10);
+    self.attackMPLabel.position = CGPointMake(self.frame.size.width*0.25, self.frame.size.height*0.9 - +10);
     self.attackMPLabel.fontColor = [SKColor greenColor];
     [self addChild:self.attackMPLabel];
     
@@ -304,9 +302,19 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.defenseMPLabel.text = @"Brio MP: 3.0";
     self.defenseMPLabel.fontSize = 20.0f;
     self.defenseMPLabel.zPosition =1.0f;
-    self.defenseMPLabel.position = CGPointMake(self.frame.size.width*0.75, self.frame.size.height*0.9 - +10);
+    self.defenseMPLabel.position = CGPointMake(self.frame.size.width*0.50, self.frame.size.height*0.9 - +10);
     self.defenseMPLabel.fontColor = [SKColor greenColor];
     [self addChild:self.defenseMPLabel];
+    
+    self.magicMPLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+    self.magicMPLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+    self.magicMPLabel.name = @"magicMPLabel";
+    self.magicMPLabel.text = @"Vif MP: 3.0";
+    self.magicMPLabel.fontSize = 20.0f;
+    self.magicMPLabel.zPosition =1.0f;
+    self.magicMPLabel.position = CGPointMake(self.frame.size.width*0.75, self.frame.size.height*0.9 - +10);
+    self.magicMPLabel.fontColor = [SKColor greenColor];
+    [self addChild:self.magicMPLabel];
     
 #pragma mark- Superpowered init
     lastSamplerate = activeFx = 0;
@@ -660,19 +668,20 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             [self.keyPressArray removeLastObject];
         }else if([n.name isEqualToString:@"bowTie"]){
             [channel play:bowtieBuffer];
-            if((self.attackMP < self.attackMPMax) && self.bowTieIncrement == 3)
+            
+            if([self.mode isEqualToString:@"Attack"] && (self.attackMP < self.attackMPMax) && self.bowTieIncrement == 3)
             {
-                if([self.mode isEqualToString:@"Attack"]){
                     self.attackMP++;
                     self.bowTieIncrement = 0;
-                }else if([self.mode isEqualToString:@"Defense"]){
-                    self.defenseMP++;
-                    self.bowTieIncrement = 0;
-                }else if([self.mode isEqualToString:@"Magic"]){
-                    self.magicMP++;
-                    self.bowTieIncrement = 0;
-                }
-
+            }
+            if([self.mode isEqualToString:@"Defense"] && (self.defenseMP < self.attackMPMax) && self.bowTieIncrement == 3){
+                self.defenseMP++;
+                self.bowTieIncrement = 0;
+            }
+            
+            if([self.mode isEqualToString:@"Magic"] && (self.magicMP < self.magicMPMax) && self.bowTieIncrement == 3){
+                self.magicMP++;
+                self.bowTieIncrement = 0;
             }
             [self.keyPressArray insertObject:@"bowTie" atIndex:0];
             [self.keyPressArray removeLastObject];
@@ -1077,10 +1086,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             NSArray *combo1 = self.magicArray[0];
             if((self.magicMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]]))
             {
-                NSLog(@"MAGIC");
+                //We increase the player's health by a certain amount each beat. This is done in the beat function
                 filter->enable(true);
                 self.filterInt = 0;
-                self.magicMP-= 1;
+                self.magicMP-= 3;
             
             }
         }
@@ -1240,7 +1249,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.playerHealthLabel.text = [NSString stringWithFormat:@"Player Health: %.2f", self.playerHealth];
     self.attackMPLabel.text = [NSString stringWithFormat:@"Adagio MP: %.2f", self.attackMP];
     self.defenseMPLabel.text = [NSString stringWithFormat:@"Brio MP: %.2f", self.defenseMP];
-    
+    self.magicMPLabel.text = [NSString stringWithFormat:@"Vif MP: %.2f", self.magicMP];
     self.lastBeat = playerBack->msElapsedSinceLastBeat;
     
 }
@@ -1259,6 +1268,14 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     }
     
     if(self.filterInt < 7){
+        
+        //Increase the player's health by a tenth of his health
+        if(self.playerHealth < self.playerHealthMax - self.playerHealthMax/200){
+            self.playerHealth += self.playerHealthMax/200;
+        }else{
+            self.playerHealth = self.playerHealthMax;
+        }
+        
         self.filterInt++;
         if(self.filterInt <= 3){
             filter->setResonantParameters(floatToFrequency(0.4), 0.1f);
@@ -1301,6 +1318,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         }
         if(self.defenseMP < self.defenseMPMax){
             self.defenseMP++;
+        }
+        if(self.magicMP < self.magicMPMax){
+            self.magicMP++;
         }
     }
     
