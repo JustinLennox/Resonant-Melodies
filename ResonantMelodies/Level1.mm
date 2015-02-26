@@ -1267,13 +1267,19 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         pthread_mutex_unlock(&mutex);
     }
     
-    if(self.filterInt < 7){
+    if(self.filterInt < 8){
         
         //Increase the player's health by a tenth of his health
-        if(self.playerHealth < self.playerHealthMax - self.playerHealthMax/200){
-            self.playerHealth += self.playerHealthMax/200;
+        if(self.attackMP < self.attackMPMax - 0.125){
+            self.attackMP += 0.125;
         }else{
-            self.playerHealth = self.playerHealthMax;
+            self.attackMP = self.attackMPMax;
+        }
+        
+        if(self.defenseMP < self.defenseMPMax - 0.125){
+            self.defenseMP += 0.125;
+        }else{
+            self.defenseMP = self.defenseMPMax;
         }
         
         self.filterInt++;
