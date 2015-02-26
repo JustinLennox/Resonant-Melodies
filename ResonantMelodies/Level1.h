@@ -17,9 +17,6 @@
 #import <OpenAL/al.h>
 #import <OpenAL/alc.h>
 #import "KeyLaser.h"
-#import "CustomProgressBar.h"
-
-#define highF @"wF.aif"
 
 @interface Level1 : SKScene
 
@@ -29,24 +26,32 @@
 @property (strong, nonatomic) SKSpriteNode *player;
 @property (nonatomic) BOOL shouldPlayerMove;
 @property (strong, nonatomic) NSString *currentPlayerKey;
-@property (strong, nonatomic) SKSpriteNode *bowTie;
-@property (nonatomic) int adagioHealthMax;
-@property (nonatomic) int adagioLevel;
-@property (nonatomic) int vifLevel;
-@property (nonatomic) int brioLevel;
-@property (strong, nonatomic) NSArray *attackArray;
-@property (strong, nonatomic) NSArray *defenseArray;
-@property (strong, nonatomic) NSArray *magicArray;
-@property (nonatomic) float adagioMP;
-@property (nonatomic) float adagioMaxMP;
-@property (nonatomic) float vifMP;
-@property (nonatomic) float vifMaxMP;
-@property (nonatomic) float brioMP;
-@property (nonatomic) float brioMaxMP;
 
 @property (nonatomic) CGFloat playerMaxX;
 
+//Player Stats
+@property (nonatomic) float playerHealth;
+@property (nonatomic) float playerHealthMax;
+@property (nonatomic) float playerExperience;
+@property (nonatomic) float playerLevel;
+@property (nonatomic) float playerToNextLevel;
+@property (nonatomic) float attackMP;
+@property (nonatomic) float attackMPMax;
+@property (nonatomic) float magicMP;
+@property (nonatomic) float magicMPMax;
+@property (nonatomic) float defenseMP;
+@property (nonatomic) float defenseMPMax;
+@property (nonatomic) float attackLevel;
+@property (nonatomic) float defenseLevel;
+@property (nonatomic) float magicLevel;
 
+//Combo Properties
+@property (strong, nonatomic) NSArray *attackArray;
+@property (strong, nonatomic) NSArray *defenseArray;
+@property (strong, nonatomic) NSArray *magicArray;
+@property (strong, nonatomic) NSMutableArray *fireballArray;
+@property (nonatomic) BOOL flameOn;
+@property (nonatomic) int filterInt;
 
 //Touch Properties
 @property (strong, nonatomic) NSMutableArray *touchArray;
@@ -61,25 +66,21 @@
 @property (strong, nonatomic) NSMutableArray *enemyArray;
 @property (strong, nonatomic) NSMutableArray *enemyHealthLabelArray;
 @property (strong, nonatomic) NSMutableArray *enemyShotArray;
+@property (nonatomic) int enemyMoveInt;
 
 //Attack Properties
 @property (nonatomic) float laserDamage;
-
-//Combo Properties
-@property (strong, nonatomic) NSMutableArray *fireballArray;
-@property (nonatomic) BOOL flameOn;
-@property (nonatomic) int filterInt;
+@property (strong, nonatomic) NSMutableArray *keyLasers;
 
 //Keyboard Properties
 @property (nonatomic) float yPositionIncrement;
 
 //Labels
-@property (strong, nonatomic) SKLabelNode *gigiHealthLabel;
 @property (strong, nonatomic) SKSpriteNode *healthBar;
-@property (strong, nonatomic) SKLabelNode *amosHealthLabel;
-@property (strong, nonatomic) SKLabelNode *dvonHealthLabel;
-@property (strong, nonatomic) SKLabelNode *adagioMPLabel;
-@property (strong, nonatomic) SKLabelNode *brioMPLabel;
+@property (strong, nonatomic) SKLabelNode *playerHealthLabel;
+@property (strong, nonatomic) SKLabelNode *attackMPLabel;
+@property (strong, nonatomic) SKLabelNode *defenseMPLabel;
+@property (strong, nonatomic) SKLabelNode *magicMPLabel;
 
 //Audio Properties
 @property (strong, nonatomic) AVAudioPlayer *lowAAudioPlayer;
@@ -90,55 +91,34 @@
 @property (strong, nonatomic) AVAudioPlayer *lowEAudioPlayer;
 @property (strong, nonatomic) NSMutableArray *bufferStorageArray;
 @property (strong, nonatomic) NSMutableDictionary *soundDictionary;
-
 @property (nonatomic) SystemSoundID resonantSound1;
 @property (nonatomic) SystemSoundID resonantSound2;
 @property (nonatomic) SystemSoundID resonantSound3;
 @property (nonatomic) SystemSoundID resonantSound4;
-
 @property (nonatomic) float lastBeat;
 
 //Game Properties
-@property (nonatomic) int score;
-@property (nonatomic) float randSecs;
-@property (nonatomic, strong) SKLabelNode *scoreLabel;
-@property (nonatomic, strong) SKLabelNode *healthLabel;
-@property (strong, nonatomic) NSString *difficulty;
 @property (nonatomic) BOOL shouldMove;
 @property (nonatomic, strong) NSArray *currentResonantArray;
 @property (nonatomic, strong) NSMutableArray *keyPressArray;
 @property (nonatomic) BOOL touchDown;
 @property (strong, nonatomic) NSArray *interactableArray;
 @property (nonatomic) BOOL isAnimating;
-@property (nonatomic) NSInteger intTmp;
-@property (strong, nonatomic) NSMutableArray *keyLasers;
 @property (strong, nonatomic) NSArray *moveablesArray;
 @property (nonatomic) BOOL cutscene;
 @property (nonatomic) BOOL shouldShoot;
-
 @property (strong, nonatomic) NSString *currentKeyDown;
-
-@property (nonatomic) float gigiHealth;
-@property (nonatomic) float amosHealth;
-@property (nonatomic) float dvonHealth;
-@property (nonatomic) int currentHeroHealth;
-
 @property (nonatomic) CGPoint location;
-
 @property (strong, nonatomic) NSArray *keyArray;
-
 @property (nonatomic) int currentRoomNumber;
-
-@property (nonatomic) int enemyMoveInt;
-
 @property (nonatomic) double touchBegan;
 @property (nonatomic) double touchLength;
 @property (nonatomic) BOOL touchingDown;
-
 @property (nonatomic) float roomCleared;
 
 //Partner Properties
 @property (nonatomic) int bowTieIncrement;
+@property (strong, nonatomic) SKSpriteNode *bowTie;
 
 //Tempo Settings
 @property (nonatomic) float BPM;

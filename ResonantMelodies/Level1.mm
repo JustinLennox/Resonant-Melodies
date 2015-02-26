@@ -224,30 +224,25 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.bowTie.name = @"bowTie";
     [self addChild:self.bowTie];
 
-    self.adagioLevel = 1;
-    self.adagioMP = 4;
-    self.adagioMaxMP = 4;
+    self.playerLevel = 1;
+    self.playerExperience = 0;
+    self.playerHealth = 10;
+    self.playerHealthMax = 10;
+    self.playerToNextLevel = 100;
     
-    self.brioMP = 3;
-    self.brioMaxMP = 3;
+    self.attackMP = 3;
+    self.attackMPMax = 3;
     
-    self.vifMP = 3;
-    self.vifMaxMP = 3;
+    self.defenseMP = 3;
+    self.defenseMPMax = 3;
     
-#pragma mark- set difficulty and tempo
+    self.magicMP = 3;
+    self.magicMPMax = 3;
     
-    self.difficulty = @"hard";
+#pragma mark- set tempo
     
-    if([self.difficulty isEqualToString:@"easy"]){
-        self.BPM = 60;
-    }else if([self.difficulty isEqualToString:@"medium"]){
-        self.BPM = 90;
-    }else if([self.difficulty isEqualToString:@"hard"]){
-        self.BPM = 125;
-    }
-    
-
-    
+    self.BPM = 125;
+        
     //Start rhythm
     self.firstBeat = YES;
     NSTimer *beat = [NSTimer scheduledTimerWithTimeInterval:(60/self.BPM) target:self selector:@selector(beat) userInfo:nil repeats:YES];
@@ -271,26 +266,16 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     //[self.view addGestureRecognizer:self.lpgr];
 #pragma mark- add labels
     
-    self.gigiHealth = 3.0;
-    self.gigiHealthLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-    self.gigiHealthLabel .name = @"gigiHealthLabel";
-    self.gigiHealthLabel .text = @"Gigi Health: 3.0";
-    self.gigiHealthLabel .fontSize = 20.0f;
-    self.gigiHealthLabel .zPosition =1.0f;
-    self.gigiHealthLabel .position = CGPointMake(self.frame.size.width*0.25, self.frame.size.height*0.9);
-    self.gigiHealthLabel .fontColor = [SKColor greenColor];
-    [self addChild:self.gigiHealthLabel];
-    
-    self.amosHealth = 3.0;
-    self.adagioHealthMax = 3.0;
-    self.amosHealthLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-    self.amosHealthLabel .name = @"amosHealthLabel";
-    self.amosHealthLabel .text = @"Amos Health: 3.0";
-    self.amosHealthLabel .fontSize = 20.0f;
-    self.amosHealthLabel .zPosition =1.0f;
-    self.amosHealthLabel .position = CGPointMake(self.frame.size.width*0.50, self.frame.size.height*0.9);
-    self.amosHealthLabel .fontColor = [SKColor greenColor];
-    [self addChild:self.amosHealthLabel];
+    self.playerHealth = 3.0;
+    self.playerHealthMax = 3.0;
+    self.playerHealthLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+    self.playerHealthLabel.name = @"playerHealthLabel";
+    self.playerHealthLabel.text = @"Player Health: 10.0";
+    self.playerHealthLabel.fontSize = 20.0f;
+    self.playerHealthLabel.zPosition =1.0f;
+    self.playerHealthLabel.position = CGPointMake(self.frame.size.width*0.50, self.frame.size.height*0.9);
+    self.playerHealthLabel.fontColor = [SKColor greenColor];
+    [self addChild:self.playerHealthLabel];
     
 
     SKSpriteNode *healthBarBack = [SKSpriteNode spriteNodeWithImageNamed:@"status_bar_health"];
@@ -299,40 +284,29 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     [self addChild:healthBarBack];
     self.healthBar = [SKSpriteNode spriteNodeWithImageNamed:@"loader_bar_red_fill.png"];
     self.healthBar.position = CGPointMake(5, 5);
-    self.healthBar.size = CGSizeMake(self.amosHealth/self.adagioHealthMax * 100, 10);
+    self.healthBar.size = CGSizeMake(self.playerHealth/self.playerHealthMax * 100, 10);
     self.healthBar.anchorPoint = CGPointMake(0.0, 0.5);
     [healthBarBack addChild:self.healthBar];
     
-    self.adagioMPLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-    self.adagioMPLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-    self.adagioMPLabel.name = @"adagioMPLabel";
-    self.adagioMPLabel.text = @"Adagio MP: 3.0";
-    self.adagioMPLabel.fontSize = 20.0f;
-    self.adagioMPLabel.zPosition =1.0f;
-    self.adagioMPLabel.position = CGPointMake(self.frame.size.width*0.50, self.frame.size.height*0.9 - +10);
-    self.adagioMPLabel.fontColor = [SKColor greenColor];
-    [self addChild:self.adagioMPLabel];
+    self.attackMPLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+    self.attackMPLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+    self.attackMPLabel.name = @"attackMPLabel";
+    self.attackMPLabel.text = @"Adagio MP: 3.0";
+    self.attackMPLabel.fontSize = 20.0f;
+    self.attackMPLabel.zPosition =1.0f;
+    self.attackMPLabel.position = CGPointMake(self.frame.size.width*0.50, self.frame.size.height*0.9 - +10);
+    self.attackMPLabel.fontColor = [SKColor greenColor];
+    [self addChild:self.attackMPLabel];
     
-    self.brioMPLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-    self.brioMPLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-    self.brioMPLabel.name = @"brioMPLabel";
-    self.brioMPLabel.text = @"Brio MP: 3.0";
-    self.brioMPLabel.fontSize = 20.0f;
-    self.brioMPLabel.zPosition =1.0f;
-    self.brioMPLabel.position = CGPointMake(self.frame.size.width*0.75, self.frame.size.height*0.9 - +10);
-    self.brioMPLabel.fontColor = [SKColor greenColor];
-    [self addChild:self.brioMPLabel];
-    
-    
-    self.dvonHealth = 3.0;
-    self.dvonHealthLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-    self.dvonHealthLabel .name = @"dvonHealthLabel";
-    self.dvonHealthLabel .text = @"Dvon Health: 3.0";
-    self.dvonHealthLabel .fontSize = 20.0f;
-    self.dvonHealthLabel .zPosition =1.0f;
-    self.dvonHealthLabel .position = CGPointMake(self.frame.size.width*0.75, self.frame.size.height*0.9);
-    self.dvonHealthLabel .fontColor = [SKColor greenColor];
-    [self addChild:self.dvonHealthLabel];
+    self.defenseMPLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+    self.defenseMPLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+    self.defenseMPLabel.name = @"defenseMPLabel";
+    self.defenseMPLabel.text = @"Brio MP: 3.0";
+    self.defenseMPLabel.fontSize = 20.0f;
+    self.defenseMPLabel.zPosition =1.0f;
+    self.defenseMPLabel.position = CGPointMake(self.frame.size.width*0.75, self.frame.size.height*0.9 - +10);
+    self.defenseMPLabel.fontColor = [SKColor greenColor];
+    [self addChild:self.defenseMPLabel];
     
 #pragma mark- Superpowered init
     lastSamplerate = activeFx = 0;
@@ -686,16 +660,16 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             [self.keyPressArray removeLastObject];
         }else if([n.name isEqualToString:@"bowTie"]){
             [channel play:bowtieBuffer];
-            if((self.adagioMP < self.adagioMaxMP) && self.bowTieIncrement == 3)
+            if((self.attackMP < self.attackMPMax) && self.bowTieIncrement == 3)
             {
                 if([self.mode isEqualToString:@"Attack"]){
-                    self.adagioMP++;
+                    self.attackMP++;
                     self.bowTieIncrement = 0;
                 }else if([self.mode isEqualToString:@"Defense"]){
-                    self.brioMP++;
+                    self.defenseMP++;
                     self.bowTieIncrement = 0;
                 }else if([self.mode isEqualToString:@"Magic"]){
-                    self.vifMP++;
+                    self.magicMP++;
                     self.bowTieIncrement = 0;
                 }
 
@@ -1035,7 +1009,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         if([self.mode isEqualToString: @"Attack"])
         {
             NSArray *combo1 = self.attackArray[0];
-            if((self.adagioMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]])){
+            if((self.attackMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]])){
                 SKSpriteNode *fireball = [SKSpriteNode spriteNodeWithImageNamed:@"orc01.png"];
                 fireball.size = CGSizeMake(50, 50);
                 fireball.position = CGPointMake(self.player.position.x+fireball.size.width/2,self.player.position.y+0);
@@ -1054,11 +1028,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 }
                 [self.fireballArray addObject:fireball];
                 
-                self.adagioMP -= 1;
+                self.attackMP -= 1;
             }
             
             NSArray *combo2 = self.attackArray[1];
-            if((self.adagioMP >= 2) &&([self.keyPressArray[1] isEqualToString:combo2[2]]) && ([self.keyPressArray[2] isEqualToString:combo2[1]]) && ([self.keyPressArray[3] isEqualToString:combo2[0]]) && !self.flameOn)
+            if((self.attackMP >= 2) &&([self.keyPressArray[1] isEqualToString:combo2[2]]) && ([self.keyPressArray[2] isEqualToString:combo2[1]]) && ([self.keyPressArray[3] isEqualToString:combo2[0]]) && !self.flameOn)
                {
                    self.flameOn = YES;
                    SKSpriteNode *flame = [SKSpriteNode spriteNodeWithImageNamed:@"orc01.png"];
@@ -1078,14 +1052,14 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                    SKAction *moveLaserActionWithDone = [SKAction sequence:@[growAction, shrinkAction, doneAction]];
                    
                    [flame runAction:moveLaserActionWithDone withKey:@"laserFired"];
-                   self.adagioMP -= 2;
+                   self.attackMP -= 2;
 
                }
         }
         if([self.mode isEqualToString: @"Defense"])
         {
             NSArray *combo1 = self.defenseArray[0];
-            if((self.brioMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]]))
+            if((self.defenseMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]]))
             {
                 if(![self childNodeWithName:@"wall"])
                 {
@@ -1094,19 +1068,19 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                     wall.position = CGPointMake(self.player.position.x+wall.size.width/2,self.player.position.y);
                     wall.name = @"wall";
                     [self addChild:wall];
-                    self.brioMP -= 1;
+                    self.defenseMP -= 1;
                 }
             }
         }
         if([self.mode isEqualToString: @"Magic"])
         {
             NSArray *combo1 = self.magicArray[0];
-            if((self.vifMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]]))
+            if((self.magicMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]]))
             {
                 NSLog(@"MAGIC");
                 filter->enable(true);
                 self.filterInt = 0;
-                self.vifMP-= 1;
+                self.magicMP-= 1;
             
             }
         }
@@ -1141,13 +1115,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     for(SKSpriteNode *enemy in self.moveablesArray){
         if([enemy intersectsNode:[self childNodeWithName:@"player"]]&&!enemy.hidden&&(enemy.zPosition==1.0f))
         {
-            if([self.currentHero isEqualToString:@"Gigi"]){
-                self.gigiHealth--;
-            }else if([self.currentHero isEqualToString:@"Amos"]){
-                self.amosHealth--;
-            }else if([self.currentHero isEqualToString:@"Dvon"]){
-                self.dvonHealth--;
-            }
+            self.playerHealth--;
             enemy.hidden = YES;
             [self childNodeWithName:[NSString stringWithFormat:@"%@Label", enemy.name]].hidden = YES;
         }else if([[self childNodeWithName:@"rightEdge"] intersectsNode:enemy])
@@ -1218,7 +1186,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             if([shot intersectsNode:self.player])
             {
                 if(!shot.hidden){
-                    self.amosHealth -= shot.damage;
+                    self.playerHealth -= shot.damage;
                     shot.hidden = YES;
                 }
             }else if([self childNodeWithName:@"wall"] && [shot intersectsNode:[self childNodeWithName:@"wall"]])
@@ -1268,12 +1236,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     }
     
     //Update Health & MP Labels
-    self.gigiHealthLabel.text = [NSString stringWithFormat:@"Gigi Health: %.2f", self.gigiHealth];
-    self.healthBar.size = CGSizeMake(self.amosHealth/self.adagioHealthMax * 100, 10);
-    self.amosHealthLabel.text = [NSString stringWithFormat:@"Amos Health: %.2f", self.amosHealth];
-    self.dvonHealthLabel.text = [NSString stringWithFormat:@"Dvon Health: %.2f", self.dvonHealth];
-    self.adagioMPLabel.text = [NSString stringWithFormat:@"Adagio MP: %.2f", self.adagioMP];
-    self.brioMPLabel.text = [NSString stringWithFormat:@"Brio MP: %.2f", self.brioMP];
+    self.healthBar.size = CGSizeMake(self.playerHealth/self.playerHealthMax * 100, 10);
+    self.playerHealthLabel.text = [NSString stringWithFormat:@"Player Health: %.2f", self.playerHealth];
+    self.attackMPLabel.text = [NSString stringWithFormat:@"Adagio MP: %.2f", self.attackMP];
+    self.defenseMPLabel.text = [NSString stringWithFormat:@"Brio MP: %.2f", self.defenseMP];
     
     self.lastBeat = playerBack->msElapsedSinceLastBeat;
     
@@ -1330,11 +1296,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     }
     
     if(self.beatCount%16 == 0){
-        if(self.adagioMP < self.adagioMaxMP){
-            self.adagioMP++;
+        if(self.attackMP < self.attackMPMax){
+            self.attackMP++;
         }
-        if(self.brioMP < self.brioMaxMP){
-            self.brioMP++;
+        if(self.defenseMP < self.defenseMPMax){
+            self.defenseMP++;
         }
     }
     
