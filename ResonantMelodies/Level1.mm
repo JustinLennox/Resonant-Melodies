@@ -231,6 +231,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.brioMP = 3;
     self.brioMaxMP = 3;
     
+    self.vifMP = 3;
+    self.vifMaxMP = 3;
+    
 #pragma mark- set difficulty and tempo
     
     self.difficulty = @"hard";
@@ -240,7 +243,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     }else if([self.difficulty isEqualToString:@"medium"]){
         self.BPM = 90;
     }else if([self.difficulty isEqualToString:@"hard"]){
-        self.BPM = 120;
+        self.BPM = 125;
     }
     
 
@@ -334,22 +337,23 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 #pragma mark- Superpowered init
     lastSamplerate = activeFx = 0;
     crossValue = 1.0f;
-    volBack = volC = volD = volE = volF = volG =  1.0f * headroom;
+    volC = volD = volE = volF = volG =  1.0f * headroom;
+    volBack = 0.8 * headroom;
     pthread_mutex_init(&mutex, NULL); // This will keep our player volumes and playback states in sync.
     if (posix_memalign((void **)&stereoBuffer, 16, 4096 + 128) != 0) abort(); // Allocating memory, aligned to 16.
     
     playerBack = new SuperpoweredAdvancedAudioPlayer((__bridge void *)self, playerEventCallbackBack, 44100, 0);
-    playerBack->open([[[NSBundle mainBundle] pathForResource:@"Level 1 Drums" ofType:@"aif"] fileSystemRepresentation]);
+    playerBack->open([[[NSBundle mainBundle] pathForResource:@"Level1Back" ofType:@"aif"] fileSystemRepresentation]);
     playerC = new SuperpoweredAdvancedAudioPlayer((__bridge void *)self, playerEventCallbackC, 44100, 0);
-    playerC->open([[[NSBundle mainBundle] pathForResource:@"Bass1.1" ofType:@"aif"] fileSystemRepresentation]);
+    playerC->open([[[NSBundle mainBundle] pathForResource:@"Bass1C" ofType:@"aif"] fileSystemRepresentation]);
     playerD = new SuperpoweredAdvancedAudioPlayer((__bridge void *)self, playerEventCallbackD, 44100, 0);
-    playerD->open([[[NSBundle mainBundle] pathForResource:@"Bass1.2" ofType:@"aif"] fileSystemRepresentation]);
+    playerD->open([[[NSBundle mainBundle] pathForResource:@"Bass1D" ofType:@"aif"] fileSystemRepresentation]);
     playerE = new SuperpoweredAdvancedAudioPlayer((__bridge void *)self, playerEventCallbackE, 44100, 0);
-    playerE->open([[[NSBundle mainBundle] pathForResource:@"Bass1.3" ofType:@"aif"] fileSystemRepresentation]);
+    playerE->open([[[NSBundle mainBundle] pathForResource:@"Bass1E" ofType:@"aif"] fileSystemRepresentation]);
     playerF = new SuperpoweredAdvancedAudioPlayer((__bridge void *)self, playerEventCallbackF, 44100, 0);
-    playerF->open([[[NSBundle mainBundle] pathForResource:@"Bass1.4" ofType:@"aif"] fileSystemRepresentation]);
+    playerF->open([[[NSBundle mainBundle] pathForResource:@"Bass1F" ofType:@"aif"] fileSystemRepresentation]);
     playerG = new SuperpoweredAdvancedAudioPlayer((__bridge void *)self, playerEventCallbackG, 44100, 0);
-    playerG->open([[[NSBundle mainBundle] pathForResource:@"Bass1.5" ofType:@"aif"] fileSystemRepresentation]);
+    playerG->open([[[NSBundle mainBundle] pathForResource:@"Bass1G" ofType:@"aif"] fileSystemRepresentation]);
     
     playerBack->syncMode = playerC->syncMode = playerD->syncMode = playerE->syncMode = playerF->syncMode = playerG->syncMode = SuperpoweredAdvancedAudioPlayerSyncMode_TempoAndBeat;
     
@@ -1094,6 +1098,18 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 }
             }
         }
+        if([self.mode isEqualToString: @"Magic"])
+        {
+            NSArray *combo1 = self.magicArray[0];
+            if((self.vifMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]]))
+            {
+                NSLog(@"MAGIC");
+                filter->enable(true);
+                self.filterInt = 0;
+                self.vifMP-= 1;
+            
+            }
+        }
     }
 }
 
@@ -1106,6 +1122,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     NSArray *defenseCombo0 = @[@"highENode", @"highDNode", @"highCNode"];
     self.defenseArray = @[defenseCombo0];
     
+    NSArray *magicCombo0 =  @[@"highENode", @"highFNode", @"highGNode"];
+    self.magicArray = @[magicCombo0];
 }
 
 
@@ -1272,6 +1290,17 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         pthread_mutex_lock(&mutex);
             playerBack->play(YES);
         pthread_mutex_unlock(&mutex);
+    }
+    
+    if(self.filterInt < 7){
+        self.filterInt++;
+        if(self.filterInt <= 3){
+            filter->setResonantParameters(floatToFrequency(0.4), 0.1f);
+        }else{
+            filter->setResonantParameters(floatToFrequency(0.4 + (self.filterInt/10.0f - 0.3)), 0.1f);
+        }
+    }else{
+        filter->enable(false);
     }
     
     self.beatTime = CACurrentMediaTime();
@@ -1591,7 +1620,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 void playerEventCallbackBack(void *clientData, SuperpoweredAdvancedAudioPlayerEvent event, void *value) {
     if (event == SuperpoweredAdvancedAudioPlayerEvent_LoadSuccess) {
         Level1 *self = (__bridge Level1 *)clientData;
-        self->playerBack->setBpm(120.0f);
+        self->playerBack->setBpm(125.0f);
         self->playerBack->setFirstBeatMs(0);
         self->playerBack->setPosition(self->playerBack->firstBeatMs, false, false);
     };
@@ -1600,7 +1629,7 @@ void playerEventCallbackBack(void *clientData, SuperpoweredAdvancedAudioPlayerEv
 void playerEventCallbackC(void *clientData, SuperpoweredAdvancedAudioPlayerEvent event, void *value) {
     if (event == SuperpoweredAdvancedAudioPlayerEvent_LoadSuccess) {
         Level1 *self = (__bridge Level1 *)clientData;
-        self->playerC->setBpm(120.0f);
+        self->playerC->setBpm(125.0f);
         self->playerC->setFirstBeatMs(0);
         self->playerC->setPosition(self->playerC->firstBeatMs, false, false);
     };
@@ -1609,7 +1638,7 @@ void playerEventCallbackC(void *clientData, SuperpoweredAdvancedAudioPlayerEvent
 void playerEventCallbackD(void *clientData, SuperpoweredAdvancedAudioPlayerEvent event, void *value) {
     if (event == SuperpoweredAdvancedAudioPlayerEvent_LoadSuccess) {
         Level1 *self = (__bridge Level1 *)clientData;
-        self->playerD->setBpm(120.0f);
+        self->playerD->setBpm(125.0f);
         self->playerD->setFirstBeatMs(0);
         self->playerD->setPosition(self->playerD->firstBeatMs, false, false);
     };
@@ -1618,7 +1647,7 @@ void playerEventCallbackD(void *clientData, SuperpoweredAdvancedAudioPlayerEvent
 void playerEventCallbackE(void *clientData, SuperpoweredAdvancedAudioPlayerEvent event, void *value) {
     if (event == SuperpoweredAdvancedAudioPlayerEvent_LoadSuccess) {
         Level1 *self = (__bridge Level1 *)clientData;
-        self->playerE->setBpm(120.0f);
+        self->playerE->setBpm(125.0f);
         self->playerE->setFirstBeatMs(0);
         self->playerE->setPosition(self->playerE->firstBeatMs, false, false);
     };
@@ -1627,7 +1656,7 @@ void playerEventCallbackE(void *clientData, SuperpoweredAdvancedAudioPlayerEvent
 void playerEventCallbackF(void *clientData, SuperpoweredAdvancedAudioPlayerEvent event, void *value) {
     if (event == SuperpoweredAdvancedAudioPlayerEvent_LoadSuccess) {
         Level1 *self = (__bridge Level1 *)clientData;
-        self->playerF->setBpm(120.0f);
+        self->playerF->setBpm(125.0f);
         self->playerF->setFirstBeatMs(0);
         self->playerF->setPosition(self->playerF->firstBeatMs, false, false);
     };
@@ -1636,7 +1665,7 @@ void playerEventCallbackF(void *clientData, SuperpoweredAdvancedAudioPlayerEvent
 void playerEventCallbackG(void *clientData, SuperpoweredAdvancedAudioPlayerEvent event, void *value) {
     if (event == SuperpoweredAdvancedAudioPlayerEvent_LoadSuccess) {
         Level1 *self = (__bridge Level1 *)clientData;
-        self->playerG->setBpm(120.0f);
+        self->playerG->setBpm(125.0f);
         self->playerG->setFirstBeatMs(0);
         self->playerG->setPosition(self->playerG->firstBeatMs, false, false);
     };
@@ -1686,7 +1715,7 @@ void playerEventCallbackG(void *clientData, SuperpoweredAdvancedAudioPlayerEvent
     pthread_mutex_lock(&mutex);
     
     bool masterIsA = YES;
-    float masterBpm = 120.0f; // Players will sync to this tempo.
+    float masterBpm = 125.0f; // Players will sync to this tempo.
     double msElapsedSinceLastBeatA = playerBack->msElapsedSinceLastBeat; // When playerB needs it, playerA has already stepped this value, so save it now.
     
     bool silence = !playerBack->process(stereoBuffer, false, numberOfSamples, volBack, masterBpm, playerC->msElapsedSinceLastBeat);
@@ -1724,37 +1753,6 @@ void playerEventCallbackG(void *clientData, SuperpoweredAdvancedAudioPlayerEvent
     
     return !silence;
 }
-
-- (IBAction)onPlayPause:(id)sender {
-    /*UIButton *button = (UIButton *)sender;
-    pthread_mutex_lock(&mutex);
-    if (playerA->playing) {
-        playerA->pause();
-        playerB->pause();
-    } else {
-        bool masterIsA = (crossValue <= 0.5f);
-        playerA->play(!masterIsA);
-        playerB->play(masterIsA);
-    };
-    pthread_mutex_unlock(&mutex);
-    button.selected = playerA->playing;*/
-}
-
-/*- (IBAction)onCrossFader:(id)sender {
-    pthread_mutex_lock(&mutex);
-    crossValue = ((UISlider *)sender).value;
-    if (crossValue < 0.01f) {
-        volA = 1.0f * headroom;
-        volB = 0.0f;
-    } else if (crossValue > 0.99f) {
-        volA = 0.0f;
-        volB = 1.0f * headroom;
-    } else { // constant power curve
-        volA = cosf(M_PI_2 * crossValue) * headroom;
-        volB = cosf(M_PI_2 * (1.0f - crossValue)) * headroom;
-    };
-    pthread_mutex_unlock(&mutex);
-}*/
 
 static inline float floatToFrequency(float value) {
     static const float min = logf(20.0f) / logf(10.0f);

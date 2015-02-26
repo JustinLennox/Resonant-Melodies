@@ -68,6 +68,7 @@
 //Combo Properties
 @property (strong, nonatomic) NSMutableArray *fireballArray;
 @property (nonatomic) BOOL flameOn;
+@property (nonatomic) int filterInt;
 
 //Keyboard Properties
 @property (nonatomic) float yPositionIncrement;

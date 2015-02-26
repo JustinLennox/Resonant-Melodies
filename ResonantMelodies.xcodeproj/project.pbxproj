@@ -64,6 +64,12 @@
 		D07234D31A99E42D00C19305 /* arrowLeft.png in Resources */ = {isa = PBXBuildFile; fileRef = D07234D21A99E42D00C19305 /* arrowLeft.png */; };
 		D07234D51A99E6CD00C19305 /* greyBoard.png in Resources */ = {isa = PBXBuildFile; fileRef = D07234D41A99E6CD00C19305 /* greyBoard.png */; };
 		D07234DB1A99E98000C19305 /* brownPost.png in Resources */ = {isa = PBXBuildFile; fileRef = D07234DA1A99E98000C19305 /* brownPost.png */; };
+		D08B64F71A9F924D000D117F /* Bass1C.aif in Resources */ = {isa = PBXBuildFile; fileRef = D08B64F11A9F924D000D117F /* Bass1C.aif */; };
+		D08B64F81A9F924D000D117F /* Bass1D.aif in Resources */ = {isa = PBXBuildFile; fileRef = D08B64F21A9F924D000D117F /* Bass1D.aif */; };
+		D08B64F91A9F924D000D117F /* Bass1E.aif in Resources */ = {isa = PBXBuildFile; fileRef = D08B64F31A9F924D000D117F /* Bass1E.aif */; };
+		D08B64FA1A9F924D000D117F /* Bass1F.aif in Resources */ = {isa = PBXBuildFile; fileRef = D08B64F41A9F924D000D117F /* Bass1F.aif */; };
+		D08B64FB1A9F924D000D117F /* Bass1G.aif in Resources */ = {isa = PBXBuildFile; fileRef = D08B64F51A9F924D000D117F /* Bass1G.aif */; };
+		D08B64FC1A9F924D000D117F /* Level1Back.aif in Resources */ = {isa = PBXBuildFile; fileRef = D08B64F61A9F924D000D117F /* Level1Back.aif */; };
 		D0A9C0661A7382890029B4EF /* aKey.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A9C05F1A7382890029B4EF /* aKey.png */; };
 		D0A9C0671A7382890029B4EF /* bKey.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A9C0601A7382890029B4EF /* bKey.png */; };
 		D0A9C0681A7382890029B4EF /* cKey.png in Resources */ = {isa = PBXBuildFile; fileRef = D0A9C0611A7382890029B4EF /* cKey.png */; };
@@ -238,6 +244,12 @@
 		D07234D21A99E42D00C19305 /* arrowLeft.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrowLeft.png; sourceTree = "<group>"; };
 		D07234D41A99E6CD00C19305 /* greyBoard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = greyBoard.png; sourceTree = "<group>"; };
 		D07234DA1A99E98000C19305 /* brownPost.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = brownPost.png; sourceTree = "<group>"; };
+		D08B64F11A9F924D000D117F /* Bass1C.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = Bass1C.aif; sourceTree = "<group>"; };
+		D08B64F21A9F924D000D117F /* Bass1D.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = Bass1D.aif; sourceTree = "<group>"; };
+		D08B64F31A9F924D000D117F /* Bass1E.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = Bass1E.aif; sourceTree = "<group>"; };
+		D08B64F41A9F924D000D117F /* Bass1F.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = Bass1F.aif; sourceTree = "<group>"; };
+		D08B64F51A9F924D000D117F /* Bass1G.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = Bass1G.aif; sourceTree = "<group>"; };
+		D08B64F61A9F924D000D117F /* Level1Back.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = Level1Back.aif; sourceTree = "<group>"; };
 		D0A9C05F1A7382890029B4EF /* aKey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = aKey.png; sourceTree = "<group>"; };
 		D0A9C0601A7382890029B4EF /* bKey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bKey.png; sourceTree = "<group>"; };
 		D0A9C0611A7382890029B4EF /* cKey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cKey.png; sourceTree = "<group>"; };
@@ -456,6 +468,12 @@
 		D0AC52631A88803B00CFED05 /* Audio */ = {
 			isa = PBXGroup;
 			children = (
+				D08B64F11A9F924D000D117F /* Bass1C.aif */,
+				D08B64F21A9F924D000D117F /* Bass1D.aif */,
+				D08B64F31A9F924D000D117F /* Bass1E.aif */,
+				D08B64F41A9F924D000D117F /* Bass1F.aif */,
+				D08B64F51A9F924D000D117F /* Bass1G.aif */,
+				D08B64F61A9F924D000D117F /* Level1Back.aif */,
 				D07234B71A99B88500C19305 /* Crash-Cymbal-2.wav */,
 				D04C505A1A9072C700C931C3 /* shatter.aif */,
 				D0AC52641A88804D00CFED05 /* Bass1.1.aif */,
@@ -963,6 +981,7 @@
 				D0AC526E1A88804D00CFED05 /* Bass1.5.aif in Resources */,
 				D04C506C1A907AA500C931C3 /* Botie12.png in Resources */,
 				D07234D11A99E42500C19305 /* arrowRight.png in Resources */,
+				D08B64F91A9F924D000D117F /* Bass1E.aif in Resources */,
 				D04C50241A8FEF7A00C931C3 /* OstinatoParticle.sks in Resources */,
 				D0FCE35E1A9BB0660027398B /* defenseSymbol.png in Resources */,
 				D0C08F621A77791E00FD429D /* lA.caf in Resources */,
@@ -983,8 +1002,10 @@
 				D0FCE35F1A9BB0660027398B /* magicSymbol.png in Resources */,
 				D0AC52781A88AD9600CFED05 /* SourceSansPro-Regular.otf in Resources */,
 				D0FA5CC41A76255A000A5660 /* gaia1.png in Resources */,
+				D08B64F71A9F924D000D117F /* Bass1C.aif in Resources */,
 				D07234D51A99E6CD00C19305 /* greyBoard.png in Resources */,
 				D0FCE35D1A9BB0660027398B /* moveSymbol.png in Resources */,
+				D08B64FC1A9F924D000D117F /* Level1Back.aif in Resources */,
 				D0C08F5B1A7775A600FD429D /* d.caf in Resources */,
 				D04C50461A900D4F00C931C3 /* dalf05.png in Resources */,
 				D04C50561A9016A400C931C3 /* BowTie2.png in Resources */,
@@ -1009,6 +1030,7 @@
 				D04C50351A8FFA6500C931C3 /* introBackground2.png in Resources */,
 				D0FA5CC61A7625CC000A5660 /* aragon1.png in Resources */,
 				D04C50251A8FEF7A00C931C3 /* spark.png in Resources */,
+				D08B64FB1A9F924D000D117F /* Bass1G.aif in Resources */,
 				D04C50551A9016A400C931C3 /* BowTie1.png in Resources */,
 				D04C503C1A90061600C931C3 /* laserbeam_blue.png in Resources */,
 				D07234BE1A99BC2E00C19305 /* status_bar_life.png in Resources */,
@@ -1046,6 +1068,7 @@
 				D0D2F7BF1A716C3400A87C21 /* Main.storyboard in Resources */,
 				D0AC526B1A88804D00CFED05 /* Bass1.2.aif in Resources */,
 				D04C50441A900D4F00C931C3 /* dalf03.png in Resources */,
+				D08B64F81A9F924D000D117F /* Bass1D.aif in Resources */,
 				D0DF251F1A84B2C100309754 /* textBoxWood.png in Resources */,
 				D07234DB1A99E98000C19305 /* brownPost.png in Resources */,
 				D0A9C0661A7382890029B4EF /* aKey.png in Resources */,
@@ -1058,6 +1081,7 @@
 				D04C501D1A8D282500C931C3 /* textBox.png in Resources */,
 				D0A9C06C1A7382890029B4EF /* gKey.png in Resources */,
 				D04C506A1A907AA500C931C3 /* Botie10.png in Resources */,
+				D08B64FA1A9F924D000D117F /* Bass1F.aif in Resources */,
 				D04C50701A907AA500C931C3 /* Botie16.png in Resources */,
 				D07234CF1A99C52400C19305 /* status_bar_health.png in Resources */,
 				D04C50331A8FFA0300C931C3 /* note1.png in Resources */,
