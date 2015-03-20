@@ -48,14 +48,10 @@
                 SKSpriteNode *signPost = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"brownPost.png"] size:CGSizeMake(screenSize.width/1.2, screenSize.height/2)];
                 signPost.alpha = 1.0f;
                 signPost.zPosition = 2.0f;
-                signPost.position = CGPointMake(CGRectGetMidX(self.parent.scene.frame) - signPost.frame.size.width/2, 70);
+                signPost.position = CGPointMake(screenSize.width/2 - self.position.x, screenSize.height/2 - self.position.y);
                 signPost.name = @"signPost";
                 [self addChild:signPost];
-            }else{
-                [self removeSign];
-            }
-            
-            if([interactable.type isEqualToString:@"cycleNPC"] && ![self childNodeWithName:@"signLabel"] && ![self childNodeWithName:@"signPost"]){
+            }else if([interactable.type isEqualToString:@"cycleNPC"] && ![self childNodeWithName:@"signLabel"] && ![self childNodeWithName:@"signPost"]){
                 
                 SKSpriteNode *signPost = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"textBox.png"] size:CGSizeMake(screenSize.width/2, screenSize.height/2.5 - interactable.size.height)];
                 signPost.alpha = 1.0f;
@@ -83,12 +79,9 @@
                 self.speechBubble.lineBreakMode = NSLineBreakByWordWrapping;
                 [self.parent.scene.view addSubview:self.speechBubble];
                 [self.parent.scene.view bringSubviewToFront:self.speechBubble];
-                
-
             }else{
                 [self removeSign];
             }
-            
 
         }else if([self childNodeWithName:@"signLabel"] || ([self childNodeWithName:@"signPost"])){
             [self removeSign];

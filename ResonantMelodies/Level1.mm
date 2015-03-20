@@ -1090,7 +1090,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             NSArray *combo1 = self.attackArray[0];
             if((self.playerMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]])){
-                SKSpriteNode *fireball = [SKSpriteNode spriteNodeWithImageNamed:@"orc01.png"];
+                SKSpriteNode *fireball = [SKSpriteNode spriteNodeWithImageNamed:@"fireball.png"];
                 fireball.size = CGSizeMake(50, 50);
                 fireball.position = CGPointMake(self.player.position.x+fireball.size.width/2,self.player.position.y+0);
                 fireball.name = @"fireball";
@@ -1115,7 +1115,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             if((self.playerMP >= 2) &&([self.keyPressArray[1] isEqualToString:combo2[2]]) && ([self.keyPressArray[2] isEqualToString:combo2[1]]) && ([self.keyPressArray[3] isEqualToString:combo2[0]]) && !self.flameOn)
                {
                    self.flameOn = YES;
-                   SKSpriteNode *flame = [SKSpriteNode spriteNodeWithImageNamed:@"orc01.png"];
+                   SKSpriteNode *flame = [SKSpriteNode spriteNodeWithImageNamed:@"fireball.png"];
                    flame.size = CGSizeMake([self childNodeWithName:@"highCNode"].frame.size.width, 1);
                    flame.position = CGPointMake(CGRectGetMidX([self childNodeWithName:[NSString stringWithFormat:@"%@", self.keyPressArray[0]]].frame), CGRectGetMaxY([self childNodeWithName:@"highCNode"].frame));
                    flame.name = @"flame";
