@@ -14,5 +14,7 @@
 @property (strong, nonatomic) NSString *displayText;
 @property (strong, nonatomic) NSArray *textArray;
 @property (strong, nonatomic) NSString *type;
+@property (nonatomic) int cycleInt;
+@property (strong, nonatomic) UILabel *speechBubble;
 
 @end

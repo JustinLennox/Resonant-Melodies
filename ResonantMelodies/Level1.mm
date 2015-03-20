@@ -853,9 +853,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:2]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:2] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.mode isEqualToString:@"Resonance"]);
                 break;
             case 4:
-            shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:3]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:2]]) && ([[self.keyPressArray objectAtIndex:2] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:3] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.mode isEqualToString:@"Resonance"]);
-                
-            
+                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:3]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:2]]) && ([[self.keyPressArray objectAtIndex:2] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:3] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.mode isEqualToString:@"Resonance"]);
+                break;
+            case 7:
+                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:6]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:5]]) && ([[self.keyPressArray objectAtIndex:2] isEqualToString:[enemy.resonantArray objectAtIndex:4]]) && ([[self.keyPressArray objectAtIndex:3] isEqualToString:[enemy.resonantArray objectAtIndex:3]]) && ([[self.keyPressArray objectAtIndex:4] isEqualToString:[enemy.resonantArray objectAtIndex:2]]) && ([[self.keyPressArray objectAtIndex:5] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:6] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.mode isEqualToString:@"Resonance"]);
+                break;
             default:
                 break;
         }
@@ -866,9 +868,15 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath:soundFile], &soundID);
             AudioServicesPlaySystemSound(soundID);
             enemy.hidden = YES;
+            [enemy removeFromParent];
             SKLabelNode *enemyHealthBar = (SKLabelNode*)[enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]];
             enemyHealthBar.alpha = 0.0f;
             enemyHealthBar.hidden = YES;
+            
+            if(self.currentRoomNumber == 7){
+                [self childNodeWithName:@"treeSprite"].hidden = YES;
+                [[self childNodeWithName:@"treeSprite"] removeFromParent];
+            }
             
            // NSString *myParticlePath = [[NSBundle mainBundle] pathForResource:@"glassShatter" ofType:@"sks"];
             //SKEmitterNode *myParticle = [NSKeyedUnarchiver unarchiveObjectWithFile:myParticlePath];
@@ -910,6 +918,21 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             }
         }else if(self.currentRoomNumber == 4){
             if([self childNodeWithName:@"enemy3"] && ([self childNodeWithName:@"enemy3"].hidden == NO) && !(self.roomCleared >= 4)){
+                rightArrow.alpha = 0.0f;
+                rightArrow.hidden = YES;
+            }
+        }else if(self.currentRoomNumber == 5){
+            if([self childNodeWithName:@"enemy1"] && ([self childNodeWithName:@"enemy1"].hidden == NO) && [self childNodeWithName:@"enemy2"] && ([self childNodeWithName:@"enemy2"].hidden == NO) && !(self.roomCleared >= 5)){
+                rightArrow.alpha = 0.0f;
+                rightArrow.hidden = YES;
+            }
+        }else if(self.currentRoomNumber == 7){
+            if([self childNodeWithName:@"bigTree"] && ([self childNodeWithName:@"bigTree"].hidden == NO) && !(self.roomCleared >= 7)){
+                rightArrow.alpha = 0.0f;
+                rightArrow.hidden = YES;
+            }
+        }else if(self.currentRoomNumber == 8){
+            if([self childNodeWithName:@"boss"] && ([self childNodeWithName:@"boss"].hidden == NO) && !(self.roomCleared >= 8)){
                 rightArrow.alpha = 0.0f;
                 rightArrow.hidden = YES;
             }
@@ -1209,7 +1232,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 }
 -(void)endSleepCombo{
     for(Enemy *enemy in self.enemyArray){
+        
+        if(!enemy.hidden){
             enemy.canShoot = YES;
+        }
             enemy.canMove = YES;
     }
 }
@@ -1243,7 +1269,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         }
     }
     
-    for (Enemy *enemy in _enemyArray)
+    for (Enemy *enemy in self.enemyArray)
     {
         if (enemy.hidden) {
             continue;
@@ -1270,6 +1296,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 
             }
             
+            NSLog(@"%@", self.enemyShotArray);
             for (EnemyShot *shot in self.enemyShotArray)
             {
                 if (shot.hidden) {
@@ -1278,6 +1305,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 if([shot intersectsNode:keyLaser] && [shot.note isEqualToString:keyLaser.note]){
                     keyLaser.hidden = YES;
                     shot.hidden = YES;
+                    [shot removeFromParent];
                 }
             }
 
@@ -1342,11 +1370,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             [enemyHealthBar runAction:resizeHealth];
             //enemyHealthLabel.position = CGPointMake(CGRectGetMidX(enemy.frame) - enemyHealthLabel.size.width/2, CGRectGetMaxY(enemy.frame) + enemyHealthLabel.size.height/2 + 5);
         }else if (enemy.health <= 0){
+            enemy.canShoot = NO;
             enemy.hidden = YES;
             [enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]].hidden = YES;
-            [self.enemyArray removeObjectAtIndex:enemy.arrayPosition];
-
         }else{
+            enemy.canShoot = NO;
             SKSpriteNode *enemyHealthBar = (SKSpriteNode*)[enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]];
             enemyHealthBar.alpha = 0.0f;
             enemyHealthBar.hidden = YES;
@@ -1358,7 +1386,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     if(self.touchDown){
         self.touchLength = CACurrentMediaTime() - self.touchBegan;
         if(self.currentKeyDown){
-          [self checkInteractables:self.currentKeyDown];
+          //[self checkInteractables:self.currentKeyDown];
         }
     }else{
         self.touchLength = 0;
@@ -1382,6 +1410,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.defenseMPLabel.text = [NSString stringWithFormat:@"Brio MP: %.2f", self.defenseMP];
     self.magicMPLabel.text = [NSString stringWithFormat:@"Vif MP: %.2f", self.magicMP];
     self.lastBeat = playerBack->msElapsedSinceLastBeat;
+    
+    if(self.playerHealth <= 0){
+        [self.player removeFromParent];
+        
+    }
     
 }
 
@@ -1450,7 +1483,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     }
     
     
-    if(self.beatCount%8 == 0){
+    if(self.beatCount%12 == 0){
         [self enemyAttack];
     }
     
@@ -1565,9 +1598,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 -(void)enemyAttack{
     for(Enemy *enemy in self.enemyArray)
     {
-        if([enemy.type isEqualToString:@"angle"] && enemy.canShoot)
+        if([enemy.type isEqualToString:@"angle"] && enemy.canShoot && !enemy.hidden)
         {
             EnemyShot *spike = [EnemyShot spriteNodeWithImageNamed:@"angleShot.png"];
+            spike.damage = 0.5f;
             spike.size = CGSizeMake(15, 10);
             spike.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
             spike.name = @"angle";
@@ -1581,17 +1615,103 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
             
             
-            SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:5.0f];
+            SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:7.0f];
             SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
                 spike.hidden = YES;
             }];
-            spike.damage = 0.25f;
             
             SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
             
             [spike runAction:moveLaserActionWithDone withKey:@"laserFired"];
             [self.enemyShotArray addObject:spike];
             
+        }else if([enemy.type isEqualToString:@"boss"] && enemy.canShoot && !enemy.hidden){
+            [self.enemyShotArray removeAllObjects];
+            EnemyShot *spike = [EnemyShot spriteNodeWithImageNamed:@"fireball.png"];
+            spike.texture = [SKTexture textureWithImageNamed:@"fireball.png"];
+            spike.damage = 1.0f;
+            
+            spike.size = CGSizeMake(15, 10);
+            spike.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
+            spike.name = @"spike1";
+            spike.note = [self getRandomNote];
+            [self addChild:spike];
+            
+            SKLabelNode *noteLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+            noteLabel.text = spike.note;
+            [spike addChild:noteLabel];
+            noteLabel.position = CGPointMake(0, 10);
+            [self.enemyShotArray addObject:spike];
+
+            EnemyShot *spike2 = [EnemyShot spriteNodeWithImageNamed:@"fireball.png"];
+            spike2.texture = [SKTexture textureWithImageNamed:@"fireball.png"];
+            spike2.damage = 1.0f;
+            
+            spike2.size = CGSizeMake(15, 10);
+            spike2.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
+            spike2.name = @"spike2";
+            spike2.note = [self getRandomNote];
+            [self addChild:spike2];
+            spike2.alpha = 0.0f;
+            SKLabelNode *note2Label = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+            note2Label.text = spike2.note;
+            [spike2 addChild:note2Label];
+            note2Label.position = CGPointMake(0, 10);
+            [self.enemyShotArray addObject:spike2];
+
+            EnemyShot *spike3 = [EnemyShot spriteNodeWithImageNamed:@"fireball.png"];
+            spike3.texture = [SKTexture textureWithImageNamed:@"fireball.png"];
+            spike3.damage = 1.0f;
+            
+            spike3.size = CGSizeMake(15, 10);
+            spike3.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
+            spike3.name = @"spike3";
+            spike3.note = [self getRandomNote];
+            [self addChild:spike3];
+            spike3.alpha = 0.0f;
+            SKLabelNode *note3Label = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+            note3Label.text = spike2.note;
+            [spike3 addChild:note3Label];
+            note3Label.position = CGPointMake(0, 10);
+            [self.enemyShotArray addObject:spike3];
+
+
+
+            
+            SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:6.0f];
+            SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
+                spike.hidden = YES;
+            }];
+            
+            SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
+            [spike runAction:moveLaserActionWithDone withKey:@"spike1Fired"];
+            
+            SKAction *wait = [SKAction waitForDuration:0.8];
+            [spike2 runAction:wait completion:^{
+                spike2.alpha = 1.0f;
+                SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:6.0f];
+                SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
+                    spike2.hidden = YES;
+                }];
+                
+                SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
+                [spike2 runAction:moveLaserActionWithDone withKey:@"spike2Fired"];
+
+            }];
+            
+            SKAction *wait2 = [SKAction waitForDuration:1.6];
+            [spike3 runAction:wait2 completion:^{
+                spike3.alpha = 1.0f;
+                SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:6.0f];
+                SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
+                    spike3.hidden = YES;
+                }];
+                
+                SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
+                [spike3 runAction:moveLaserActionWithDone withKey:@"spike3Fired"];
+            }];
+            
+
         }
         
         
@@ -1909,7 +2029,7 @@ static inline float floatToFrequency(float value) {
 -(void)loadNextRoom:(int)roomNumber{
     [self removeChildrenInArray:self.enemyArray];
     [self removeChildrenInArray:self.interactableArray];
-    self.enemyArray = [NSArray arrayWithObjects: nil];
+    self.enemyArray = [NSMutableArray arrayWithObjects: nil];
     self.interactableArray = [NSArray arrayWithObjects: nil];
     for(SKLabelNode *enemyHealthLabel in self.enemyHealthLabelArray){
         enemyHealthLabel.hidden = YES;
@@ -2013,12 +2133,12 @@ static inline float floatToFrequency(float value) {
     if(self.currentRoomNumber == 1){
         
         Interactable *sign1 = [[Interactable alloc] init];
-        [sign1 setTexture:[SKTexture textureWithImageNamed:@"signPost.jpg"]];
+        [sign1 setTexture:[SKTexture textureWithImageNamed:@"signPost.png"]];
         sign1.name = @"sign1";
         sign1.displayText = @"Welcome to the Pink Forest";
-        sign1.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highENode"].frame), CGRectGetMidY(self.frame));
         sign1.keyNode = @"highDNode";
-        sign1.size = CGSizeMake(30,30);
+        sign1.size = CGSizeMake(40,40);
+        sign1.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highENode"].frame), CGRectGetMaxY([self childNodeWithName:@"highENode"].frame) + sign1.size.height/2 - 5);
         sign1.type = @"sign";
         sign1.zPosition = 0.0f;
         [self addChild:sign1];
@@ -2032,13 +2152,13 @@ static inline float floatToFrequency(float value) {
         }
         
         Interactable *sign2 = [[Interactable alloc] init];
-        [sign2 setTexture:[SKTexture textureWithImageNamed:@"signPost.jpg"]];
+        [sign2 setTexture:[SKTexture textureWithImageNamed:@"signPost.png"]];
         sign2.name = @"sign2";
         sign2.displayText = @"WATCH OUT FOR THE ORCS!";
-        sign2.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highDNode"].frame), CGRectGetMidY(self.frame));
         sign2.keyNode = @"highCNode";
         sign2.type = @"sign";
-        sign2.size = CGSizeMake(30,30);
+        sign2.size = CGSizeMake(40,40);
+        sign2.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highDNode"].frame), CGRectGetMaxY([self childNodeWithName:@"highDNode"].frame)  + sign2.size.height/2 - 5);
         sign2.zPosition = 0.0f;
         [self addChild:sign2];
         self.interactableArray = [NSArray arrayWithObjects:sign2, nil];
@@ -2113,6 +2233,128 @@ static inline float floatToFrequency(float value) {
         SKAction *moveDown = [SKAction moveByX:0 y:-3 duration:1.0f];
         SKAction *floatAction = [SKAction sequence:@[moveUp, moveDown]];
         [enemy3 runAction:[SKAction repeatActionForever:floatAction]];
+    }else if(self.currentRoomNumber == 5){
+        if(self.roomCleared < 4)
+        {
+            self.roomCleared = 4;
+        }
+        
+        self.enemyMoveInt = 1;
+        
+        Enemy *enemy1 = [Enemy spriteNodeWithImageNamed:@"angle.png"];
+        enemy1.name = @"enemy1";
+        enemy1.size = CGSizeMake(50,50);
+        enemy1.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highDNode"].frame), CGRectGetMaxY([self childNodeWithName:@"highFNode"].frame) + enemy1.frame.size.height/2.3);
+        enemy1.zPosition = 1.0f;
+        enemy1.health = 150;
+        enemy1.healthMax = 150;
+        enemy1.hidden = NO;
+        enemy1.canShoot = YES;
+        enemy1.canMove = YES;
+        enemy1.sleepChance = 2;
+        enemy1.type = @"angle";
+        enemy1.resonantArray = @[@"highANode", @"highBNode", @"highCNode", @"highDNode"];
+        [self addChild:enemy1];
+        
+        Enemy *enemy2 = [Enemy spriteNodeWithImageNamed:@"angle.png"];
+        enemy2.name = @"enemy2";
+        enemy2.size = CGSizeMake(50,50);
+        enemy2.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highFNode"].frame), CGRectGetMaxY([self childNodeWithName:@"highFNode"].frame) + enemy2.frame.size.height/2.3);
+        enemy2.zPosition = 1.0f;
+        enemy2.health = 150;
+        enemy2.healthMax = 150;
+        enemy2.hidden = NO;
+        enemy2.canShoot = YES;
+        enemy2.canMove = YES;
+        enemy2.sleepChance = 2;
+        enemy2.type = @"angle";
+        enemy2.resonantArray = @[@"highANode", @"highBNode", @"highCNode", @"highDNode"];
+        [self addChild:enemy2];
+        
+        self.enemyArray = [NSMutableArray arrayWithObjects:enemy1, enemy2, nil];
+        enemy2.arrayPosition = 0;
+        self.moveablesArray = [NSArray arrayWithObjects:enemy1, enemy2, nil];
+    }else if(self.currentRoomNumber == 6){
+        if(self.roomCleared < 5)
+        {
+            self.roomCleared = 5;
+        }
+        
+        Interactable *cycleNPC = [[Interactable alloc] init];
+        [cycleNPC setTexture:[SKTexture textureWithImageNamed:@"gaia1.png"]];
+        cycleNPC.name = @"cycleNPC";
+        cycleNPC.textArray = @[@"Uh... Shoot, what was my line...", @"Oh yeah. Hey kid! I'm an NPC. Nice to meet you!", @"Oh he's talking to me again. Er. Hello there.", @"Look kid, what do you want from me?", @"Please... I... I don't have anything else to say...", @"OK, I can't take it anymore. The guy up ahead's favorite vegatable is the Cabbage. Now please leave me alone. I beg you."];
+        cycleNPC.keyNode = @"highDNode";
+        cycleNPC.size = CGSizeMake(63,75);
+        cycleNPC.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highENode"].frame), CGRectGetMaxY([self childNodeWithName:@"highENode"].frame) + cycleNPC.size.height/2 - 8);
+        cycleNPC.type = @"cycleNPC";
+        cycleNPC.zPosition = 1.0f;
+        cycleNPC.xScale = -1.0f;
+        [self addChild:cycleNPC];
+        
+        self.interactableArray = @[cycleNPC];
+    }else if(self.currentRoomNumber == 7){
+        if(self.roomCleared < 6)
+        {
+            self.roomCleared = 6;
+        }
+        
+        SKSpriteNode *treeSprite = [SKSpriteNode spriteNodeWithImageNamed:@"bigTree.png"];
+        treeSprite.size = CGSizeMake(200, 400);
+        treeSprite.name = @"treeSprite";
+        treeSprite.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highFNode"].frame), CGRectGetMaxY([self childNodeWithName:@"highFNode"].frame) + treeSprite.frame.size.height/2 - 3);
+        [self addChild:treeSprite];
+        
+        Enemy *bigTree =[Enemy spriteNodeWithColor:[SKColor clearColor] size:CGSizeMake(60, 60)];
+        bigTree.name = @"bigTree";
+        bigTree.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highFNode"].frame), CGRectGetMaxY([self childNodeWithName:@"highFNode"].frame) + 30);
+        bigTree.zPosition = 1.0f;
+        bigTree.health = 10000000000;
+        bigTree.healthMax = 100000000;
+        bigTree.hidden = NO;
+        bigTree.canShoot = NO;
+        bigTree.canMove = NO;
+        bigTree.sleepChance = 2000000000;
+        bigTree.type = @"tree";
+        bigTree.resonantArray = @[@"highCNode", @"highANode", @"highBNode", @"highBNode", @"highANode", @"highGNode", @"highENode"];
+        [self addChild:bigTree];
+
+        
+        Interactable *cycleNPC = [[Interactable alloc] init];
+        [cycleNPC setTexture:[SKTexture textureWithImageNamed:@"evilBowtie.png"]];
+        cycleNPC.name = @"cycleNPC";
+        cycleNPC.textArray = @[@"Well, well, well. Looks like somebody finally made it all the way through the forest.", @"If you want to face the boss, you'll have to get past this tree here.", @"And to get past this tree, you need to know the boss's favorite vegetable. Ha! Good luck sucker!"];
+        cycleNPC.keyNode = @"highDNode";
+        cycleNPC.size = CGSizeMake(40,40);
+        cycleNPC.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highENode"].frame), CGRectGetMaxY([self childNodeWithName:@"highENode"].frame) + treeSprite.size.height/2 - cycleNPC.size.height);
+        cycleNPC.type = @"cycleNPC";
+        cycleNPC.zPosition = 1.0f;
+        [self addChild:cycleNPC];
+        self.interactableArray = @[cycleNPC, treeSprite];
+        self.enemyArray = [NSMutableArray arrayWithObjects: bigTree, nil];
+    }else if(self.currentRoomNumber == 8){
+        if(self.roomCleared < 7)
+        {
+            self.roomCleared = 7;
+        }
+        
+        self.enemyMoveInt = 1;
+        
+        Enemy *enemy1 = [Enemy spriteNodeWithImageNamed:@"orc01.png"];
+        enemy1.name = @"boss";
+        enemy1.size = CGSizeMake(72, 80);
+        enemy1.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highDNode"].frame), CGRectGetMaxY([self childNodeWithName:@"highFNode"].frame) + enemy1.size.height/2 - 10);
+        enemy1.zPosition = 1.0f;
+        enemy1.health = 500;
+        enemy1.healthMax = 500;
+        enemy1.hidden = NO;
+        enemy1.canShoot = YES;
+        enemy1.canMove = YES;
+        enemy1.sleepChance = 3;
+        enemy1.type = @"boss";
+        enemy1.resonantArray = @[@"highANode", @"highBNode", @"highCNode", @"highDNode"];
+        [self addChild:enemy1];
+        self.enemyArray = [NSMutableArray arrayWithObjects:enemy1, nil];
     }
     
     for(Enemy *enemy in self.enemyArray){
