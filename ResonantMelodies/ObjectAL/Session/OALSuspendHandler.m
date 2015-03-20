@@ -1,4 +1,4 @@
-//
+self;//
 //  OALSuspendHandler.m
 //  ObjectAL
 //

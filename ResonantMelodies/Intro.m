@@ -9,6 +9,26 @@
 #import "Intro.h"
 #import "Level1.h"
 
+@implementation SKScene (Unarchive)
+
++ (instancetype)unarchiveFromFile:(NSString *)file {
+    /* Retrieve scene file path from the application bundle */
+    NSString *nodePath = [[NSBundle mainBundle] pathForResource:file ofType:@"sks"];
+    /* Unarchive the file to an SKScene object */
+    NSData *data = [NSData dataWithContentsOfFile:nodePath
+                                          options:NSDataReadingMappedIfSafe
+                                            error:nil];
+    NSKeyedUnarchiver *arch = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    [arch setClass:self forClassName:@"SKScene"];
+    SKScene *scene = [arch decodeObjectForKey:NSKeyedArchiveRootObjectKey];
+    [arch finishDecoding];
+    
+    return scene;
+}
+
+@end
+
+
 @implementation Intro
 
 -(void)didMoveToView:(SKView *)view {
@@ -381,8 +401,13 @@
     } completion:^(BOOL finished) {
         [self.textLabel removeFromSuperview];
     }];
-    SKScene *level1 = [[Level1 alloc] initWithSize:self.size];
+    //NSString *scenePath = [[NSBundle mainBundle] pathForResource:@"SceneOne" ofType:@"sks"];
+    //SKScene *scene = [NSKeyedUnarchiver unarchiveObjectWithFile:scenePath];
+    //SKScene *level1 = scene;//[[Level1 alloc] initWithSize:self.size];
+    Level1 *level1 = [Level1 unarchiveFromFile:@"SceneOne"];
     SKTransition *transition = [SKTransition fadeWithDuration:2.0f];
+    level1.scaleMode = SKSceneScaleModeResizeFill;
+    //level1.scaleMode = SKSceneScaleModeAspectFit;
     [self.view presentScene:level1 transition:transition];
     
 }

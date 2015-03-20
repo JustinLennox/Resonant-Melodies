@@ -11,5 +11,7 @@
 @interface KeyLaser : SKSpriteNode
 
 @property (nonatomic) float damage;
+@property (strong, nonatomic) NSString *note;
 
+-(void)setNote:(NSString *)note;
 @end

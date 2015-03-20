@@ -12,5 +12,7 @@
 
 @property (strong, nonatomic) NSString *keyNode;
 @property (strong, nonatomic) NSString *displayText;
+@property (strong, nonatomic) NSArray *textArray;
+@property (strong, nonatomic) NSString *type;
 
 @end

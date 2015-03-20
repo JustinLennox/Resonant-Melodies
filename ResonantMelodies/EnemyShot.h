@@ -11,5 +11,6 @@
 @interface EnemyShot : SKSpriteNode
 
 @property (nonatomic) float damage;
+@property (strong, nonatomic) NSString *note;
 
 @end

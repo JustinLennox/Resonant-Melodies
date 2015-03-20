@@ -24,6 +24,7 @@
 @property (strong, nonatomic) NSString *mode;
 @property (strong, nonatomic) NSString *currentHero;
 @property (strong, nonatomic) SKSpriteNode *player;
+@property (strong, nonatomic) SKNode *smallNode;
 @property (nonatomic) BOOL shouldPlayerMove;
 @property (strong, nonatomic) NSString *currentPlayerKey;
 
@@ -35,6 +36,8 @@
 @property (nonatomic) float playerExperience;
 @property (nonatomic) float playerLevel;
 @property (nonatomic) float playerToNextLevel;
+@property (nonatomic) float playerMP;
+@property (nonatomic) float playerMPMax;
 @property (nonatomic) float attackMP;
 @property (nonatomic) float attackMPMax;
 @property (nonatomic) float magicMP;
@@ -76,11 +79,24 @@
 @property (nonatomic) float yPositionIncrement;
 
 //Labels
-@property (strong, nonatomic) SKSpriteNode *healthBar;
+@property (strong, nonatomic) UIImageView *healthBar;
 @property (strong, nonatomic) SKLabelNode *playerHealthLabel;
 @property (strong, nonatomic) SKLabelNode *attackMPLabel;
 @property (strong, nonatomic) SKLabelNode *defenseMPLabel;
 @property (strong, nonatomic) SKLabelNode *magicMPLabel;
+
+
+//Bars
+@property (strong, nonatomic) SKSpriteNode *healthBarBack;
+@property (strong, nonatomic) SKSpriteNode *healthBarFill;
+@property (nonatomic) float healthBarFillMaxWidth;
+@property (nonatomic) float mpBarFillMaxWidth;
+@property (strong, nonatomic) SKSpriteNode *mpBarBack;
+@property (strong, nonatomic) SKSpriteNode *mpBarFill;
+
+
+
+
 
 //Audio Properties
 @property (strong, nonatomic) AVAudioPlayer *lowAAudioPlayer;

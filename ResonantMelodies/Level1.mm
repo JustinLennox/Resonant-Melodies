@@ -27,13 +27,14 @@
 #define lDKeySound @"lD.caf"
 #define lEKeySound @"lE.caf"
 
-#define fKeySound @"f.caf"
-#define gKeySound @"g.caf"
-#define aKeySound @"a.caf"
-#define bKeySound @"b.caf"
-#define cKeySound @"c.caf"
-#define dKeySound @"d.caf"
-#define eKeySound @"e.caf"
+#define aKeySound @"Level1A.aif"
+#define bKeySound @"Level1B.aif"
+#define cKeySound @"Level1C.aif"
+#define dKeySound @"Level1D.aif"
+#define eKeySound @"Level1E.aif"
+#define fKeySound @"Level1F.aif"
+#define gKeySound @"Level1G.aif"
+
 #define bowtieSound @"Crash-Cymbal-2.wav"
 
 #define HEADROOM_DECIBEL 3.0f
@@ -58,6 +59,25 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 }
 
 @end*/
+
+@implementation SKScene (Unarchive)
+
++ (instancetype)unarchiveFromFile:(NSString *)file {
+    /* Retrieve scene file path from the application bundle */
+    NSString *nodePath = [[NSBundle mainBundle] pathForResource:file ofType:@"sks"];
+    /* Unarchive the file to an SKScene object */
+    NSData *data = [NSData dataWithContentsOfFile:nodePath
+                                          options:NSDataReadingMappedIfSafe
+                                            error:nil];
+    NSKeyedUnarchiver *arch = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    [arch setClass:self forClassName:@"SKScene"];
+    SKScene *scene = [arch decodeObjectForKey:NSKeyedArchiveRootObjectKey];
+    [arch finishDecoding];
+    
+    return scene;
+}
+
+@end
 
 @implementation Level1{
     SKNode *node;
@@ -107,10 +127,14 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 #pragma mark- beginning init
 -(void)didMoveToView:(SKView *)view {
-    //Level1 *scene = [Level1 unarchiveFromFile:@"Level1Scene"];
-    
+    NSLog(@"Before %@", NSStringFromCGSize(self.size));
+    self.smallNode = [[SKNode alloc] init];
+    self.size = CGSizeMake([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+    NSLog(@"After %@", NSStringFromCGSize(self.size));
+    [self addChild:self.smallNode];
+
 #pragma mark- set up camera
-    self.anchorPoint = CGPointMake (0,0);
+   // self.anchorPoint = CGPointMake (0,0);
     SKNode *myWorld = [SKNode node];
     [self addChild:myWorld];
     SKNode *camera = [SKNode node];
@@ -190,7 +214,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     eKeyBuffer = [[OpenALManager sharedInstance] bufferFromFile:eKeySound];
     bowtieBuffer = [[OpenALManager sharedInstance] bufferFromFile:bowtieSound];
     
-    channel.volume = 0.4f;
+    channel.volume = 0.8f;
     
     
 #pragma mark- add keys
@@ -230,8 +254,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.playerHealthMax = 10;
     self.playerToNextLevel = 100;
     
-    self.attackMP = 3;
-    self.attackMPMax = 3;
+    self.playerMP = 3;
+    self.playerMPMax = 3;
     
     self.defenseMP = 3;
     self.defenseMPMax = 3;
@@ -272,19 +296,46 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.playerHealthLabel.fontSize = 20.0f;
     self.playerHealthLabel.zPosition =1.0f;
     self.playerHealthLabel.position = CGPointMake(self.frame.size.width*0.50, self.frame.size.height*0.9);
+    self.playerHealthLabel.alpha = 0.0f;
     self.playerHealthLabel.fontColor = [SKColor greenColor];
     [self addChild:self.playerHealthLabel];
     
 
-    SKSpriteNode *healthBarBack = [SKSpriteNode spriteNodeWithImageNamed:@"status_bar_health"];
-    healthBarBack.position = CGPointMake(self.frame.size.width*0.10, self.frame.size.height*0.9);
-    healthBarBack.size = CGSizeMake(150, 40);
-    [self addChild:healthBarBack];
+    self.healthBarBack = [SKSpriteNode spriteNodeWithImageNamed:@"status_bar_health.png"];
+    self.healthBarBack.size = CGSizeMake(200, 60);
+    self.healthBarBack.position = CGPointMake(10, self.frame.size.height - self.healthBarBack.size.height - 10);
+    [self addChild:self.healthBarBack];
+    self.healthBarBack.anchorPoint = CGPointMake(0, 0);
+    
+    self.healthBarFill = [SKSpriteNode spriteNodeWithImageNamed:@"loader_bar_red_fill.png"];
+    self.healthBarFill.size = CGSizeMake(self.healthBarBack.size.width * (447.00f/762.00f), self.healthBarBack.size.height * (47.00f/252.00f));
+    [self.healthBarBack addChild:self.healthBarFill];
+    self.healthBarFill.position = CGPointMake(((self.healthBarBack.size.width * (265.00f/762.00f))), (self.healthBarBack.size.height * (132.00f/252.00f)));
+    self.healthBarFillMaxWidth = self.healthBarFill.size.width;
+    self.healthBarFill.anchorPoint = CGPointMake(0, 0.5);
+    
+    self.mpBarBack = [SKSpriteNode spriteNodeWithImageNamed:@"status_barpower"];
+    self.mpBarBack.size = CGSizeMake(150, 40);
+    self.mpBarBack.position = CGPointMake(self.healthBarBack.position.x + self.healthBarBack.size.width + 20, self.frame.size.height - self.healthBarBack.size.height/2 - self.mpBarBack.size.height/2 - 10 );
+
+    [self addChild:self.mpBarBack];
+    self.mpBarBack.anchorPoint = CGPointMake(0, 0);
+    
+    self.mpBarFill = [SKSpriteNode spriteNodeWithImageNamed:@"loader_bar_green_fill.png"];
+    self.mpBarFill.size = CGSizeMake(self.mpBarBack.size.width * (447.00f/762.00f), self.mpBarBack.size.height * (47.00f/252.00f));
+    [self.mpBarBack addChild:self.mpBarFill];
+    self.mpBarFill.position = CGPointMake(((self.mpBarBack.size.width * (265.00f/762.00f))), (self.mpBarBack.size.height * (132.00f/252.00f)));
+    self.mpBarFill.anchorPoint = CGPointMake(0, 0.5);
+    self.mpBarFillMaxWidth = self.mpBarFill.size.width;
+
+
+    
+    /*[self addChild:healthBarBack];
     self.healthBar = [SKSpriteNode spriteNodeWithImageNamed:@"loader_bar_red_fill.png"];
     self.healthBar.position = CGPointMake(5, 5);
     self.healthBar.size = CGSizeMake(self.playerHealth/self.playerHealthMax * 100, 10);
     self.healthBar.anchorPoint = CGPointMake(0.0, 0.5);
-    [healthBarBack addChild:self.healthBar];
+    //[healthBarBack addChild:self.healthBar];*/
     
     self.attackMPLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
     self.attackMPLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
@@ -293,6 +344,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.attackMPLabel.fontSize = 20.0f;
     self.attackMPLabel.zPosition =1.0f;
     self.attackMPLabel.position = CGPointMake(self.frame.size.width*0.25, self.frame.size.height*0.9 - +10);
+    self.attackMPLabel.alpha = 0.0f;
     self.attackMPLabel.fontColor = [SKColor greenColor];
     [self addChild:self.attackMPLabel];
     
@@ -304,6 +356,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.defenseMPLabel.zPosition =1.0f;
     self.defenseMPLabel.position = CGPointMake(self.frame.size.width*0.50, self.frame.size.height*0.9 - +10);
     self.defenseMPLabel.fontColor = [SKColor greenColor];
+    self.defenseMPLabel.alpha = 0.0f;
     [self addChild:self.defenseMPLabel];
     
     self.magicMPLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
@@ -312,6 +365,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.magicMPLabel.text = @"Vif MP: 3.0";
     self.magicMPLabel.fontSize = 20.0f;
     self.magicMPLabel.zPosition =1.0f;
+    self.magicMPLabel.alpha = 0.0f;
     self.magicMPLabel.position = CGPointMake(self.frame.size.width*0.75, self.frame.size.height*0.9 - +10);
     self.magicMPLabel.fontColor = [SKColor greenColor];
     [self addChild:self.magicMPLabel];
@@ -319,13 +373,13 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 #pragma mark- Superpowered init
     lastSamplerate = activeFx = 0;
     crossValue = 1.0f;
-    volC = volD = volE = volF = volG =  1.0f * headroom;
-    volBack = 0.8 * headroom;
+    volC = volD = volE = volF = volG =  0.5f * headroom;
+    volBack = 0.85 * headroom;
     pthread_mutex_init(&mutex, NULL); // This will keep our player volumes and playback states in sync.
     if (posix_memalign((void **)&stereoBuffer, 16, 4096 + 128) != 0) abort(); // Allocating memory, aligned to 16.
     
     playerBack = new SuperpoweredAdvancedAudioPlayer((__bridge void *)self, playerEventCallbackBack, 44100, 0);
-    playerBack->open([[[NSBundle mainBundle] pathForResource:@"Level1Back" ofType:@"aif"] fileSystemRepresentation]);
+    playerBack->open([[[NSBundle mainBundle] pathForResource:@"Back1" ofType:@"mp3"] fileSystemRepresentation]);
     playerC = new SuperpoweredAdvancedAudioPlayer((__bridge void *)self, playerEventCallbackC, 44100, 0);
     playerC->open([[[NSBundle mainBundle] pathForResource:@"Bass1C" ofType:@"aif"] fileSystemRepresentation]);
     playerD = new SuperpoweredAdvancedAudioPlayer((__bridge void *)self, playerEventCallbackD, 44100, 0);
@@ -471,8 +525,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         self.touchDown = YES;
         
         SKNode *n = [self nodeAtPoint:[touch locationInNode:self]];
-        NSLog(@"Touch registered");
-        NSLog(@"%@", n.name);
         if([n.name isEqualToString:@"lowCNode"])
         {
             //[lowChannel stop];
@@ -594,7 +646,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             [channel play:aKeyBuffer];
             
-            [self shootLaser:keyLaserDamage];
+            [self shootLaser:keyLaserDamage withNote:@"A"];
             [self.keyPressArray insertObject:@"highANode" atIndex:0];
             [self.keyPressArray removeLastObject];
             [self movePlayer:@"highANode"];
@@ -603,7 +655,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             [channel play:bKeyBuffer];
             
-            [self shootLaser:keyLaserDamage];
+            [self shootLaser:keyLaserDamage withNote:@"B"];
             [self.keyPressArray insertObject:@"highBNode" atIndex:0];
             [self.keyPressArray removeLastObject];
             [self movePlayer:@"highBNode"];
@@ -612,7 +664,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             [channel play:cKeyBuffer];
             
-            [self shootLaser:keyLaserDamage];
+            [self shootLaser:keyLaserDamage withNote:@"C"];
             [self.keyPressArray insertObject:@"highCNode" atIndex:0];
             [self.keyPressArray removeLastObject];
             [self movePlayer:@"highCNode"];
@@ -621,7 +673,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             [channel play:dKeyBuffer];
             
-            [self shootLaser:keyLaserDamage];
+            [self shootLaser:keyLaserDamage withNote:@"D"];
             [self.keyPressArray insertObject:@"highDNode" atIndex:0];
             [self.keyPressArray removeLastObject];
             [self movePlayer:@"highDNode"];
@@ -629,7 +681,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         }else if([n.name isEqualToString:@"highENode"])
         {
             [channel play:eKeyBuffer];
-            [self shootLaser:keyLaserDamage];
+            [self shootLaser:keyLaserDamage withNote:@"E"];
             [self.keyPressArray insertObject:@"highENode" atIndex:0];
             [self.keyPressArray removeLastObject];
             [self movePlayer:@"highENode"];
@@ -638,7 +690,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             [channel play:fKeyBuffer];
             
-            [self shootLaser:keyLaserDamage];
+            [self shootLaser:keyLaserDamage withNote:@"F"];
             [self.keyPressArray insertObject:@"highFNode" atIndex:0];
             [self.keyPressArray removeLastObject];
             [self movePlayer:@"highFNode"];
@@ -647,7 +699,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             [channel play:gKeyBuffer];
             
-            [self shootLaser:keyLaserDamage];
+            [self shootLaser:keyLaserDamage withNote:@"G"];
             [self.keyPressArray insertObject:@"highGNode" atIndex:0];
             [self.keyPressArray removeLastObject];
             [self movePlayer:@"highGNode"];
@@ -669,12 +721,12 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         }else if([n.name isEqualToString:@"bowTie"]){
             [channel play:bowtieBuffer];
             
-            if([self.mode isEqualToString:@"Attack"] && (self.attackMP < self.attackMPMax) && self.bowTieIncrement == 3)
+            if([self.mode isEqualToString:@"Attack"] && (self.playerMP < self.playerMPMax) && self.bowTieIncrement == 3)
             {
-                    self.attackMP++;
+                    self.playerMP++;
                     self.bowTieIncrement = 0;
             }
-            if([self.mode isEqualToString:@"Defense"] && (self.defenseMP < self.attackMPMax) && self.bowTieIncrement == 3){
+            if([self.mode isEqualToString:@"Defense"] && (self.defenseMP < self.playerMPMax) && self.bowTieIncrement == 3){
                 self.defenseMP++;
                 self.bowTieIncrement = 0;
             }
@@ -945,7 +997,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         SKLabelNode *bagLabel;
         bagLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
         bagLabel.name = @"bagLabel";
-        bagLabel.text = @"Bag!";
+        bagLabel.text = @"Move!";
         bagLabel.fontSize = 80;
         bagLabel.position = CGPointMake(CGRectGetMidX(self.frame),CGRectGetMidY(self.frame));
         bagLabel.fontColor = [SKColor brownColor];
@@ -976,9 +1028,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 }
 
 
--(void)shootLaser:(float)keyLaserDamage{
+-(void)shootLaser:(float)keyLaserDamage withNote:(NSString*)laserNote{
     if(self.shouldShoot && ![self.mode isEqualToString:@"Bag"] && ![self.mode isEqualToString:@"Resonance"]){
-        KeyLaser *keyLaser = [self.keyLasers objectAtIndex:_nextKeyLaser];
+        KeyLaser *keyLaser = [_keyLasers objectAtIndex:_nextKeyLaser];
         _nextKeyLaser++;
         if (_nextKeyLaser >= self.keyLasers.count) {
             
@@ -992,8 +1044,14 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
         }
         keyLaser.damage = keyLaserDamage;
+        if([self.mode isEqualToString:@"Defense"]){
+            keyLaser.note = laserNote;
+        }else{
+            keyLaser.note = @"";
+        }
         keyLaser.position = CGPointMake(self.player.position.x+keyLaser.size.width/2,self.player.position.y+0);
         keyLaser.hidden = NO;
+        keyLaser.zRotation = -M_PI/2;
         [keyLaser removeAllActions];
         
         
@@ -1018,7 +1076,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         if([self.mode isEqualToString: @"Attack"])
         {
             NSArray *combo1 = self.attackArray[0];
-            if((self.attackMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]])){
+            if((self.playerMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]])){
                 SKSpriteNode *fireball = [SKSpriteNode spriteNodeWithImageNamed:@"orc01.png"];
                 fireball.size = CGSizeMake(50, 50);
                 fireball.position = CGPointMake(self.player.position.x+fireball.size.width/2,self.player.position.y+0);
@@ -1037,11 +1095,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 }
                 [self.fireballArray addObject:fireball];
                 
-                self.attackMP -= 1;
+                self.playerMP -= 1;
             }
             
             NSArray *combo2 = self.attackArray[1];
-            if((self.attackMP >= 2) &&([self.keyPressArray[1] isEqualToString:combo2[2]]) && ([self.keyPressArray[2] isEqualToString:combo2[1]]) && ([self.keyPressArray[3] isEqualToString:combo2[0]]) && !self.flameOn)
+            if((self.playerMP >= 2) &&([self.keyPressArray[1] isEqualToString:combo2[2]]) && ([self.keyPressArray[2] isEqualToString:combo2[1]]) && ([self.keyPressArray[3] isEqualToString:combo2[0]]) && !self.flameOn)
                {
                    self.flameOn = YES;
                    SKSpriteNode *flame = [SKSpriteNode spriteNodeWithImageNamed:@"orc01.png"];
@@ -1061,7 +1119,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                    SKAction *moveLaserActionWithDone = [SKAction sequence:@[growAction, shrinkAction, doneAction]];
                    
                    [flame runAction:moveLaserActionWithDone withKey:@"laserFired"];
-                   self.attackMP -= 2;
+                   self.playerMP -= 2;
 
                }
         }
@@ -1090,6 +1148,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 filter->enable(true);
                 self.filterInt = 0;
                 self.magicMP-= 3;
+                
             
             }
         }
@@ -1109,6 +1168,61 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.magicArray = @[magicCombo0];
 }
 
+-(void)sleepCombo{
+    for(Enemy *enemy in self.enemyArray){
+        int randomInt = arc4random() % enemy.sleepChance;
+        if(randomInt == 0){
+            enemy.canShoot = NO;
+            enemy.canMove = NO;
+            NSLog(@"SLEEP!");
+            
+            //Add a little sleep label that lets you know it hit
+            SKLabelNode *sleepLabel;
+            sleepLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+            sleepLabel.name = @"sleepLabel";
+            sleepLabel.text = @"Sleep!";
+            sleepLabel.fontSize = 15;
+            sleepLabel.fontColor = [SKColor greenColor];
+            [enemy addChild:sleepLabel];
+            sleepLabel.position = CGPointMake(0, CGRectGetMaxY(enemy.frame) + 10);
+            
+            SKAction *fadeAction = [SKAction fadeAlphaTo:0.0f duration:0.5];
+            SKAction *moveUp = [SKAction moveToY:sleepLabel.frame.origin.y+10 duration:0.5];
+            SKAction *removeLabel = [SKAction removeFromParent];
+            SKAction *hideLabel = [SKAction hide];
+            SKAction *fadeUp = [SKAction group:@[moveUp, fadeAction]];
+            SKAction *labelAnim = [SKAction sequence:@[fadeUp, hideLabel, removeLabel]];
+            [sleepLabel runAction:labelAnim];
+
+        }else{
+            //Add a label that lets you know you missed
+            SKLabelNode *sleepLabel;
+            sleepLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+            sleepLabel.name = @"sleepLabel";
+            sleepLabel.text = @"Miss!";
+            sleepLabel.fontSize = 15;
+            sleepLabel.fontColor = [SKColor greenColor];
+            [enemy addChild:sleepLabel];
+            sleepLabel.position = CGPointMake(0, CGRectGetMaxY(enemy.frame) + 10);
+
+            SKAction *fadeAction = [SKAction fadeAlphaTo:0.0f duration:0.5];
+            SKAction *moveUp = [SKAction moveToY:sleepLabel.frame.origin.y+10 duration:0.5];
+            SKAction *removeLabel = [SKAction removeFromParent];
+            SKAction *hideLabel = [SKAction hide];
+            SKAction *fadeUp = [SKAction group:@[moveUp, fadeAction]];
+            SKAction *labelAnim = [SKAction sequence:@[fadeUp, hideLabel, removeLabel]];
+            [sleepLabel runAction:labelAnim];
+            
+        }
+    }
+    
+}
+-(void)endSleepCombo{
+    for(Enemy *enemy in self.enemyArray){
+            enemy.canShoot = YES;
+            enemy.canMove = YES;
+    }
+}
 
 #pragma mark- update
 
@@ -1162,7 +1276,20 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 if(!keyLaser.hidden){
                     keyLaser.hidden = YES;
                 }
+                
             }
+            
+            for (EnemyShot *shot in self.enemyShotArray)
+            {
+                if (shot.hidden) {
+                    continue;
+                }
+                if([shot intersectsNode:keyLaser] && [shot.note isEqualToString:keyLaser.note]){
+                    keyLaser.hidden = YES;
+                    shot.hidden = YES;
+                }
+            }
+
 
         }
         
@@ -1245,7 +1372,18 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     }
     
     //Update Health & MP Labels
-    self.healthBar.size = CGSizeMake(self.playerHealth/self.playerHealthMax * 100, 10);
+    //[self.playerHealthBar.healthBar setFrame:CGRectMake(self.playerHealthBar.frame.origin.x, self.playerHealthBar.frame.origin.y, self.playerHealth/self.playerHealthMax * self.playerHealthBar.healthBar.frame.size.width, self.playerHealthBar.healthBar.frame.size.height)];
+    //SKAction *resize = [SKAction resizeToWidth:((self.playerHealth/self.playerHealthMax) * self.healthBarFill.size.width) duration:0.2f];
+    //[self.healthBarFill runAction:resize];
+    //self.healthBarFill.anchorPoint = CGPointMake(0.0, 0.5);
+   // self.healthBarFill.size = CGSizeMake((self.playerHealth/self.playerHealthMax)*self.healthBarFillMaxWidth, self.healthBarFill.size.height);
+
+    SKAction *resizeHealth = [SKAction resizeToWidth:((self.playerHealth/self.playerHealthMax) * self.healthBarFillMaxWidth) duration:0.2f];
+    [self.healthBarFill runAction:resizeHealth];
+    
+    SKAction *resizeMP = [SKAction resizeToWidth:((self.playerMP/self.playerMPMax) * self.mpBarFillMaxWidth) duration:0.2f];
+    [self.mpBarFill runAction:resizeMP];
+    
     self.playerHealthLabel.text = [NSString stringWithFormat:@"Player Health: %.2f", self.playerHealth];
     self.attackMPLabel.text = [NSString stringWithFormat:@"Adagio MP: %.2f", self.attackMP];
     self.defenseMPLabel.text = [NSString stringWithFormat:@"Brio MP: %.2f", self.defenseMP];
@@ -1269,8 +1407,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
     if(self.filterInt < 8){
         
+        if(self.filterInt == 0){
+            [self sleepCombo];
+        }
         //Increase the player's health by a tenth of his health
-        if(self.attackMP < self.attackMPMax - 0.125){
+       /* if(self.attackMP < self.attackMPMax - 0.125){
             self.attackMP += 0.125;
         }else{
             self.attackMP = self.attackMPMax;
@@ -1280,7 +1421,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.defenseMP += 0.125;
         }else{
             self.defenseMP = self.defenseMPMax;
-        }
+        }*/
         
         self.filterInt++;
         if(self.filterInt <= 3){
@@ -1290,6 +1431,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         }
     }else{
         filter->enable(false);
+        [self endSleepCombo];
     }
     
     self.beatTime = CACurrentMediaTime();
@@ -1319,8 +1461,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     }
     
     if(self.beatCount%16 == 0){
-        if(self.attackMP < self.attackMPMax){
-            self.attackMP++;
+        if(self.playerMP < self.playerMPMax){
+            self.playerMP++;
         }
         if(self.defenseMP < self.defenseMPMax){
             self.defenseMP++;
@@ -1416,9 +1558,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
     for(Enemy *enemy in self.moveablesArray){
 
-        if([enemy.type isEqualToString:@"scooter"]){
+        if([enemy.type isEqualToString:@"scooter"] && enemy.canMove){
             [enemy runAction:moveScooter];
-        }else if([enemy.type isEqualToString:@"angle"]){
+        }else if([enemy.type isEqualToString:@"angle"] && enemy.canMove){
             [enemy runAction:moveAngle];
         }
         
@@ -1429,13 +1571,22 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 -(void)enemyAttack{
     for(Enemy *enemy in self.enemyArray)
     {
-        if([enemy.type isEqualToString:@"angle"])
+        if([enemy.type isEqualToString:@"angle"] && enemy.canShoot)
         {
             EnemyShot *spike = [EnemyShot spriteNodeWithImageNamed:@"angleShot.png"];
             spike.size = CGSizeMake(15, 10);
             spike.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
             spike.name = @"angle";
+            spike.note = [self getRandomNote];
             [self addChild:spike];
+            
+            SKLabelNode *noteLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+            noteLabel.text = spike.note;
+            [spike addChild:noteLabel];
+            noteLabel.position = CGPointMake(0, 10);
+
+            
+            
             SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:5.0f];
             SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
                 spike.hidden = YES;
@@ -1451,6 +1602,12 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         
         
     }
+}
+
+-(NSString *)getRandomNote{
+    
+    NSArray *noteArray = @[@"A", @"B", @"C", @"D", @"E", @"F", @"G"];
+    return [noteArray objectAtIndex: arc4random() % [noteArray count]];
 }
 
 #pragma mark - keyboard key nodes
@@ -1861,12 +2018,14 @@ static inline float floatToFrequency(float value) {
     
     if(self.currentRoomNumber == 1){
         
-        Interactable *sign1 = [Interactable spriteNodeWithImageNamed:@"signPost.jpg"];
+        Interactable *sign1 = [[Interactable alloc] init];
+        [sign1 setTexture:[SKTexture textureWithImageNamed:@"signPost.jpg"]];
         sign1.name = @"sign1";
         sign1.displayText = @"Welcome to the Pink Forest";
         sign1.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highENode"].frame), CGRectGetMidY(self.frame));
         sign1.keyNode = @"highDNode";
         sign1.size = CGSizeMake(30,30);
+        sign1.type = @"sign";
         sign1.zPosition = 0.0f;
         [self addChild:sign1];
         
@@ -1878,12 +2037,13 @@ static inline float floatToFrequency(float value) {
             self.roomCleared = 1;
         }
         
-        Interactable *sign2 = [Interactable spriteNodeWithImageNamed:@"signPost.jpg"];
+        Interactable *sign2 = [[Interactable alloc] init];
+        [sign2 setTexture:[SKTexture textureWithImageNamed:@"signPost.jpg"]];
         sign2.name = @"sign2";
         sign2.displayText = @"WATCH OUT FOR THE ORCS!";
-        sign2.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highDNode"].frame),
-        CGRectGetMidY(self.frame));
+        sign2.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highDNode"].frame), CGRectGetMidY(self.frame));
         sign2.keyNode = @"highCNode";
+        sign2.type = @"sign";
         sign2.size = CGSizeMake(30,30);
         sign2.zPosition = 0.0f;
         [self addChild:sign2];
@@ -1898,6 +2058,9 @@ static inline float floatToFrequency(float value) {
         enemy1.healthMax = 100;
         enemy1.hidden = NO;
         enemy1.type = @"scooter";
+        enemy1.canMove = YES;
+        enemy1.canShoot = YES;
+        enemy1.sleepChance = 2;
         enemy1.resonantArray = @[@"highANode", @"highBNode", @"highCNode", @"highDNode"];
         [self addChild:enemy1];
         self.enemyArray = [NSMutableArray arrayWithObjects:enemy1, nil];
@@ -1915,11 +2078,14 @@ static inline float floatToFrequency(float value) {
         Enemy *enemy2 = [Enemy spriteNodeWithImageNamed:@"angle.png"];
         enemy2.name = @"enemy2";
         enemy2.size = CGSizeMake(50,50);
-        enemy2.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highDNode"].frame), CGRectGetMaxY([self childNodeWithName:@"highDNode"].frame) + enemy2.frame.size.height/2.3);
+        enemy2.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highFNode"].frame), CGRectGetMaxY([self childNodeWithName:@"highFNode"].frame) + enemy2.frame.size.height/2.3);
         enemy2.zPosition = 1.0f;
         enemy2.health = 150;
         enemy2.healthMax = 150;
         enemy2.hidden = NO;
+        enemy2.canShoot = YES;
+        enemy2.canMove = YES;
+        enemy2.sleepChance = 2;
         enemy2.type = @"angle";
         enemy2.resonantArray = @[@"highANode", @"highBNode", @"highCNode", @"highDNode"];
         [self addChild:enemy2];
@@ -1936,9 +2102,12 @@ static inline float floatToFrequency(float value) {
         enemy3.name = @"enemy3";
         enemy3.size = CGSizeMake(40,40);
         enemy3.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highDNode"].frame), CGRectGetMaxY([self childNodeWithName:@"highDNode"].frame) + enemy3.frame.size.height/2.3 + 10);
+        enemy3.sleepChance = 2;
         enemy3.zPosition = 1.0f;
         enemy3.health = 1000;
         enemy3.healthMax = 1000;
+        enemy3.canMove = YES;
+        enemy3.canShoot = YES;
         enemy3.hidden = NO;
         enemy3.type = @"bowTie";
         enemy3.resonantArray = @[@"highANode", @"highBNode", @"highCNode"];

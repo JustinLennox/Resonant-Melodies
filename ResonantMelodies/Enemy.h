@@ -16,5 +16,8 @@
 @property (strong, nonatomic) SKLabelNode *healthLabel;
 @property (strong, nonatomic) NSString *type;
 @property (nonatomic) int arrayPosition;
+@property (nonatomic) BOOL canMove;
+@property (nonatomic) BOOL canShoot;
+@property (nonatomic) int sleepChance;
 
 @end
