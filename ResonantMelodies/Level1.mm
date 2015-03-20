@@ -874,9 +874,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath:soundFile], &soundID);
             AudioServicesPlaySystemSound(soundID);
             enemy.hidden = YES;
-            SKLabelNode *enemyHealthLabel = (SKLabelNode*)[self childNodeWithName:[NSString stringWithFormat:@"%@Label", enemy.name]];
-            enemyHealthLabel.alpha = 1.0f;
-            enemyHealthLabel.hidden = YES;
+            SKLabelNode *enemyHealthBar = (SKLabelNode*)[enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]];
+            enemyHealthBar.alpha = 0.0f;
+            enemyHealthBar.hidden = YES;
             
            // NSString *myParticlePath = [[NSBundle mainBundle] pathForResource:@"glassShatter" ofType:@"sks"];
             //SKEmitterNode *myParticle = [NSKeyedUnarchiver unarchiveObjectWithFile:myParticlePath];
@@ -1235,10 +1235,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     }*/
 
     //Watch the enemy's movement
-    for(SKSpriteNode *enemy in self.moveablesArray){
+    for(Enemy *enemy in self.moveablesArray){
         if([enemy intersectsNode:[self childNodeWithName:@"player"]]&&!enemy.hidden&&(enemy.zPosition==1.0f))
         {
             self.playerHealth--;
+            enemy.health = 0;
             enemy.hidden = YES;
             [self childNodeWithName:[NSString stringWithFormat:@"%@Label", enemy.name]].hidden = YES;
         }else if([[self childNodeWithName:@"rightEdge"] intersectsNode:enemy])
@@ -1344,21 +1345,23 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 
         if(enemy.health > 0){
-            SKSpriteNode *enemyHealthLabel = (SKSpriteNode*)[self childNodeWithName:[NSString stringWithFormat:@"%@Label", enemy.name]];
+            SKSpriteNode *enemyHealthBar = (SKSpriteNode*)[enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]];
             //enemyHealthLabel.text = [NSString stringWithFormat:@"%.2f", enemy.health];
-            enemyHealthLabel.size = CGSizeMake(enemy.health/enemy.healthMax * 50, 10);
-            enemyHealthLabel.position = CGPointMake(CGRectGetMidX(enemy.frame) - enemyHealthLabel.size.width/2, CGRectGetMaxY(enemy.frame) + enemyHealthLabel.size.height/2 + 5);
-        }else{
-            SKSpriteNode *enemyHealthLabel = (SKSpriteNode*)[self childNodeWithName:[NSString stringWithFormat:@"%@Label", enemy.name]];
-            enemyHealthLabel.alpha = 1.0f;
-            enemyHealthLabel.hidden = YES;
-        }
-        if(enemy.health <= 0)
-        {
+            //enemyHealthBar.size = CGSizeMake(enemy.health/enemy.healthMax * 50, 10);
+            SKAction *resizeHealth = [SKAction resizeToWidth:(enemy.health/enemy.healthMax * 50) duration:0.1f];
+            [enemyHealthBar runAction:resizeHealth];
+            //enemyHealthLabel.position = CGPointMake(CGRectGetMidX(enemy.frame) - enemyHealthLabel.size.width/2, CGRectGetMaxY(enemy.frame) + enemyHealthLabel.size.height/2 + 5);
+        }else if (enemy.health <= 0){
             enemy.hidden = YES;
-            [self childNodeWithName:[NSString stringWithFormat:@"%@Label", enemy.name]].hidden = YES;
+            [enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]].hidden = YES;
             [self.enemyArray removeObjectAtIndex:enemy.arrayPosition];
+
+        }else{
+            SKSpriteNode *enemyHealthBar = (SKSpriteNode*)[enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]];
+            enemyHealthBar.alpha = 0.0f;
+            enemyHealthBar.hidden = YES;
         }
+
     }
 
     //Update the touch held length && check interactables
@@ -2130,13 +2133,13 @@ static inline float floatToFrequency(float value) {
             enemyHealthLabel.fontColor = [SKColor redColor];
             enemyHealthLabel.name = [NSString stringWithFormat:@"%@Label", enemy.name];
             enemyHealthLabel.fontSize = 20;*/
-            SKSpriteNode *enemyHealthLabel = [SKSpriteNode spriteNodeWithImageNamed:@"loader_bar_red_fill.png"];
-            enemyHealthLabel.name = [NSString stringWithFormat:@"%@Label", enemy.name];
-            enemyHealthLabel.size = CGSizeMake(50, 10);
-            enemyHealthLabel.position = CGPointMake(CGRectGetMidX(enemy.frame) - enemyHealthLabel.size.width/2, CGRectGetMaxY(enemy.frame) + enemyHealthLabel.size.height/2 + 5);
-            enemyHealthLabel.anchorPoint = CGPointMake(0.0, 0.5);
-            [self addChild:enemyHealthLabel];
-            [self.enemyHealthLabelArray addObject:enemyHealthLabel];
+            SKSpriteNode *enemyHealthBar = [SKSpriteNode spriteNodeWithImageNamed:@"loader_bar_red_fill.png"];
+            enemyHealthBar.name = [NSString stringWithFormat:@"%@Bar", enemy.name];
+            enemyHealthBar.size = CGSizeMake(50, 10);
+            enemyHealthBar.position = CGPointMake(-enemyHealthBar.size.width/2, enemy.size.height/2 + enemyHealthBar.size.height);
+            enemyHealthBar.anchorPoint = CGPointMake(0.0, 0.5);
+            [enemy addChild:enemyHealthBar];
+            [self.enemyHealthLabelArray addObject:enemyHealthBar];
             
         }
     }
