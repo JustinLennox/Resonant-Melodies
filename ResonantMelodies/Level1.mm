@@ -274,8 +274,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 #pragma mark- add lasers
     self.keyLasers = [[NSMutableArray alloc] init];
     for (int i = 0; i < 30; ++i) {
-        KeyLaser *keyLaser = [KeyLaser spriteNodeWithImageNamed:@"laserbeam_blue"];
-        keyLaser.size = CGSizeMake(25, 10);
+        KeyLaser *keyLaser = [KeyLaser spriteNodeWithImageNamed:@"note1.png"];
+        keyLaser.size = CGSizeMake(16, 27);
         //SKSpriteNode *shipLaser = [SKSpriteNode spriteNodeWithTexture:laserTexture];
         keyLaser.name = @"keyLaser";
         keyLaser.hidden = YES;
@@ -496,7 +496,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.playerMaxX = CGRectGetMaxX(self.player.frame);
     
     self.shouldShoot = YES;
-    
+    self.filterInt = 100;
     [self playCutscene:@"intro"];
 
 }
@@ -721,20 +721,12 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         }else if([n.name isEqualToString:@"bowTie"]){
             [channel play:bowtieBuffer];
             
-            if([self.mode isEqualToString:@"Attack"] && (self.playerMP < self.playerMPMax) && self.bowTieIncrement == 3)
+            if((self.playerMP < self.playerMPMax) && self.bowTieIncrement == 3)
             {
                     self.playerMP++;
                     self.bowTieIncrement = 0;
             }
-            if([self.mode isEqualToString:@"Defense"] && (self.defenseMP < self.playerMPMax) && self.bowTieIncrement == 3){
-                self.defenseMP++;
-                self.bowTieIncrement = 0;
-            }
-            
-            if([self.mode isEqualToString:@"Magic"] && (self.magicMP < self.magicMPMax) && self.bowTieIncrement == 3){
-                self.magicMP++;
-                self.bowTieIncrement = 0;
-            }
+
             [self.keyPressArray insertObject:@"bowTie" atIndex:0];
             [self.keyPressArray removeLastObject];
         }else{
@@ -1038,10 +1030,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         }
         
         if(keyLaserDamage < 0.5f){
-            keyLaser.texture = [SKTexture textureWithImage:[UIImage imageNamed:@"laserbeam_red.png"]];
+            keyLaser.texture = [SKTexture textureWithImage:[UIImage imageNamed:@"redNote.png"]];
         }else{
-            keyLaser.texture = [SKTexture textureWithImage:[UIImage imageNamed:@"laserbeam_blue.png"]];
-
+            keyLaser.texture = [SKTexture textureWithImage:[UIImage imageNamed:@"note1.png"]];
         }
         keyLaser.damage = keyLaserDamage;
         if([self.mode isEqualToString:@"Defense"]){
@@ -1051,7 +1042,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         }
         keyLaser.position = CGPointMake(self.player.position.x+keyLaser.size.width/2,self.player.position.y+0);
         keyLaser.hidden = NO;
-        keyLaser.zRotation = -M_PI/2;
         [keyLaser removeAllActions];
         
         
@@ -1142,12 +1132,12 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         if([self.mode isEqualToString: @"Magic"])
         {
             NSArray *combo1 = self.magicArray[0];
-            if((self.magicMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]]))
+            if((self.playerMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]]) && self.filterInt == 100)
             {
                 //We increase the player's health by a certain amount each beat. This is done in the beat function
                 filter->enable(true);
                 self.filterInt = 0;
-                self.magicMP-= 3;
+                self.playerMP-= 1;
                 
             
             }
@@ -1181,10 +1171,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             sleepLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
             sleepLabel.name = @"sleepLabel";
             sleepLabel.text = @"Sleep!";
-            sleepLabel.fontSize = 15;
+            sleepLabel.fontSize = 20;
             sleepLabel.fontColor = [SKColor greenColor];
             [enemy addChild:sleepLabel];
-            sleepLabel.position = CGPointMake(0, CGRectGetMaxY(enemy.frame) + 10);
+            sleepLabel.position = CGPointMake(0, enemy.size.height/2 + 15);
             
             SKAction *fadeAction = [SKAction fadeAlphaTo:0.0f duration:0.5];
             SKAction *moveUp = [SKAction moveToY:sleepLabel.frame.origin.y+10 duration:0.5];
@@ -1200,10 +1190,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             sleepLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
             sleepLabel.name = @"sleepLabel";
             sleepLabel.text = @"Miss!";
-            sleepLabel.fontSize = 15;
+            sleepLabel.fontSize = 20;
             sleepLabel.fontColor = [SKColor greenColor];
             [enemy addChild:sleepLabel];
-            sleepLabel.position = CGPointMake(0, CGRectGetMaxY(enemy.frame) + 10);
+            sleepLabel.position = CGPointMake(0, enemy.size.height/2 + 15);
 
             SKAction *fadeAction = [SKAction fadeAlphaTo:0.0f duration:0.5];
             SKAction *moveUp = [SKAction moveToY:sleepLabel.frame.origin.y+10 duration:0.5];
@@ -1433,6 +1423,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             filter->setResonantParameters(floatToFrequency(0.4 + (self.filterInt/10.0f - 0.3)), 0.1f);
         }
     }else{
+        self.filterInt = 100;
         filter->enable(false);
         [self endSleepCombo];
     }
