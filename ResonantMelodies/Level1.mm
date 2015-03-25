@@ -425,7 +425,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     leftArrow.alpha = 0.0f;
     leftArrow.hidden = YES;
     
-    self.currentRoomNumber = 1;
+    self.currentRoomNumber = 6;
     [self loadRoom:1];
     
 #pragma mark- add key icons
@@ -1296,7 +1296,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 
             }
             
-            NSLog(@"%@", self.enemyShotArray);
             for (EnemyShot *shot in self.enemyShotArray)
             {
                 if (shot.hidden) {
@@ -1305,7 +1304,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 if([shot intersectsNode:keyLaser] && [shot.note isEqualToString:keyLaser.note]){
                     keyLaser.hidden = YES;
                     shot.hidden = YES;
-                    [shot removeFromParent];
+                    //[self.enemyArray removeLastObject];
+                    //NSLog(@"Intersect");
                 }
             }
 
@@ -1626,14 +1626,13 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             [self.enemyShotArray addObject:spike];
             
         }else if([enemy.type isEqualToString:@"boss"] && enemy.canShoot && !enemy.hidden){
-            [self.enemyShotArray removeAllObjects];
+           // [self.enemyShotArray removeAllObjects];
             EnemyShot *spike = [EnemyShot spriteNodeWithImageNamed:@"fireball.png"];
             spike.texture = [SKTexture textureWithImageNamed:@"fireball.png"];
             spike.damage = 1.0f;
             
             spike.size = CGSizeMake(15, 10);
             spike.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
-            spike.name = @"spike1";
             spike.note = [self getRandomNote];
             [self addChild:spike];
             
@@ -1649,7 +1648,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             
             spike2.size = CGSizeMake(15, 10);
             spike2.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
-            spike2.name = @"spike2";
             spike2.note = [self getRandomNote];
             [self addChild:spike2];
             spike2.alpha = 0.0f;
@@ -1665,12 +1663,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             
             spike3.size = CGSizeMake(15, 10);
             spike3.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
-            spike3.name = @"spike3";
             spike3.note = [self getRandomNote];
             [self addChild:spike3];
             spike3.alpha = 0.0f;
             SKLabelNode *note3Label = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-            note3Label.text = spike2.note;
+            note3Label.text = spike3.note;
             [spike3 addChild:note3Label];
             note3Label.position = CGPointMake(0, 10);
             [self.enemyShotArray addObject:spike3];
@@ -1681,6 +1678,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:6.0f];
             SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
                 spike.hidden = YES;
+                [self.enemyShotArray removeObject:spike];
+                [spike removeFromParent];
             }];
             
             SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
@@ -1692,6 +1691,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:6.0f];
                 SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
                     spike2.hidden = YES;
+                    [self.enemyShotArray removeObject:spike2];
+                    [spike2 removeFromParent];
                 }];
                 
                 SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
@@ -1705,6 +1706,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:6.0f];
                 SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
                     spike3.hidden = YES;
+                    [self.enemyShotArray removeObject:spike3];
+                    [spike3 removeFromParent];
                 }];
                 
                 SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
