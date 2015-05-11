@@ -282,7 +282,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         
     //Start rhythm
     self.firstBeat = YES;
-    NSTimer *beat = [NSTimer scheduledTimerWithTimeInterval:(60/self.BPM) target:self selector:@selector(beat) userInfo:nil repeats:YES];
+//    NSTimer *beat = [NSTimer scheduledTimerWithTimeInterval:(60/self.BPM) target:self selector:@selector(beat) userInfo:nil repeats:YES];
     self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
 #pragma mark- add lasers
     self.keyLasers = [[NSMutableArray alloc] init];
@@ -498,7 +498,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     signPost.zPosition = -2.0f;
     [self addChild:signPost];
     signPost.hidden = YES;
-
+    
+    double beatInterval = 60.0f/self.BPM;
+    NSTimer *beatTimer = [NSTimer scheduledTimerWithTimeInterval:beatInterval target:self selector:@selector(beatTimer:) userInfo:nil repeats:false];
+    
     self.touchDown = NO;
     
     [self loadCombos];
@@ -1264,6 +1267,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     }*/
 
     //Watch the enemy's movement
+    self.lastBeat = playerBack->msElapsedSinceLastBeat;
+//    NSLog(@"Since last beat: %f", self.lastBeat);
     for(Enemy *enemy in self.moveablesArray){
         if([enemy intersectsNode:[self childNodeWithName:@"player"]]&&!enemy.hidden&&(enemy.zPosition==1.0f))
         {
@@ -1422,8 +1427,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.attackMPLabel.text = [NSString stringWithFormat:@"Adagio MP: %.2f", self.attackMP];
     self.defenseMPLabel.text = [NSString stringWithFormat:@"Brio MP: %.2f", self.defenseMP];
     self.magicMPLabel.text = [NSString stringWithFormat:@"Vif MP: %.2f", self.magicMP];
-    self.lastBeat = playerBack->msElapsedSinceLastBeat;
-    
     if(self.playerHealth <= 0){
         [self.player removeFromParent];
         
@@ -1433,6 +1436,43 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 
 #pragma mark- tempo methods
+
+-(void)beatTimer: (NSTimer *) timer{
+    
+    double lastBeat = playerBack->msElapsedSinceLastBeat;
+    NSLog(@"Timer since last beat: %f", lastBeat);
+//    NSTimer *beatTimer = [[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:(60.00f/self.BPM)]
+//                             interval:(60.00f/self.BPM)
+//                               target:self
+//                             selector:@selector(beatTimer:)
+//                             userInfo:nil
+//                              repeats:NO];
+//    NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
+//    [runLoop addTimer:timer forMode:NSDefaultRunLoopMode];
+//
+    if(lastBeat < 100){
+        NSLog(@"Delay:%f", ((60.00f/self.BPM) - (lastBeat * 0.001)));
+        [self performSelector:@selector(beatTimer:) withObject:nil afterDelay:((60.00f/self.BPM) - (lastBeat * 0.001))];
+    }else if(lastBeat > 460 && lastBeat < 480){
+        NSLog(@"Delay:%f", ((60.00f/self.BPM) + ((480 - lastBeat) * 0.001)));
+        [self performSelector:@selector(beatTimer:) withObject:nil afterDelay:((60.00f/self.BPM) + ((480 - lastBeat) * 0.001))];
+    }else{
+        
+        [self performSelector:@selector(beatTimer:) withObject:nil afterDelay:(60.00f/self.BPM)];
+
+    }
+    
+//    double ranCol = (double)arc4random_uniform(255);
+//    double ranCol2 = (double)arc4random_uniform(255);
+//    double ranCol3 = (double)arc4random_uniform(255);
+//
+//
+//    self.player.color = [SKColor colorWithRed:(ranCol/255.0f) green:(ranCol2/255.0f) blue:(ranCol3/255.0f) alpha:1.0f];
+//    self.player.colorBlendFactor = 1.0f;
+//
+    [self beat];
+    
+}
 
 -(void)beat{
 
@@ -1501,6 +1541,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     }
     
     if(self.beatCount%16 == 0){
+        [self enemyAttack:@"cool"];
         if(self.playerMP < self.playerMPMax){
             self.playerMP++;
         }
@@ -1519,6 +1560,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
      SKAction *moveCamera = [SKAction moveByX:([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:0];
      [camera runAction:moveCamera];
      [self centerOnNode:camera];*/
+}
+
+-(void)enemyAttack:(NSString *)attackName{
+    
+    
 }
 
 - (void) centerOnNode: (SKNode *) node
@@ -1801,6 +1847,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNode.position = CGPointMake(5*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highANode";//how the node is identified later
     keyNode.zPosition = 1.0;
+    
+    SKSpriteNode *aMarker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"circle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
+    aMarker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + aMarker.frame.size.height/2.0f);
+    aMarker.name = @"aMarker";
+    [self.scene addChild:aMarker];
     return keyNode;
 }
 
