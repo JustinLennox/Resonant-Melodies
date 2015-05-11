@@ -1451,10 +1451,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 //    [runLoop addTimer:timer forMode:NSDefaultRunLoopMode];
 //
     if(lastBeat < 100){
-        NSLog(@"Delay:%f", ((60.00f/self.BPM) - (lastBeat * 0.001)));
+//        NSLog(@"Delay:%f", ((60.00f/self.BPM) - (lastBeat * 0.001)));
         [self performSelector:@selector(beatTimer:) withObject:nil afterDelay:((60.00f/self.BPM) - (lastBeat * 0.001))];
     }else if(lastBeat > 460 && lastBeat < 480){
-        NSLog(@"Delay:%f", ((60.00f/self.BPM) + ((480 - lastBeat) * 0.001)));
+//        NSLog(@"Delay:%f", ((60.00f/self.BPM) + ((480 - lastBeat) * 0.001)));
         [self performSelector:@selector(beatTimer:) withObject:nil afterDelay:((60.00f/self.BPM) + ((480 - lastBeat) * 0.001))];
     }else{
         
@@ -1563,8 +1563,17 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 }
 
 -(void)enemyAttack:(NSString *)attackName{
+    CGSize markerSize = [self childNodeWithName:@"aMarker"].frame.size;
     
-    
+    SKSpriteNode *attackNote = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"circle.png"] size:markerSize];
+    attackNote.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"aMarker"].frame), self.scene.size.height + attackNote.frame.size.height);
+    [self.scene addChild:attackNote];
+    SKAction *moveNote = [SKAction moveToY:([self childNodeWithName:@"aMarker"].frame.origin.y + attackNote.frame.size.height/2.0f) duration:(4.00f* (60.0f/self.BPM))];
+    [attackNote runAction:moveNote completion:^{
+        double delay = playerBack->msElapsedSinceLastBeat;
+        NSLog(@"Delay:%f", delay);
+        
+    }];
 }
 
 - (void) centerOnNode: (SKNode *) node
