@@ -146,6 +146,19 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.view.multipleTouchEnabled = YES;
     
 #pragma mark- set up background
+    UISwipeGestureRecognizer *swipeUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeUp:)];
+    swipeUp.direction = UISwipeGestureRecognizerDirectionUp;
+    [self.view addGestureRecognizer:swipeUp];
+    
+    UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeRight:)];
+    swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
+    [self.view addGestureRecognizer:swipeRight];
+    
+    UISwipeGestureRecognizer *swipeDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeDown:)];
+    swipeDown.direction = UISwipeGestureRecognizerDirectionDown;
+    [self.view addGestureRecognizer:swipeDown];
+    
+    
     SKSpriteNode *backgroundImage = [SKSpriteNode spriteNodeWithImageNamed:@"Sakura Forest Game Background.png"];
     backgroundImage.name = @"background";
     backgroundImage.size = CGSizeMake(self.view.frame.size.width, self.view.frame.size.height);
@@ -2386,6 +2399,27 @@ static inline float floatToFrequency(float value) {
     // Return YES for supported orientations
     return ((interfaceOrientation == UIInterfaceOrientationLandscapeLeft) ||
             (interfaceOrientation == UIInterfaceOrientationLandscapeRight));
+}
+
+-(void)swipeUp: (UISwipeGestureRecognizer *)sender{
+    if(sender.state == UIGestureRecognizerStateEnded){
+        SKSpriteNode *background = (SKSpriteNode *)[self childNodeWithName:@"background"];
+        [background setTexture:[SKTexture textureWithImageNamed:@"Sakura Forest Game Background.png"]];
+    }
+}
+
+-(void)swipeDown: (UISwipeGestureRecognizer *)sender{
+    if(sender.state == UIGestureRecognizerStateEnded){
+        SKSpriteNode *background = (SKSpriteNode *)[self childNodeWithName:@"background"];
+        [background setTexture:[SKTexture textureWithImageNamed:@"Background-B-Default.png"]];
+    }
+}
+
+-(void)swipeRight: (UISwipeGestureRecognizer *)sender{
+    if(sender.state == UIGestureRecognizerStateEnded){
+        SKSpriteNode *background = (SKSpriteNode *)[self childNodeWithName:@"background"];
+        [background setTexture:[SKTexture textureWithImageNamed:@"Sand-mountain-game-background.png"]];
+    }
 }
 
 @end

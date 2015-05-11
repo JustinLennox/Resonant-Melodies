@@ -149,6 +149,8 @@
 		D0DF25691A8754CE00309754 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0DF25681A8754CE00309754 /* CoreGraphics.framework */; };
 		D0DF25811A87553C00309754 /* libSuperpoweredAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D0DF256A1A87553C00309754 /* libSuperpoweredAudio.a */; };
 		D0DF25821A87553C00309754 /* SuperpoweredIOSAudioOutput.mm in Sources */ = {isa = PBXBuildFile; fileRef = D0DF25791A87553C00309754 /* SuperpoweredIOSAudioOutput.mm */; };
+		D0EFAC691AED54A500E973FE /* Sand-mountain-game-background.png in Resources */ = {isa = PBXBuildFile; fileRef = D0EFAC681AED54A500E973FE /* Sand-mountain-game-background.png */; };
+		D0EFAC6B1AED54AB00E973FE /* Background-B-Default.png in Resources */ = {isa = PBXBuildFile; fileRef = D0EFAC6A1AED54AB00E973FE /* Background-B-Default.png */; };
 		D0FA5CB21A746175000A5660 /* orc01.png in Resources */ = {isa = PBXBuildFile; fileRef = D0FA5CB11A746175000A5660 /* orc01.png */; };
 		D0FA5CB51A75BDEA000A5660 /* dalf1.png in Resources */ = {isa = PBXBuildFile; fileRef = D0FA5CB41A75BDEA000A5660 /* dalf1.png */; };
 		D0FA5CBC1A7608E7000A5660 /* WorldOverview.m in Sources */ = {isa = PBXBuildFile; fileRef = D0FA5CBB1A7608E7000A5660 /* WorldOverview.m */; };
@@ -380,6 +382,8 @@
 		D0DF257E1A87553C00309754 /* SuperpoweredRoll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SuperpoweredRoll.h; sourceTree = "<group>"; };
 		D0DF257F1A87553C00309754 /* SuperpoweredTimeStretching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SuperpoweredTimeStretching.h; sourceTree = "<group>"; };
 		D0DF25801A87553C00309754 /* SuperpoweredWhoosh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SuperpoweredWhoosh.h; sourceTree = "<group>"; };
+		D0EFAC681AED54A500E973FE /* Sand-mountain-game-background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Sand-mountain-game-background.png"; sourceTree = "<group>"; };
+		D0EFAC6A1AED54AB00E973FE /* Background-B-Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Background-B-Default.png"; sourceTree = "<group>"; };
 		D0FA5CB11A746175000A5660 /* orc01.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = orc01.png; sourceTree = "<group>"; };
 		D0FA5CB41A75BDEA000A5660 /* dalf1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = dalf1.png; sourceTree = "<group>"; };
 		D0FA5CBA1A7608E7000A5660 /* WorldOverview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorldOverview.h; path = ../WorldOverview.h; sourceTree = "<group>"; };
@@ -755,6 +759,8 @@
 			isa = PBXGroup;
 			children = (
 				D0D2F7DD1A716FE500A87C21 /* Sakura Forest Game Background.png */,
+				D0EFAC6A1AED54AB00E973FE /* Background-B-Default.png */,
+				D0EFAC681AED54A500E973FE /* Sand-mountain-game-background.png */,
 			);
 			name = Backgrounds;
 			sourceTree = "<group>";
@@ -1132,6 +1138,7 @@
 				D04C502B1A8FF6F400C931C3 /* fire.sks in Resources */,
 				D0FCE3601A9BB0660027398B /* weaponSymbol.png in Resources */,
 				D04C50291A8FF24A00C931C3 /* introBackground1.png in Resources */,
+				D0EFAC691AED54A500E973FE /* Sand-mountain-game-background.png in Resources */,
 				D04C50711A907AA500C931C3 /* Botie17.png in Resources */,
 				D01A0B651ABB2F1C004BEE8F /* Back1.mp3 in Resources */,
 				D0DF25241A874EBD00309754 /* bassA.caf in Resources */,
@@ -1169,6 +1176,7 @@
 				D01A0BAB1ABB62E1004BEE8F /* Level1B.aif in Resources */,
 				D0C08F661A77791E00FD429D /* lE.caf in Resources */,
 				D04C50791A92BA4F00C931C3 /* angle.png in Resources */,
+				D0EFAC6B1AED54AB00E973FE /* Background-B-Default.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
