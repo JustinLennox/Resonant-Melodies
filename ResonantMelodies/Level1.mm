@@ -1441,6 +1441,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
     double lastBeat = playerBack->msElapsedSinceLastBeat;
     NSLog(@"Timer since last beat: %f", lastBeat);
+//    NSLog(@"Closest beat:%f", playerBack->closestBeatMs(CACurrentMediaTime()*1000, 0));
+//    NSLog(@"CURRENT MEDIA TIME:%f", CACurrentMediaTime()*1000);
+
 //    NSTimer *beatTimer = [[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:(60.00f/self.BPM)]
 //                             interval:(60.00f/self.BPM)
 //                               target:self
@@ -1451,10 +1454,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 //    [runLoop addTimer:timer forMode:NSDefaultRunLoopMode];
 //
     if(lastBeat < 100){
-//        NSLog(@"Delay:%f", ((60.00f/self.BPM) - (lastBeat * 0.001)));
+        NSLog(@"Delay:%f", ((60.00f/self.BPM) - (lastBeat * 0.001)));
         [self performSelector:@selector(beatTimer:) withObject:nil afterDelay:((60.00f/self.BPM) - (lastBeat * 0.001))];
     }else if(lastBeat > 460 && lastBeat < 480){
-//        NSLog(@"Delay:%f", ((60.00f/self.BPM) + ((480 - lastBeat) * 0.001)));
+        NSLog(@"Delay:%f", ((60.00f/self.BPM) + ((480 - lastBeat) * 0.001)));
         [self performSelector:@selector(beatTimer:) withObject:nil afterDelay:((60.00f/self.BPM) + ((480 - lastBeat) * 0.001))];
     }else{
         
@@ -1540,8 +1543,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         [self enemyAttack];
     }
     
-    if(self.beatCount%16 == 0){
-        [self enemyAttack:@"cool"];
+    if(self.beatCount%17 == 0){
+        [self enemyAttack:@{@"c":@0, @"d":@1, @"e":@2}];
         if(self.playerMP < self.playerMPMax){
             self.playerMP++;
         }
@@ -1562,18 +1565,64 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
      [self centerOnNode:camera];*/
 }
 
--(void)enemyAttack:(NSString *)attackName{
-    CGSize markerSize = [self childNodeWithName:@"aMarker"].frame.size;
+-(void)enemyAttack:(NSDictionary *) enemyAttack{
+
+    for(id key in enemyAttack){
+        CGSize markerSize = [self childNodeWithName:@"aMarker"].frame.size;
+        NSString *firstLetter = [key substringToIndex:1];
+        NSString *markerName = [NSString stringWithFormat:@"%@Marker", firstLetter];
+        SKSpriteNode *attackNote = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"circle.png"] size:markerSize];
+        attackNote.position = CGPointMake(CGRectGetMidX([self childNodeWithName:markerName].frame), self.scene.size.height + attackNote.frame.size.height);
+        attackNote.alpha = 0.5f;
+        attackNote.zPosition = 2.0f;
+        [self.scene addChild:attackNote];
+        SKAction *delayNote = [SKAction waitForDuration:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
+        [attackNote runAction:delayNote completion:^{
+            SKAction *moveNote = [SKAction moveToY:([self childNodeWithName:markerName].frame.origin.y + attackNote.frame.size.height/2.0f) duration:(4.00f * (60.0f/self.BPM))];
+            [attackNote runAction:moveNote completion:^{
+                double delay = playerBack->msElapsedSinceLastBeat;
+                NSLog(@"Delay:%f", delay);
+                SKAction *moveNoteDown = [SKAction moveToY:-attackNote.frame.size.height duration:(4.00f* (60.0f/self.BPM))];
+                [attackNote runAction:moveNoteDown completion:^{
+                    [attackNote removeFromParent];
+                }];
+                
+            }];
+        }];
+
+
+    }
     
-    SKSpriteNode *attackNote = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"circle.png"] size:markerSize];
-    attackNote.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"aMarker"].frame), self.scene.size.height + attackNote.frame.size.height);
-    [self.scene addChild:attackNote];
-    SKAction *moveNote = [SKAction moveToY:([self childNodeWithName:@"aMarker"].frame.origin.y + attackNote.frame.size.height/2.0f) duration:(4.00f* (60.0f/self.BPM))];
-    [attackNote runAction:moveNote completion:^{
-        double delay = playerBack->msElapsedSinceLastBeat;
-        NSLog(@"Delay:%f", delay);
-        
-    }];
+//    SKSpriteNode *attackNote = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"circle.png"] size:markerSize];
+//    attackNote.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"aMarker"].frame), self.scene.size.height + attackNote.frame.size.height);
+//    [self.scene addChild:attackNote];
+//    SKAction *moveNote = [SKAction moveToY:([self childNodeWithName:@"aMarker"].frame.origin.y + attackNote.frame.size.height/2.0f) duration:(4.00f * (60.0f/self.BPM))];
+//    [attackNote runAction:moveNote completion:^{
+//        double delay = playerBack->msElapsedSinceLastBeat;
+//        NSLog(@"Delay:%f", delay);
+//        SKAction *moveNoteDown = [SKAction moveToY:-attackNote.frame.size.height duration:(4.00f* (60.0f/self.BPM))];
+//        [attackNote runAction:moveNoteDown completion:^{
+//            [attackNote removeFromParent];
+//        }];
+//        
+//    }];
+    
+//    SKSpriteNode *attackNote2 = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"circle.png"] size:markerSize];
+//    attackNote2.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"aMarker"].frame), self.scene.size.height + attackNote.frame.size.height);
+//    [self.scene addChild:attackNote2];
+//    SKAction *delayNote = [SKAction waitForDuration:(60.0f/self.BPM)];
+//    [attackNote2 runAction:delayNote completion:^{
+//        [attackNote2 runAction:moveNote completion:^{
+//            double delay = playerBack->msElapsedSinceLastBeat;
+//            NSLog(@"Delay:%f", delay);
+//            SKAction *moveNoteDown = [SKAction moveToY:-attackNote.frame.size.height duration:(4.00f* (60.0f/self.BPM))];
+//            [attackNote2 runAction:moveNoteDown completion:^{
+//                [attackNote2 removeFromParent];
+//            }];
+//            
+//        }];
+//    }];
+
 }
 
 - (void) centerOnNode: (SKNode *) node
@@ -1857,9 +1906,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNode.name = @"highANode";//how the node is identified later
     keyNode.zPosition = 1.0;
     
-    SKSpriteNode *aMarker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"circle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
+    SKSpriteNode *aMarker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
     aMarker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + aMarker.frame.size.height/2.0f);
     aMarker.name = @"aMarker";
+    aMarker.zPosition = 2.0f;
     [self.scene addChild:aMarker];
     return keyNode;
 }
@@ -1871,6 +1921,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNode.position = CGPointMake(6*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5,(self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highBNode";//how the node is identified later
     keyNode.zPosition = 1.0;
+    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
+    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
+    Marker.name = @"bMarker";
+    Marker.zPosition = 2.0f;
+    [self.scene addChild:Marker];
     return keyNode;
 }
 
@@ -1881,6 +1936,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNode.position = CGPointMake(7*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highCNode";//how the node is identified later
     keyNode.zPosition = 1.0;
+    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
+    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
+    Marker.name = @"cMarker";
+    Marker.zPosition = 2.0f;
+    [self.scene addChild:Marker];
     return keyNode;
 }
 
@@ -1891,6 +1951,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNode.position = CGPointMake(8*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highDNode";//how the node is identified later
     keyNode.zPosition = 1.0;
+    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
+    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
+    Marker.name = @"dMarker";
+    Marker.zPosition = 2.0f;
+    [self.scene addChild:Marker];
     return keyNode;
 }
 
@@ -1901,6 +1966,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNode.position = CGPointMake(9*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highENode";//how the node is identified later
     keyNode.zPosition = 1.0;
+    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
+    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
+    Marker.name = @"eMarker";
+    Marker.zPosition = 2.0f;
+    [self.scene addChild:Marker];
     return keyNode;
 }
 
@@ -1911,6 +1981,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNode.position = CGPointMake(10*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highFNode";//how the node is identified later
     keyNode.zPosition = 1.0;
+    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
+    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
+    Marker.name = @"fMarker";
+    Marker.zPosition = 2.0f;
+    [self.scene addChild:Marker];
     return keyNode;
 }
 
@@ -1921,6 +1996,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNode.position = CGPointMake(11*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highGNode";//how the node is identified later
     keyNode.zPosition = 1.0;
+    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
+    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
+    Marker.name = @"gMarker";
+    Marker.zPosition = 2.0f;
+    [self.scene addChild:Marker];
     return keyNode;
 }
 
