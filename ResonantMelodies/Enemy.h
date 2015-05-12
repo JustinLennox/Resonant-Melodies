@@ -19,5 +19,5 @@
 @property (nonatomic) BOOL canMove;
 @property (nonatomic) BOOL canShoot;
 @property (nonatomic) int sleepChance;
-
+@property (nonatomic) float attackDamage;
 @end

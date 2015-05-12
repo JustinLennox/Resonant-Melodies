@@ -143,5 +143,8 @@
 @property (nonatomic) int measureCount;
 @property (nonatomic) double beatTime;
 
+//Rhythm Game Defense Properties
+@property (nonatomic) bool defending;
+
 
 @end
