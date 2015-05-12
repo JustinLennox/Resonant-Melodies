@@ -1612,7 +1612,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         [self enemyAttack];
     }
     
-    if(self.beatCount%17 == 0){
+    if(self.beatCount%16 == 0){
         [self enemyAttack:@{@"c":@0.5, @"d":@1, @"e":@1.5, @"c2":@2.0, @"d2":@2.5, @"e2":@3.0, @"e3":@3.25, @"e4":@3.5, @"e5":@3.75}];
         if(self.playerMP < self.playerMPMax){
             self.playerMP++;
@@ -1648,7 +1648,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         [self.scene addChild:attackNote];
         SKAction *delayNote = [SKAction waitForDuration:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
         [attackNote runAction:delayNote completion:^{
-            SKAction *moveNote = [SKAction moveToY:([self childNodeWithName:markerName].frame.origin.y + attackNote.frame.size.height/2.0f) duration:(4.00f * (60.0f/self.BPM))];
+            SKAction *moveNote = [SKAction moveToY:([self childNodeWithName:markerName].frame.origin.y + attackNote.frame.size.height/2.0f) duration:(4.50f * (60.0f/self.BPM))];
             [attackNote runAction:moveNote completion:^{
                 double delay = playerBack->msElapsedSinceLastBeat;
 //                NSLog(@"Delay:%f", delay);
@@ -2036,7 +2036,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake(self.frame.size.width/12, self.frame.size.height/2.25)];
     keyNode.position = CGPointMake(9*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highENode";//how the node is identified later
-    keyNode.zPosition = 1.0;
+    keyNode.zPosition = 3.0;
     SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
     Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
     Marker.name = @"eMarker";
