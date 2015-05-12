@@ -146,18 +146,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.view.multipleTouchEnabled = YES;
     
 #pragma mark- set up background
-    UISwipeGestureRecognizer *swipeUp = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeUp:)];
-    swipeUp.direction = UISwipeGestureRecognizerDirectionUp;
-    [self.view addGestureRecognizer:swipeUp];
-    
-    UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeRight:)];
-    swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
-    [self.view addGestureRecognizer:swipeRight];
-    
-    UISwipeGestureRecognizer *swipeDown = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeDown:)];
-    swipeDown.direction = UISwipeGestureRecognizerDirectionDown;
-    [self.view addGestureRecognizer:swipeDown];
-    
     
     SKSpriteNode *backgroundImage = [SKSpriteNode spriteNodeWithImageNamed:@"Sakura Forest Game Background.png"];
     backgroundImage.name = @"background";
@@ -428,6 +416,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     rightArrow.size = CGSizeMake(40, 40);
     [self addChild:rightArrow];
     rightArrow.alpha = 0.0f;
+    rightArrow.zPosition = 3.0f;
     rightArrow.hidden = YES;
     
     SKSpriteNode *leftArrow = [SKSpriteNode spriteNodeWithImageNamed:@"arrowLeft.png"];
@@ -438,7 +427,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     leftArrow.alpha = 0.0f;
     leftArrow.hidden = YES;
     
-    self.currentRoomNumber = 6;
+    self.currentRoomNumber = 3;
     [self loadRoom:1];
     
 #pragma mark- add key icons
@@ -778,7 +767,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     [self enumerateChildNodesWithName:noteName usingBlock:^(SKNode *node, BOOL *stop) {
         [noteArray addObject:node];
     }];
-    NSLog(@"NoteArray:%@", noteArray);
     
     if(noteArray.count > 0)
     {
@@ -794,6 +782,15 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             }
             
         }
+        
+        NSMutableDictionary *attackDictionary = [[NSMutableDictionary alloc] init];
+        
+        for(Enemy *enemy in self.enemyArray){
+            if([enemyNote.name containsString:[enemy.name uppercaseString]]){
+                attackDictionary = enemy.attackDictionary;
+            }
+        }
+        NSLog(@"Current Attack Damage1:%@", [attackDictionary objectForKey:@"currentAttackDamage"]);
 
         SKSpriteNode *marker = (SKSpriteNode *)[self childNodeWithName:[NSString stringWithFormat:@"%@Marker", keyName.lowercaseString]];
         SKLabelNode *quality = [[SKLabelNode alloc] initWithFontNamed:@"Helvetica-Bold"];
@@ -801,27 +798,38 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         quality.zPosition = 2.0f;
         [self addChild:quality];
         quality.position = CGPointMake(marker.position.x, marker.position.y + 20);
+        float currentAttackDamage = [[attackDictionary objectForKey:@"currentAttackDamage"] floatValue];
+        float maxAttackDamage = [[attackDictionary objectForKey:@"maxAttackDamage"] floatValue];
+        float damageStep = maxAttackDamage / (attackDictionary.count - 4.0f);
+        NSLog(@"DamageStep:%f", damageStep);
         if(fabs(enemyNote.position.y - marker.position.y)  >= 30.00f && fabs(enemyNote.position.y - marker.position.y)< 50.00f){
             [enemyNote removeFromParent];
             quality.text = @"OK";
+            currentAttackDamage -= damageStep/4.0f;
             quality.fontColor = [SKColor redColor];
             
         }else if(fabs(enemyNote.position.y - marker.position.y) >= 20.00f &&  fabs(enemyNote.position.y - marker.position.y) < 30.00f){
             [enemyNote removeFromParent];
             quality.text = @"Good!";
+            currentAttackDamage -= damageStep/3.0f;
             quality.fontColor = [SKColor blueColor];
 
         }else if(fabs(enemyNote.position.y - marker.position.y) >= 10.00f &&  fabs(enemyNote.position.y - marker.position.y) < 20.00f){
             [enemyNote removeFromParent];
+            currentAttackDamage -= damageStep/2.0f;
             quality.fontColor = [SKColor greenColor];
 
             quality.text = @"Great!";
         }else if(fabs(enemyNote.position.y - marker.position.y) >= 0.00f &&  fabs(enemyNote.position.y - marker.position.y) < 10.00f){
             [enemyNote removeFromParent];
+            currentAttackDamage -= damageStep;
             quality.fontColor = [SKColor purpleColor];
 
             quality.text = @"Perfect!";
         }
+        
+        [attackDictionary setObject:[NSNumber numberWithFloat:currentAttackDamage] forKey:@"currentAttackDamage"];
+        NSLog(@"Current Attack Damage:%@", [attackDictionary objectForKey:@"currentAttackDamage"]);
         
         SKAction *moveUp = [SKAction moveByX:0 y:10.0f duration:0.2f];
         SKAction *fade = [SKAction fadeAlphaTo:0.0f duration:0.2f];
@@ -1609,11 +1617,12 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
     
     if(self.beatCount%12 == 0){
-        [self enemyAttack];
+       // [self enemyAttack];
     }
     
     if(self.beatCount%16 == 0){
-        [self enemyAttack:@{@"c":@0.5, @"d":@1, @"e":@1.5, @"c2":@2.0, @"d2":@2.5, @"e2":@3.0, @"e3":@3.25, @"e4":@3.5, @"e5":@3.75}];
+        //Add
+        [self enemyAttack:@{}];
         if(self.playerMP < self.playerMPMax){
             self.playerMP++;
         }
@@ -1634,65 +1643,68 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
      [self centerOnNode:camera];*/
 }
 
--(void)enemyAttack:(NSDictionary *) enemyAttack{
+-(void)enemyAttack:(NSMutableDictionary *) enemyAttack{
+    
+    for(Enemy *enemy in self.enemyArray)
+    {
+        [self showDefenseMarkers];
+        enemyAttack = enemy.attackDictionary;
+        [enemyAttack setObject:[enemyAttack objectForKey:@"maxAttackDamage"] forKey:@"currentAttackDamage"];
 
-    for(id key in enemyAttack){
-        CGSize markerSize = [self childNodeWithName:@"aMarker"].frame.size;
-        NSString *firstLetter = [key substringToIndex:1];
-        NSString *markerName = [NSString stringWithFormat:@"%@Marker", firstLetter];
-        SKSpriteNode *attackNote = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"circle.png"] size:markerSize];
-        attackNote.position = CGPointMake(CGRectGetMidX([self childNodeWithName:markerName].frame), self.scene.size.height + attackNote.frame.size.height);
-        attackNote.alpha = 0.5f;
-        attackNote.zPosition = 2.0f;
-        attackNote.name = [NSString stringWithFormat:@"%@", [key uppercaseString]];
-        [self.scene addChild:attackNote];
-        SKAction *delayNote = [SKAction waitForDuration:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
-        [attackNote runAction:delayNote completion:^{
-            SKAction *moveNote = [SKAction moveToY:([self childNodeWithName:markerName].frame.origin.y + attackNote.frame.size.height/2.0f) duration:(4.50f * (60.0f/self.BPM))];
-            [attackNote runAction:moveNote completion:^{
-                double delay = playerBack->msElapsedSinceLastBeat;
-//                NSLog(@"Delay:%f", delay);
-                SKAction *moveNoteDown = [SKAction moveToY:-attackNote.frame.size.height duration:(4.00f* (60.0f/self.BPM))];
-                [attackNote runAction:moveNoteDown completion:^{
-                    [attackNote removeFromParent];
-                }];
+        for(id key in enemyAttack){
+            NSString *keyString = [NSString stringWithFormat:@"%@", key];
+            if([keyString isEqualToString:@"end"]){
                 
-            }];
-        }];
+                [self performSelector:@selector(hideDefenseMarkers) withObject:nil afterDelay:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
+                [self performSelector:@selector(enemyAttack) withObject:nil afterDelay:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
+                
+            }else if([keyString isEqualToString:@"name"]){
+                
+            }else if (![keyString isEqualToString:@"currentAttackDamage"] && ![keyString isEqualToString:@"maxAttackDamage"]){
+                CGSize markerSize = [self childNodeWithName:@"aMarker"].frame.size;
+                NSString *firstLetter = [key substringToIndex:1];
+                NSString *markerName = [NSString stringWithFormat:@"%@Marker", firstLetter];
+                SKSpriteNode *attackNote = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"circle.png"] size:markerSize];
+                attackNote.position = CGPointMake(CGRectGetMidX([self childNodeWithName:markerName].frame), self.scene.size.height + attackNote.frame.size.height);
+                attackNote.alpha = 0.5f;
+                attackNote.zPosition = 2.0f;
+                attackNote.name = [NSString stringWithFormat:@"%@", [key uppercaseString]];
+                [self.scene addChild:attackNote];
+                SKAction *delayNote = [SKAction waitForDuration:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
+                [attackNote runAction:delayNote completion:^{
+                    SKAction *moveNote = [SKAction moveToY:([self childNodeWithName:markerName].frame.origin.y + attackNote.frame.size.height/2.0f) duration:(4.0f * (60.0f/self.BPM))];
+                    [attackNote runAction:moveNote completion:^{
+                        double delay = playerBack->msElapsedSinceLastBeat;
+        //                NSLog(@"Delay:%f", delay);
+                        SKAction *moveNoteDown = [SKAction moveToY:-attackNote.frame.size.height duration:(4.00f* (60.0f/self.BPM))];
+                        [attackNote runAction:moveNoteDown completion:^{
+                            
+                            [attackNote removeFromParent];
+                        }];
+                        
+                    }];
+                }];
 
-
+            }
+        }
     }
-    
-//    SKSpriteNode *attackNote = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"circle.png"] size:markerSize];
-//    attackNote.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"aMarker"].frame), self.scene.size.height + attackNote.frame.size.height);
-//    [self.scene addChild:attackNote];
-//    SKAction *moveNote = [SKAction moveToY:([self childNodeWithName:@"aMarker"].frame.origin.y + attackNote.frame.size.height/2.0f) duration:(4.00f * (60.0f/self.BPM))];
-//    [attackNote runAction:moveNote completion:^{
-//        double delay = playerBack->msElapsedSinceLastBeat;
-//        NSLog(@"Delay:%f", delay);
-//        SKAction *moveNoteDown = [SKAction moveToY:-attackNote.frame.size.height duration:(4.00f* (60.0f/self.BPM))];
-//        [attackNote runAction:moveNoteDown completion:^{
-//            [attackNote removeFromParent];
-//        }];
-//        
-//    }];
-    
-//    SKSpriteNode *attackNote2 = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"circle.png"] size:markerSize];
-//    attackNote2.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"aMarker"].frame), self.scene.size.height + attackNote.frame.size.height);
-//    [self.scene addChild:attackNote2];
-//    SKAction *delayNote = [SKAction waitForDuration:(60.0f/self.BPM)];
-//    [attackNote2 runAction:delayNote completion:^{
-//        [attackNote2 runAction:moveNote completion:^{
-//            double delay = playerBack->msElapsedSinceLastBeat;
-//            NSLog(@"Delay:%f", delay);
-//            SKAction *moveNoteDown = [SKAction moveToY:-attackNote.frame.size.height duration:(4.00f* (60.0f/self.BPM))];
-//            [attackNote2 runAction:moveNoteDown completion:^{
-//                [attackNote2 removeFromParent];
-//            }];
-//            
-//        }];
-//    }];
 
+}
+
+-(void)hideDefenseMarkers{
+    [self enumerateChildNodesWithName:@"*Marker" usingBlock:^(SKNode *node, BOOL *stop) {
+        node.hidden = YES;
+        node.zPosition = -10.0f;
+    }];
+}
+
+-(void)showDefenseMarkers{
+    
+    [self enumerateChildNodesWithName:@"*Marker" usingBlock:^(SKNode *node, BOOL *stop) {
+        node.hidden = NO;
+        node.zPosition = 2.0f;
+    }];
+    
 }
 
 - (void) centerOnNode: (SKNode *) node
@@ -1789,7 +1801,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         if([enemy.type isEqualToString:@"angle"] && enemy.canShoot && !enemy.hidden)
         {
             EnemyShot *spike = [EnemyShot spriteNodeWithImageNamed:@"angleShot.png"];
-            spike.damage = 0.5f;
+            spike.damage = [[enemy.attackDictionary objectForKey:@"currentAttackDamage"] floatValue];
             spike.size = CGSizeMake(15, 10);
             spike.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
             spike.name = @"angle";
@@ -2357,6 +2369,8 @@ static inline float floatToFrequency(float value) {
 
 -(void)loadRoom:(int)roomNumber{
     
+    [self hideDefenseMarkers];
+    
     if(self.currentRoomNumber == 1){
         
         Interactable *sign1 = [[Interactable alloc] init];
@@ -2396,6 +2410,7 @@ static inline float floatToFrequency(float value) {
         enemy1.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highGNode"].frame), CGRectGetMaxY([self childNodeWithName:@"highGNode"].frame) + enemy1.size.height/2 + 10);
         enemy1.zPosition = 1.0f;
         enemy1.health = 100;
+        enemy1.attackDictionary = @{@"cenemy1":@1.0, @"denemy1":@1.5, @"eenemy1":@1.0, @"c2enemy1":@1.5, @"d2enemy1":@2.0, @"e2enemy1":@3.0, @"e3enemy1":@3.25, @"e4enemy1":@3.5, @"e5enemy1":@3.75, @"end":@9.5, @"name":@"Needle Shot"};
         enemy1.healthMax = 100;
         enemy1.hidden = NO;
         enemy1.type = @"scooter";
@@ -2423,6 +2438,7 @@ static inline float floatToFrequency(float value) {
         enemy2.zPosition = 1.0f;
         enemy2.health = 150;
         enemy2.healthMax = 150;
+        enemy2.attackDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"cenemy2":@1.0, @"denemy2":@1.0, @"eenemy2":@1.5, @"f2enemy2":@2.0, @"g2enemy2":@2.5, @"e2enemy2":@3.0, @"a3enemy2":@3.25, @"end":@8.75, @"name":@"Needle Shot", @"maxAttackDamage":@2.0, @"currentAttackDamage":@2.0}];
         enemy2.hidden = NO;
         enemy2.canShoot = YES;
         enemy2.canMove = YES;
@@ -2480,6 +2496,7 @@ static inline float floatToFrequency(float value) {
         enemy1.canMove = YES;
         enemy1.sleepChance = 2;
         enemy1.type = @"angle";
+        enemy1.attackDictionary = @{@"cenemy1":@1.0, @"denemy1":@2.0, @"eenemy1":@3.0, @"f2enemy1":@2.0, @"end":@8.75, @"name":@"Needle Shot"};
         enemy1.resonantArray = @[@"highANode", @"highBNode", @"highCNode", @"highDNode"];
         [self addChild:enemy1];
         
@@ -2490,6 +2507,7 @@ static inline float floatToFrequency(float value) {
         enemy2.zPosition = 1.0f;
         enemy2.health = 150;
         enemy2.healthMax = 150;
+        enemy2.attackDictionary = @{@"aenemy2":@1.0, @"benemy2":@2.0, @"cenemy2":@3.0, @"d2enemy2":@2.0, @"end":@8.75, @"name":@"Needle Shot"};
         enemy2.hidden = NO;
         enemy2.canShoot = YES;
         enemy2.canMove = YES;
@@ -2506,11 +2524,22 @@ static inline float floatToFrequency(float value) {
         {
             self.roomCleared = 5;
         }
-        
+        NSLog(@"Enemy Array:%@", self.enemyArray);
         Interactable *cycleNPC = [[Interactable alloc] init];
         [cycleNPC setTexture:[SKTexture textureWithImageNamed:@"gaia1.png"]];
+        NSString *deviceName = [[UIDevice currentDevice] name];
+        NSString *personsName = @"John";
+        NSRange range = [deviceName rangeOfString:@"'s"];
+        if (range.location == NSNotFound) {
+            NSLog(@"string was not found");
+            personsName = deviceName;
+        } else {
+            NSLog(@"position %lu", (unsigned long)range.location);
+            personsName = [deviceName substringToIndex:range.location];
+        }
         cycleNPC.name = @"cycleNPC";
-        cycleNPC.textArray = @[@"Uh... Shoot, what was my line...", @"Oh yeah. Hey kid! I'm an NPC. Nice to meet you!", @"Oh he's talking to me again. Er. Hello there.", @"Look kid, what do you want from me?", @"Please... I... I don't have anything else to say...", @"OK, I can't take it anymore. The guy up ahead's favorite vegatable is the Cabbage. Now please leave me alone. I beg you."];
+        NSString *isYourNameString = [NSString stringWithFormat:@"Is your name... %@??", personsName];
+        cycleNPC.textArray = @[isYourNameString, @"Oh yeah. Hey kid! I'm an NPC. Nice to meet you!", @"Oh he's talking to me again. Er. Hello there.", @"Look kid, what do you want from me?", @"Please... I... I don't have anything else to say...", @"OK, I can't take it anymore. The guy up ahead's favorite vegatable is the Cabbage. Now please leave me alone. I beg you."];
         cycleNPC.keyNode = @"highDNode";
         cycleNPC.size = CGSizeMake(63,75);
         cycleNPC.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highENode"].frame), CGRectGetMaxY([self childNodeWithName:@"highENode"].frame) + cycleNPC.size.height/2 - 8);
@@ -2610,27 +2639,6 @@ static inline float floatToFrequency(float value) {
     // Return YES for supported orientations
     return ((interfaceOrientation == UIInterfaceOrientationLandscapeLeft) ||
             (interfaceOrientation == UIInterfaceOrientationLandscapeRight));
-}
-
--(void)swipeUp: (UISwipeGestureRecognizer *)sender{
-    if(sender.state == UIGestureRecognizerStateEnded){
-        SKSpriteNode *background = (SKSpriteNode *)[self childNodeWithName:@"background"];
-        [background setTexture:[SKTexture textureWithImageNamed:@"Sakura Forest Game Background.png"]];
-    }
-}
-
--(void)swipeDown: (UISwipeGestureRecognizer *)sender{
-    if(sender.state == UIGestureRecognizerStateEnded){
-        SKSpriteNode *background = (SKSpriteNode *)[self childNodeWithName:@"background"];
-        [background setTexture:[SKTexture textureWithImageNamed:@"Background-B-Default.png"]];
-    }
-}
-
--(void)swipeRight: (UISwipeGestureRecognizer *)sender{
-    if(sender.state == UIGestureRecognizerStateEnded){
-        SKSpriteNode *background = (SKSpriteNode *)[self childNodeWithName:@"background"];
-        [background setTexture:[SKTexture textureWithImageNamed:@"Sand-mountain-game-background.png"]];
-    }
 }
 
 @end

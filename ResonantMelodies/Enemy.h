@@ -14,7 +14,9 @@
 @property (nonatomic) float healthMax;
 @property (strong, nonatomic) NSArray *resonantArray;
 @property (strong, nonatomic) SKLabelNode *healthLabel;
+@property (strong, nonatomic) NSMutableDictionary *attackDictionary;
 @property (strong, nonatomic) NSString *type;
+@property (nonatomic) float currentAttackDamage;
 @property (nonatomic) int arrayPosition;
 @property (nonatomic) BOOL canMove;
 @property (nonatomic) BOOL canShoot;
