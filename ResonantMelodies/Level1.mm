@@ -774,27 +774,52 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 -(void)checkDefenseForKey:(NSString *)keyName{
     NSString *noteName = [NSString stringWithFormat:@"%@*", keyName];
+    NSMutableArray *noteArray = [[NSMutableArray alloc] init];
     [self enumerateChildNodesWithName:noteName usingBlock:^(SKNode *node, BOOL *stop) {
-        SKSpriteNode *enemyNote = node;
+        [noteArray addObject:node];
+    }];
+    NSLog(@"NoteArray:%@", noteArray);
+    
+    if(noteArray.count > 0)
+    {
+        SKSpriteNode *enemyNote = [noteArray objectAtIndex:0];
+        for(int x = 0; x < noteArray.count; x++)
+        {
+            
+            SKSpriteNode *otherNote = (SKSpriteNode *)[noteArray objectAtIndex:x];
+            if((otherNote.position.y < enemyNote.position.y && otherNote.position.y > CGRectGetMinY([self childNodeWithName:@"aMarker"].frame)) || enemyNote.position.y < CGRectGetMinY([self childNodeWithName:@"aMarker"].frame))
+            {
+                enemyNote = otherNote;
+                NSLog(enemyNote.name);
+            }
+            
+        }
+
         SKSpriteNode *marker = (SKSpriteNode *)[self childNodeWithName:[NSString stringWithFormat:@"%@Marker", keyName.lowercaseString]];
         SKLabelNode *quality = [[SKLabelNode alloc] initWithFontNamed:@"Helvetica-Bold"];
-        quality.fontColor = [SKColor blueColor];
         quality.fontSize = 15.0f;
         quality.zPosition = 2.0f;
         [self addChild:quality];
         quality.position = CGPointMake(marker.position.x, marker.position.y + 20);
-        if(fabs(enemyNote.position.y - marker.position.y)  >= 30.00f && fabs(enemyNote.position.y - marker.position.y)< 40.00f){
+        if(fabs(enemyNote.position.y - marker.position.y)  >= 30.00f && fabs(enemyNote.position.y - marker.position.y)< 50.00f){
             [enemyNote removeFromParent];
             quality.text = @"OK";
+            quality.fontColor = [SKColor redColor];
             
         }else if(fabs(enemyNote.position.y - marker.position.y) >= 20.00f &&  fabs(enemyNote.position.y - marker.position.y) < 30.00f){
             [enemyNote removeFromParent];
             quality.text = @"Good!";
+            quality.fontColor = [SKColor blueColor];
+
         }else if(fabs(enemyNote.position.y - marker.position.y) >= 10.00f &&  fabs(enemyNote.position.y - marker.position.y) < 20.00f){
             [enemyNote removeFromParent];
+            quality.fontColor = [SKColor greenColor];
+
             quality.text = @"Great!";
         }else if(fabs(enemyNote.position.y - marker.position.y) >= 0.00f &&  fabs(enemyNote.position.y - marker.position.y) < 10.00f){
             [enemyNote removeFromParent];
+            quality.fontColor = [SKColor purpleColor];
+
             quality.text = @"Perfect!";
         }
         
@@ -804,7 +829,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         [quality runAction:moveUpAndFade completion:^{
             [quality removeFromParent];
         }];
-    }];
+    }
+
+    
     
 }
 
@@ -1586,7 +1613,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     }
     
     if(self.beatCount%17 == 0){
-        [self enemyAttack:@{@"c":@0.5, @"d":@1, @"e":@1.5, @"c2":@2.0, @"d2":@2.5, @"e2":@3.0}];
+        [self enemyAttack:@{@"c":@0.5, @"d":@1, @"e":@1.5, @"c2":@2.0, @"d2":@2.5, @"e2":@3.0, @"e3":@3.25, @"e4":@3.5, @"e5":@3.75}];
         if(self.playerMP < self.playerMPMax){
             self.playerMP++;
         }
@@ -2009,7 +2036,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake(self.frame.size.width/12, self.frame.size.height/2.25)];
     keyNode.position = CGPointMake(9*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highENode";//how the node is identified later
-    keyNode.zPosition = 3.0;
+    keyNode.zPosition = 1.0;
     SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
     Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
     Marker.name = @"eMarker";
