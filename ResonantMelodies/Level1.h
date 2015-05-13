@@ -131,6 +131,7 @@
 @property (nonatomic) double touchLength;
 @property (nonatomic) BOOL touchingDown;
 @property (nonatomic) float roomCleared;
+@property (strong, nonatomic) NSMutableArray *enemyToDeleteArray;
 
 //Partner Properties
 @property (nonatomic) int bowTieIncrement;

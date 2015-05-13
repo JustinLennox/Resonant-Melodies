@@ -497,6 +497,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
     self.fireballArray = [[NSMutableArray alloc] init];
     self.enemyShotArray = [[NSMutableArray alloc] init];
+    self.enemyToDeleteArray = [[NSMutableArray alloc] init];
     
     self.playerMaxX = CGRectGetMaxX(self.player.frame);
     
@@ -778,7 +779,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             if((otherNote.position.y < enemyNote.position.y && otherNote.position.y > CGRectGetMinY([self childNodeWithName:@"aMarker"].frame)) || enemyNote.position.y < CGRectGetMinY([self childNodeWithName:@"aMarker"].frame))
             {
                 enemyNote = otherNote;
-                NSLog(enemyNote.name);
             }
             
         }
@@ -790,7 +790,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 attackDictionary = enemy.attackDictionary;
             }
         }
-        NSLog(@"Current Attack Damage1:%@", [attackDictionary objectForKey:@"currentAttackDamage"]);
+//        NSLog(@"Current Attack Damage1:%@", [attackDictionary objectForKey:@"currentAttackDamage"]);
 
         SKSpriteNode *marker = (SKSpriteNode *)[self childNodeWithName:[NSString stringWithFormat:@"%@Marker", keyName.lowercaseString]];
         SKLabelNode *quality = [[SKLabelNode alloc] initWithFontNamed:@"Helvetica-Bold"];
@@ -801,7 +801,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         float currentAttackDamage = [[attackDictionary objectForKey:@"currentAttackDamage"] floatValue];
         float maxAttackDamage = [[attackDictionary objectForKey:@"maxAttackDamage"] floatValue];
         float damageStep = maxAttackDamage / (attackDictionary.count - 4.0f);
-        NSLog(@"DamageStep:%f", damageStep);
+//        NSLog(@"DamageStep:%f", damageStep);
         if(fabs(enemyNote.position.y - marker.position.y)  >= 30.00f && fabs(enemyNote.position.y - marker.position.y)< 50.00f){
             [enemyNote removeFromParent];
             quality.text = @"OK";
@@ -829,7 +829,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         }
         
         [attackDictionary setObject:[NSNumber numberWithFloat:currentAttackDamage] forKey:@"currentAttackDamage"];
-        NSLog(@"Current Attack Damage:%@", [attackDictionary objectForKey:@"currentAttackDamage"]);
+//        NSLog(@"Current Attack Damage:%@", [attackDictionary objectForKey:@"currentAttackDamage"]);
         
         SKAction *moveUp = [SKAction moveByX:0 y:10.0f duration:0.2f];
         SKAction *fade = [SKAction fadeAlphaTo:0.0f duration:0.2f];
@@ -1396,12 +1396,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 if (shot.hidden) {
                     continue;
                 }
-                if([shot intersectsNode:keyLaser] && [shot.note isEqualToString:keyLaser.note]){
-                    keyLaser.hidden = YES;
-                    shot.hidden = YES;
-                    //[self.enemyArray removeLastObject];
-                    //NSLog(@"Intersect");
-                }
+
             }
 
 
@@ -1467,6 +1462,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         }else if (enemy.health <= 0){
             enemy.canShoot = NO;
             enemy.hidden = YES;
+            [self.enemyToDeleteArray addObject:enemy];
+            [enemy removeFromParent];
             [enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]].hidden = YES;
         }else{
             enemy.canShoot = NO;
@@ -1509,6 +1506,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         
     }
     
+    [self removeDefeatedEnemies];
 }
 
 
@@ -1798,123 +1796,130 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
     for(Enemy *enemy in self.enemyArray)
     {
-        if([enemy.type isEqualToString:@"angle"] && enemy.canShoot && !enemy.hidden)
-        {
-            EnemyShot *spike = [EnemyShot spriteNodeWithImageNamed:@"angleShot.png"];
-            spike.damage = [[enemy.attackDictionary objectForKey:@"currentAttackDamage"] floatValue];
-            spike.size = CGSizeMake(15, 10);
-            spike.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
-            spike.name = @"angle";
-            spike.note = [self getRandomNote];
-            [self addChild:spike];
-            
-            SKLabelNode *noteLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-            noteLabel.text = spike.note;
-            [spike addChild:noteLabel];
-            noteLabel.position = CGPointMake(0, 10);
-
-            
-            
-            SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:7.0f];
-            SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
-                spike.hidden = YES;
+        if([[enemy.attackDictionary objectForKey:@"currentAttackDamage"] floatValue] < 0.01f){
+            SKLabelNode *blockedAttack = [SKLabelNode labelNodeWithText:@"Blocked!"];
+            blockedAttack.position = enemy.position;
+            blockedAttack.zPosition = enemy.zPosition + 0.1f;
+            [self.scene addChild:blockedAttack];
+            SKAction *moveUp = [SKAction moveByX:0 y:10.0f duration:0.2f];
+            SKAction *fade = [SKAction fadeAlphaTo:0.0f duration:0.2f];
+            SKAction *moveUpAndFade = [SKAction group:@[moveUp, fade]];
+            [blockedAttack runAction:moveUpAndFade completion:^{
+                [blockedAttack removeFromParent];
             }];
             
-            SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
-            
-            [spike runAction:moveLaserActionWithDone withKey:@"laserFired"];
-            [self.enemyShotArray addObject:spike];
-            
-        }else if([enemy.type isEqualToString:@"boss"] && enemy.canShoot && !enemy.hidden){
-           // [self.enemyShotArray removeAllObjects];
-            EnemyShot *spike = [EnemyShot spriteNodeWithImageNamed:@"fireball.png"];
-            spike.texture = [SKTexture textureWithImageNamed:@"fireball.png"];
-            spike.damage = 1.0f;
-            
-            spike.size = CGSizeMake(15, 10);
-            spike.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
-            spike.note = [self getRandomNote];
-            [self addChild:spike];
-            
-            SKLabelNode *noteLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-            noteLabel.text = spike.note;
-            [spike addChild:noteLabel];
-            noteLabel.position = CGPointMake(0, 10);
-            [self.enemyShotArray addObject:spike];
+        }else{
+            if([enemy.type isEqualToString:@"angle"] && enemy.canShoot && !enemy.hidden)
+            {
+                NSLog(@"Enemy attack dictionary:%@", enemy.attackDictionary);
+                EnemyShot *spike = [EnemyShot spriteNodeWithImageNamed:@"angleShot.png"];
+                spike.damage = [[enemy.attackDictionary objectForKey:@"currentAttackDamage"] floatValue];
+                spike.size = CGSizeMake(15, 10);
+                spike.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
+                spike.name = @"angle";
+                [self addChild:spike];
 
-            EnemyShot *spike2 = [EnemyShot spriteNodeWithImageNamed:@"fireball.png"];
-            spike2.texture = [SKTexture textureWithImageNamed:@"fireball.png"];
-            spike2.damage = 1.0f;
-            
-            spike2.size = CGSizeMake(15, 10);
-            spike2.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
-            spike2.note = [self getRandomNote];
-            [self addChild:spike2];
-            spike2.alpha = 0.0f;
-            SKLabelNode *note2Label = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-            note2Label.text = spike2.note;
-            [spike2 addChild:note2Label];
-            note2Label.position = CGPointMake(0, 10);
-            [self.enemyShotArray addObject:spike2];
-
-            EnemyShot *spike3 = [EnemyShot spriteNodeWithImageNamed:@"fireball.png"];
-            spike3.texture = [SKTexture textureWithImageNamed:@"fireball.png"];
-            spike3.damage = 1.0f;
-            
-            spike3.size = CGSizeMake(15, 10);
-            spike3.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
-            spike3.note = [self getRandomNote];
-            [self addChild:spike3];
-            spike3.alpha = 0.0f;
-            SKLabelNode *note3Label = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-            note3Label.text = spike3.note;
-            [spike3 addChild:note3Label];
-            note3Label.position = CGPointMake(0, 10);
-            [self.enemyShotArray addObject:spike3];
-
-
-
-            
-            SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:6.0f];
-            SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
-                spike.hidden = YES;
-                [self.enemyShotArray removeObject:spike];
-                [spike removeFromParent];
-            }];
-            
-            SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
-            [spike runAction:moveLaserActionWithDone withKey:@"spike1Fired"];
-            
-            SKAction *wait = [SKAction waitForDuration:0.8];
-            [spike2 runAction:wait completion:^{
-                spike2.alpha = 1.0f;
-                SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:6.0f];
+                SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:7.0f];
                 SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
-                    spike2.hidden = YES;
-                    [self.enemyShotArray removeObject:spike2];
-                    [spike2 removeFromParent];
+                    spike.hidden = YES;
                 }];
                 
                 SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
-                [spike2 runAction:moveLaserActionWithDone withKey:@"spike2Fired"];
+                
+                [spike runAction:moveLaserActionWithDone withKey:@"laserFired"];
+                [self.enemyShotArray addObject:spike];
+                
+            }else if([enemy.type isEqualToString:@"boss"] && enemy.canShoot && !enemy.hidden){
+               // [self.enemyShotArray removeAllObjects];
+                EnemyShot *spike = [EnemyShot spriteNodeWithImageNamed:@"fireball.png"];
+                spike.texture = [SKTexture textureWithImageNamed:@"fireball.png"];
+                spike.damage = 1.0f;
+                
+                spike.size = CGSizeMake(15, 10);
+                spike.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
+                spike.note = [self getRandomNote];
+                [self addChild:spike];
+                
+                SKLabelNode *noteLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+                noteLabel.text = spike.note;
+                [spike addChild:noteLabel];
+                noteLabel.position = CGPointMake(0, 10);
+                [self.enemyShotArray addObject:spike];
 
-            }];
-            
-            SKAction *wait2 = [SKAction waitForDuration:1.6];
-            [spike3 runAction:wait2 completion:^{
-                spike3.alpha = 1.0f;
+                EnemyShot *spike2 = [EnemyShot spriteNodeWithImageNamed:@"fireball.png"];
+                spike2.texture = [SKTexture textureWithImageNamed:@"fireball.png"];
+                spike2.damage = 1.0f;
+                
+                spike2.size = CGSizeMake(15, 10);
+                spike2.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
+                spike2.note = [self getRandomNote];
+                [self addChild:spike2];
+                spike2.alpha = 0.0f;
+                SKLabelNode *note2Label = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+                note2Label.text = spike2.note;
+                [spike2 addChild:note2Label];
+                note2Label.position = CGPointMake(0, 10);
+                [self.enemyShotArray addObject:spike2];
+
+                EnemyShot *spike3 = [EnemyShot spriteNodeWithImageNamed:@"fireball.png"];
+                spike3.texture = [SKTexture textureWithImageNamed:@"fireball.png"];
+                spike3.damage = 1.0f;
+                
+                spike3.size = CGSizeMake(15, 10);
+                spike3.position = CGPointMake(enemy.position.x-spike.size.width/2,enemy.position.y);
+                spike3.note = [self getRandomNote];
+                [self addChild:spike3];
+                spike3.alpha = 0.0f;
+                SKLabelNode *note3Label = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+                note3Label.text = spike3.note;
+                [spike3 addChild:note3Label];
+                note3Label.position = CGPointMake(0, 10);
+                [self.enemyShotArray addObject:spike3];
+
+
+
+                
                 SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:6.0f];
                 SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
-                    spike3.hidden = YES;
-                    [self.enemyShotArray removeObject:spike3];
-                    [spike3 removeFromParent];
+                    spike.hidden = YES;
+                    [self.enemyShotArray removeObject:spike];
+                    [spike removeFromParent];
                 }];
                 
                 SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
-                [spike3 runAction:moveLaserActionWithDone withKey:@"spike3Fired"];
-            }];
-            
+                [spike runAction:moveLaserActionWithDone withKey:@"spike1Fired"];
+                
+                SKAction *wait = [SKAction waitForDuration:0.8];
+                [spike2 runAction:wait completion:^{
+                    spike2.alpha = 1.0f;
+                    SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:6.0f];
+                    SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
+                        spike2.hidden = YES;
+                        [self.enemyShotArray removeObject:spike2];
+                        [spike2 removeFromParent];
+                    }];
+                    
+                    SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
+                    [spike2 runAction:moveLaserActionWithDone withKey:@"spike2Fired"];
 
+                }];
+                
+                SKAction *wait2 = [SKAction waitForDuration:1.6];
+                [spike3 runAction:wait2 completion:^{
+                    spike3.alpha = 1.0f;
+                    SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:6.0f];
+                    SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
+                        spike3.hidden = YES;
+                        [self.enemyShotArray removeObject:spike3];
+                        [spike3 removeFromParent];
+                    }];
+                    
+                    SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
+                    [spike3 runAction:moveLaserActionWithDone withKey:@"spike3Fired"];
+                }];
+                
+
+            }
         }
         
         
@@ -1925,6 +1930,18 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
     NSArray *noteArray = @[@"A", @"B", @"C", @"D", @"E", @"F", @"G"];
     return [noteArray objectAtIndex: arc4random() % [noteArray count]];
+}
+
+-(void)removeDefeatedEnemies{
+    
+    for(Enemy *enemy in self.enemyToDeleteArray){
+        [self.enemyArray removeObject:enemy];
+    }
+    
+    if(self.enemyToDeleteArray.count > 0){
+        [self.enemyToDeleteArray removeAllObjects];
+    }
+    
 }
 
 #pragma mark - keyboard key nodes
@@ -2524,7 +2541,6 @@ static inline float floatToFrequency(float value) {
         {
             self.roomCleared = 5;
         }
-        NSLog(@"Enemy Array:%@", self.enemyArray);
         Interactable *cycleNPC = [[Interactable alloc] init];
         [cycleNPC setTexture:[SKTexture textureWithImageNamed:@"gaia1.png"]];
         NSString *deviceName = [[UIDevice currentDevice] name];
