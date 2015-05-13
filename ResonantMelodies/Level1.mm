@@ -1621,7 +1621,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     }
     
     if(self.beatCount%16 == 0){
-        //Add
         [self enemyAttack:@{}];
         if(self.playerMP < self.playerMPMax){
             self.playerMP++;
@@ -1644,47 +1643,48 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 }
 
 -(void)enemyAttack:(NSMutableDictionary *) enemyAttack{
-    
-    for(Enemy *enemy in self.enemyArray)
-    {
-        [self showDefenseMarkers];
-        enemyAttack = enemy.attackDictionary;
-        [enemyAttack setObject:[enemyAttack objectForKey:@"maxAttackDamage"] forKey:@"currentAttackDamage"];
 
-        for(id key in enemyAttack){
-            NSString *keyString = [NSString stringWithFormat:@"%@", key];
-            if([keyString isEqualToString:@"end"]){
-                
-                [self performSelector:@selector(hideDefenseMarkers) withObject:nil afterDelay:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
-                [self performSelector:@selector(enemyAttack) withObject:nil afterDelay:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
-                
-            }else if([keyString isEqualToString:@"name"]){
-                
-            }else if (![keyString isEqualToString:@"currentAttackDamage"] && ![keyString isEqualToString:@"maxAttackDamage"]){
-                CGSize markerSize = [self childNodeWithName:@"aMarker"].frame.size;
-                NSString *firstLetter = [key substringToIndex:1];
-                NSString *markerName = [NSString stringWithFormat:@"%@Marker", firstLetter];
-                SKSpriteNode *attackNote = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"circle.png"] size:markerSize];
-                attackNote.position = CGPointMake(CGRectGetMidX([self childNodeWithName:markerName].frame), self.scene.size.height + attackNote.frame.size.height);
-                attackNote.alpha = 0.5f;
-                attackNote.zPosition = 2.0f;
-                attackNote.name = [NSString stringWithFormat:@"%@", [key uppercaseString]];
-                [self.scene addChild:attackNote];
-                SKAction *delayNote = [SKAction waitForDuration:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
-                [attackNote runAction:delayNote completion:^{
-                    SKAction *moveNote = [SKAction moveToY:([self childNodeWithName:markerName].frame.origin.y + attackNote.frame.size.height/2.0f) duration:(4.0f * (60.0f/self.BPM))];
-                    [attackNote runAction:moveNote completion:^{
-                        double delay = playerBack->msElapsedSinceLastBeat;
-        //                NSLog(@"Delay:%f", delay);
-                        SKAction *moveNoteDown = [SKAction moveToY:-attackNote.frame.size.height duration:(4.00f* (60.0f/self.BPM))];
-                        [attackNote runAction:moveNoteDown completion:^{
+    for(Enemy *enemy in self.enemyArray){
+        if(enemy.canShoot && !enemy.hidden){
+            [self showDefenseMarkers];
+            enemyAttack = enemy.attackDictionary;
+            [enemyAttack setObject:[enemyAttack objectForKey:@"maxAttackDamage"] forKey:@"currentAttackDamage"];
+
+            for(id key in enemyAttack){
+                NSString *keyString = [NSString stringWithFormat:@"%@", key];
+                if([keyString isEqualToString:@"end"]){
+                    
+                    [self performSelector:@selector(hideDefenseMarkers) withObject:nil afterDelay:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
+                    [self performSelector:@selector(enemyAttack) withObject:nil afterDelay:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
+                    
+                }else if([keyString isEqualToString:@"name"]){
+                    
+                }else if (![keyString isEqualToString:@"currentAttackDamage"] && ![keyString isEqualToString:@"maxAttackDamage"]){
+                    CGSize markerSize = [self childNodeWithName:@"aMarker"].frame.size;
+                    NSString *firstLetter = [key substringToIndex:1];
+                    NSString *markerName = [NSString stringWithFormat:@"%@Marker", firstLetter];
+                    SKSpriteNode *attackNote = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"circle.png"] size:markerSize];
+                    attackNote.position = CGPointMake(CGRectGetMidX([self childNodeWithName:markerName].frame), self.scene.size.height + attackNote.frame.size.height);
+                    attackNote.alpha = 0.5f;
+                    attackNote.zPosition = 2.0f;
+                    attackNote.name = [NSString stringWithFormat:@"%@", [key uppercaseString]];
+                    [self.scene addChild:attackNote];
+                    SKAction *delayNote = [SKAction waitForDuration:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
+                    [attackNote runAction:delayNote completion:^{
+                        SKAction *moveNote = [SKAction moveToY:([self childNodeWithName:markerName].frame.origin.y + attackNote.frame.size.height/2.0f) duration:(4.0f * (60.0f/self.BPM))];
+                        [attackNote runAction:moveNote completion:^{
+                            double delay = playerBack->msElapsedSinceLastBeat;
+            //                NSLog(@"Delay:%f", delay);
+                            SKAction *moveNoteDown = [SKAction moveToY:-attackNote.frame.size.height duration:(4.00f* (60.0f/self.BPM))];
+                            [attackNote runAction:moveNoteDown completion:^{
+                                
+                                [attackNote removeFromParent];
+                            }];
                             
-                            [attackNote removeFromParent];
                         }];
-                        
                     }];
-                }];
 
+                }
             }
         }
     }
@@ -2410,7 +2410,7 @@ static inline float floatToFrequency(float value) {
         enemy1.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highGNode"].frame), CGRectGetMaxY([self childNodeWithName:@"highGNode"].frame) + enemy1.size.height/2 + 10);
         enemy1.zPosition = 1.0f;
         enemy1.health = 100;
-        enemy1.attackDictionary = @{@"cenemy1":@1.0, @"denemy1":@1.5, @"eenemy1":@1.0, @"c2enemy1":@1.5, @"d2enemy1":@2.0, @"e2enemy1":@3.0, @"e3enemy1":@3.25, @"e4enemy1":@3.5, @"e5enemy1":@3.75, @"end":@9.5, @"name":@"Needle Shot"};
+        enemy1.attackDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"cenemy1":@1.0, @"denemy1":@1.0, @"eenemy1":@1.5, @"f2enemy1":@2.0, @"g2enemy1":@2.5, @"e2enemy1":@3.0, @"a3enemy1":@3.25, @"end":@8.75, @"name":@"Needle Shot", @"maxAttackDamage":@2.0, @"currentAttackDamage":@2.0}];
         enemy1.healthMax = 100;
         enemy1.hidden = NO;
         enemy1.type = @"scooter";
@@ -2496,7 +2496,7 @@ static inline float floatToFrequency(float value) {
         enemy1.canMove = YES;
         enemy1.sleepChance = 2;
         enemy1.type = @"angle";
-        enemy1.attackDictionary = @{@"cenemy1":@1.0, @"denemy1":@2.0, @"eenemy1":@3.0, @"f2enemy1":@2.0, @"end":@8.75, @"name":@"Needle Shot"};
+        enemy1.attackDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"eenemy1":@1.0, @"fenemy1":@2.0, @"genemy1":@3.0, @"end":@8.75, @"name":@"Needle Shot", @"maxAttackDamage":@2.0, @"currentAttackDamage":@2.0}];
         enemy1.resonantArray = @[@"highANode", @"highBNode", @"highCNode", @"highDNode"];
         [self addChild:enemy1];
         
@@ -2507,7 +2507,7 @@ static inline float floatToFrequency(float value) {
         enemy2.zPosition = 1.0f;
         enemy2.health = 150;
         enemy2.healthMax = 150;
-        enemy2.attackDictionary = @{@"aenemy2":@1.0, @"benemy2":@2.0, @"cenemy2":@3.0, @"d2enemy2":@2.0, @"end":@8.75, @"name":@"Needle Shot"};
+        enemy2.attackDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"cenemy2":@1.0, @"denemy2":@2.0, @"eenemy2":@3.0, @"end":@8.75, @"name":@"Needle Shot", @"maxAttackDamage":@2.0, @"currentAttackDamage":@2.0}];
         enemy2.hidden = NO;
         enemy2.canShoot = YES;
         enemy2.canMove = YES;
