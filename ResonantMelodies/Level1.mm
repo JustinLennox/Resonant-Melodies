@@ -1137,7 +1137,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 
 -(void)shootLaser:(float)keyLaserDamage withNote:(NSString*)laserNote{
-    if(self.shouldShoot && ![self.mode isEqualToString:@"Bag"] && ![self.mode isEqualToString:@"Resonance"]){
+    if(self.shouldShoot && ![self.mode isEqualToString:@"Bag"] && ![self.mode isEqualToString:@"Resonance"] && self.defending == NO){
         KeyLaser *keyLaser = [_keyLasers objectAtIndex:_nextKeyLaser];
         _nextKeyLaser++;
         if (_nextKeyLaser >= self.keyLasers.count) {
@@ -1177,7 +1177,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 #pragma mark- combos
 
 -(void)checkCombo{
-    if(self.shouldShoot && ![self.mode isEqualToString:@"Bag"]){
+    if(self.shouldShoot && ![self.mode isEqualToString:@"Bag"] && self.defending == NO){
         
         if([self.mode isEqualToString: @"Attack"])
         {
@@ -1400,6 +1400,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             }
 
 
+        }
+        
+        if([self childNodeWithName:[NSString stringWithFormat: @"%@AttackLabel", enemy.name]]){
+            SKLabelNode *attackLabel = (SKLabelNode *)[self childNodeWithName:[NSString stringWithFormat: @"%@AttackLabel", enemy.name]];
+            attackLabel.position = CGPointMake(enemy.position.x, enemy.position.y + 10);
         }
         
         if([[self childNodeWithName:@"flame"] intersectsNode:enemy])
@@ -1640,56 +1645,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
      [self centerOnNode:camera];*/
 }
 
--(void)enemyAttack:(NSMutableDictionary *) enemyAttack{
-
-    for(Enemy *enemy in self.enemyArray){
-        if(enemy.canShoot && !enemy.hidden){
-            [self showDefenseMarkers];
-            enemyAttack = enemy.attackDictionary;
-            [enemyAttack setObject:[enemyAttack objectForKey:@"maxAttackDamage"] forKey:@"currentAttackDamage"];
-
-            for(id key in enemyAttack){
-                NSString *keyString = [NSString stringWithFormat:@"%@", key];
-                if([keyString isEqualToString:@"end"]){
-                    
-                    [self performSelector:@selector(hideDefenseMarkers) withObject:nil afterDelay:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
-                    [self performSelector:@selector(enemyAttack) withObject:nil afterDelay:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
-                    
-                }else if([keyString isEqualToString:@"name"]){
-                    
-                }else if (![keyString isEqualToString:@"currentAttackDamage"] && ![keyString isEqualToString:@"maxAttackDamage"]){
-                    CGSize markerSize = [self childNodeWithName:@"aMarker"].frame.size;
-                    NSString *firstLetter = [key substringToIndex:1];
-                    NSString *markerName = [NSString stringWithFormat:@"%@Marker", firstLetter];
-                    SKSpriteNode *attackNote = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"circle.png"] size:markerSize];
-                    attackNote.position = CGPointMake(CGRectGetMidX([self childNodeWithName:markerName].frame), self.scene.size.height + attackNote.frame.size.height);
-                    attackNote.alpha = 0.5f;
-                    attackNote.zPosition = 2.0f;
-                    attackNote.name = [NSString stringWithFormat:@"%@", [key uppercaseString]];
-                    [self.scene addChild:attackNote];
-                    SKAction *delayNote = [SKAction waitForDuration:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
-                    [attackNote runAction:delayNote completion:^{
-                        SKAction *moveNote = [SKAction moveToY:([self childNodeWithName:markerName].frame.origin.y + attackNote.frame.size.height/2.0f) duration:(4.0f * (60.0f/self.BPM))];
-                        [attackNote runAction:moveNote completion:^{
-                            double delay = playerBack->msElapsedSinceLastBeat;
-            //                NSLog(@"Delay:%f", delay);
-                            SKAction *moveNoteDown = [SKAction moveToY:-attackNote.frame.size.height duration:(4.00f* (60.0f/self.BPM))];
-                            [attackNote runAction:moveNoteDown completion:^{
-                                
-                                [attackNote removeFromParent];
-                            }];
-                            
-                        }];
-                    }];
-
-                }
-            }
-        }
-    }
-
-}
 
 -(void)hideDefenseMarkers{
+    self.defending = NO;
     [self enumerateChildNodesWithName:@"*Marker" usingBlock:^(SKNode *node, BOOL *stop) {
         node.hidden = YES;
         node.zPosition = -10.0f;
@@ -1697,6 +1655,17 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 }
 
 -(void)showDefenseMarkers{
+    self.defending = YES;
+    SKLabelNode *defendLabel = [SKLabelNode labelNodeWithText:@"Defend!"];
+    defendLabel.position = CGPointMake([self childNodeWithName:@"dMarker"].position.x, self.scene.frame.size.height/1.5);
+    defendLabel.fontName = @"MorrisRoman-Black";
+    [defendLabel setFontSize: 40.0f];
+    [defendLabel setFontColor:[UIColor blueColor]];
+    [self.scene addChild:defendLabel];
+    SKAction *fade = [SKAction fadeAlphaTo:0.0f duration:2.0f*(60.0f/self.BPM)];
+    [defendLabel runAction:fade completion:^{
+        [defendLabel removeFromParent];
+    }];
     
     [self enumerateChildNodesWithName:@"*Marker" usingBlock:^(SKNode *node, BOOL *stop) {
         node.hidden = NO;
@@ -1752,50 +1721,111 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         case 1:
         {
             self.enemyMoveInt++;
-            moveAngle = [SKAction moveByX:-([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:0.2f];
+            moveAngle = [SKAction moveByX:-([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:(60.0f/self.BPM)/2.0f];
             break;
         }
         case 2:
         {
             self.enemyMoveInt++;
-            moveAngle = [SKAction moveByX:-([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:0.2f];
+            moveAngle = [SKAction moveByX:-([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:(60.0f/self.BPM)/2.0f];
             break;
         }
         case 3:
         {
             self.enemyMoveInt++;
-            moveAngle = [SKAction moveByX:([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:0.2f];
+            moveAngle = [SKAction moveByX:([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:(60.0f/self.BPM)/2.0f];
             break;
         }
         case 4:
         {
             self.enemyMoveInt = 1;
-            moveAngle = [SKAction moveByX:([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:0.2f];
+            moveAngle = [SKAction moveByX:([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:(60.0f/self.BPM)/2.0f];
             break;
         }
         default:
             break;
     }
     
-    SKAction *moveScooter = [SKAction moveByX:-([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:0.2f];
+    SKAction *moveScooter = [SKAction moveByX:-([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:(60.0f/self.BPM)/2.0f];
     
     
     for(Enemy *enemy in self.moveablesArray){
-
-        if([enemy.type isEqualToString:@"scooter"] && enemy.canMove){
-            [enemy runAction:moveScooter];
-        }else if([enemy.type isEqualToString:@"angle"] && enemy.canMove){
-            [enemy runAction:moveAngle];
-        }
+        
+            if([enemy.type isEqualToString:@"scooter"] && enemy.canMove){
+                [enemy runAction:moveScooter];
+            }else if([enemy.type isEqualToString:@"angle"] && enemy.canMove){
+                [enemy runAction:moveAngle];
+            }
         
     }
     
 }
 
+-(void)enemyAttack:(NSMutableDictionary *) enemyAttack{
+    
+    for(Enemy *enemy in self.enemyArray){
+        if(enemy.canShoot && !enemy.hidden){
+            [self showDefenseMarkers];
+            enemyAttack = enemy.attackDictionary;
+            [enemyAttack setObject:[enemyAttack objectForKey:@"maxAttackDamage"] forKey:@"currentAttackDamage"];
+            
+            for(id key in enemyAttack){
+                NSString *keyString = [NSString stringWithFormat:@"%@", key];
+                if([keyString isEqualToString:@"end"]){
+                    
+                    [self performSelector:@selector(hideDefenseMarkers) withObject:nil afterDelay:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
+                    [self performSelector:@selector(enemyAttack) withObject:nil afterDelay:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
+                    
+                }else if([keyString isEqualToString:@"name"]){
+                    
+                    SKLabelNode *attackNameLabel = [[SKLabelNode alloc] initWithFontNamed:@"Helvetica-Bold"];
+                    attackNameLabel.text = [enemyAttack objectForKey:@"name"];
+                    attackNameLabel.fontSize = 20.0f;
+                    attackNameLabel.zPosition = enemy.zPosition + 0.1;
+                    attackNameLabel.name = [NSString stringWithFormat:@"%@AttackLabel", enemy.name];
+                    attackNameLabel.position = CGPointMake(enemy.position.x, enemy.position.y + 10);
+                    [self.scene addChild:attackNameLabel];
+
+                }else if (![keyString isEqualToString:@"currentAttackDamage"] && ![keyString isEqualToString:@"maxAttackDamage"]){
+                    CGSize markerSize = [self childNodeWithName:@"aMarker"].frame.size;
+                    NSString *firstLetter = [key substringToIndex:1];
+                    NSString *markerName = [NSString stringWithFormat:@"%@Marker", firstLetter];
+                    SKSpriteNode *attackNote = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"circle.png"] size:markerSize];
+                    attackNote.position = CGPointMake(CGRectGetMidX([self childNodeWithName:markerName].frame), self.scene.size.height + attackNote.frame.size.height);
+                    attackNote.alpha = 0.5f;
+                    attackNote.zPosition = 2.0f;
+                    attackNote.name = [NSString stringWithFormat:@"%@", [key uppercaseString]];
+                    [self.scene addChild:attackNote];
+                    SKAction *delayNote = [SKAction waitForDuration:([[enemyAttack objectForKey:key] floatValue] * (60.0f/self.BPM))];
+                    [attackNote runAction:delayNote completion:^{
+                        SKAction *moveNote = [SKAction moveToY:([self childNodeWithName:markerName].frame.origin.y + attackNote.frame.size.height/2.0f) duration:(4.0f * (60.0f/self.BPM))];
+                        [attackNote runAction:moveNote completion:^{
+                            double delay = playerBack->msElapsedSinceLastBeat;
+                            //                NSLog(@"Delay:%f", delay);
+                            SKAction *moveNoteDown = [SKAction moveToY:-attackNote.frame.size.height duration:(4.00f* (60.0f/self.BPM))];
+                            [attackNote runAction:moveNoteDown completion:^{
+                                
+                                [attackNote removeFromParent];
+                            }];
+                            
+                        }];
+                    }];
+                    
+                }
+            }
+        }
+    }
+    
+}
+
+
 -(void)enemyAttack{
     
     for(Enemy *enemy in self.enemyArray)
     {
+        SKLabelNode *enemyAttackLabel = (SKLabelNode *)[self childNodeWithName:[NSString stringWithFormat:@"%@AttackLabel", enemy.name]];
+        [enemyAttackLabel removeFromParent];
+        
         if([[enemy.attackDictionary objectForKey:@"currentAttackDamage"] floatValue] < 0.01f){
             SKLabelNode *blockedAttack = [SKLabelNode labelNodeWithText:@"Blocked!"];
             blockedAttack.position = enemy.position;
@@ -1809,6 +1839,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             }];
             
         }else{
+            
             if([enemy.type isEqualToString:@"angle"] && enemy.canShoot && !enemy.hidden)
             {
                 NSLog(@"Enemy attack dictionary:%@", enemy.attackDictionary);
@@ -2283,6 +2314,7 @@ static inline float floatToFrequency(float value) {
 #pragma mark- Room Loading
 
 -(void)loadNextRoom:(int)roomNumber{
+    [self hideDefenseMarkers];
     [self removeChildrenInArray:self.enemyArray];
     [self removeChildrenInArray:self.interactableArray];
     self.enemyArray = [NSMutableArray arrayWithObjects: nil];
@@ -2334,6 +2366,7 @@ static inline float floatToFrequency(float value) {
 }
 
 -(void)loadPreviousRoom:(int)roomNumber{
+    [self hideDefenseMarkers];
     [self removeChildrenInArray:self.enemyArray];
     [self removeChildrenInArray:self.interactableArray];
     self.enemyArray = [NSMutableArray arrayWithObjects: nil];
@@ -2385,8 +2418,6 @@ static inline float floatToFrequency(float value) {
 }
 
 -(void)loadRoom:(int)roomNumber{
-    
-    [self hideDefenseMarkers];
     
     if(self.currentRoomNumber == 1){
         
