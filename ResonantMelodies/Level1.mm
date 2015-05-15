@@ -518,8 +518,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     //Load the animation frames from the TextureAtlas
     int numImages = adagioAnimatedAtlas.textureNames.count;
     NSLog(@"num images:%d", numImages);
-    for (int i=1; i <= numImages/2; i++) {
-        NSString *textureName = [NSString stringWithFormat:@"adagio%d", i];
+    for (int i=1; i <= numImages; i++) {
+        NSString *textureName = [NSString stringWithFormat:@"dalf%d", i];
         SKTexture *temp = [adagioAnimatedAtlas textureNamed:textureName];
         [walkFrames addObject:temp];
         NSLog(@"Yo");
