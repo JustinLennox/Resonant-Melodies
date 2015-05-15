@@ -82,6 +82,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 @implementation Level1{
     SKNode *node;
     AVAudioPlayer *backgroundAudioPlayer;
+    NSArray *_adagioWalkingFrames;
     int _nextKeyLaser;
     // Sound Effects
     ALDevice* device;
@@ -122,6 +123,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     float *stereoBuffer, crossValue, volBack, volC, volD, volE, volF, volG;
     unsigned int lastSamplerate;
     pthread_mutex_t mutex;
+    
+    
     
 }
 
@@ -504,6 +507,40 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.shouldShoot = YES;
     self.filterInt = 100;
     [self playCutscene:@"intro"];
+    
+#pragma mark- animations
+    //Setup the array to hold the walking frames
+    NSMutableArray *walkFrames = [NSMutableArray array];
+    
+    //Load the TextureAtlas for the bear
+    SKTextureAtlas *adagioAnimatedAtlas = [SKTextureAtlas atlasNamed:@"musicModeAdagio"];
+    
+    //Load the animation frames from the TextureAtlas
+    int numImages = adagioAnimatedAtlas.textureNames.count;
+    NSLog(@"num images:%d", numImages);
+    for (int i=1; i <= numImages/2; i++) {
+        NSString *textureName = [NSString stringWithFormat:@"adagio%d", i];
+        SKTexture *temp = [adagioAnimatedAtlas textureNamed:textureName];
+        [walkFrames addObject:temp];
+        NSLog(@"Yo");
+    }
+    _adagioWalkingFrames = walkFrames;
+    NSLog(@"Walking frames: %@", walkFrames);
+    [self.player setTexture:_adagioWalkingFrames[0]];
+    
+
+
+}
+
+-(void)walkAdagio{
+        //This is our general runAction method to make our bear walk.
+        //By using a withKey if this gets called while already running it will remove the first action before
+        //starting this again.
+        
+        [self.player runAction:[SKAction animateWithTextures:_adagioWalkingFrames
+                                                                        timePerFrame:0.1f
+                                                                              resize:NO
+                                                                             restore:YES] withKey:@"walkingInPlaceBear"];
 
 }
 
@@ -1724,6 +1761,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         SKAction *movePlayer = [SKAction moveTo:CGPointMake(CGRectGetMidX(keySprite.frame), CGRectGetMidY(self.frame)-5) duration:moveDuration];
         
         [self.player runAction:movePlayer withKey:@"movePlayer"];
+        [self walkAdagio];
     }
     
 }
