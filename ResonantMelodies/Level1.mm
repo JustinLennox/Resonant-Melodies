@@ -1850,9 +1850,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 spike.name = @"angle";
                 [self addChild:spike];
 
-                SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:7.0f];
+                SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:2.0f];
                 SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
                     spike.hidden = YES;
+                    [spike removeFromParent];
                 }];
                 
                 SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
@@ -1907,10 +1908,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 note3Label.position = CGPointMake(0, 10);
                 [self.enemyShotArray addObject:spike3];
 
-
-
-                
-                SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:6.0f];
+                SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:2.0f];
                 SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
                     spike.hidden = YES;
                     [self.enemyShotArray removeObject:spike];
@@ -1923,7 +1921,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 SKAction *wait = [SKAction waitForDuration:0.8];
                 [spike2 runAction:wait completion:^{
                     spike2.alpha = 1.0f;
-                    SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:6.0f];
+                    SKAction *laserMoveAction = [SKAction moveByX:-self.frame.size.width y:0 duration:2.0f];
                     SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
                         spike2.hidden = YES;
                         [self.enemyShotArray removeObject:spike2];
