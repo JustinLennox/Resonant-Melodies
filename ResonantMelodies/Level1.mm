@@ -539,18 +539,20 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.currentHero = @"Amos";
             //playerC->exitLoop();
             //playerC->open([[[NSBundle mainBundle] pathForResource:@"Bass1.1" ofType:@"aif"] fileSystemRepresentation]);
-            pthread_mutex_lock(&mutex);
-            playerC->loop(0, 8000, YES, 255, YES);
-            playerD->exitLoop();
-            playerE->exitLoop();
-            playerF->exitLoop();
-            playerG->exitLoop();
-            playerD->pause();
-            playerE->pause();
-            playerF->pause();
-            playerG->pause();
-            pthread_mutex_unlock(&mutex);
+//            pthread_mutex_lock(&mutex);
+//            playerC->loop(0, 8000, YES, 255, YES);
+//            playerD->exitLoop();
+//            playerE->exitLoop();
+//            playerF->exitLoop();
+//            playerG->exitLoop();
+//            playerD->pause();
+//            playerE->pause();
+//            playerF->pause();
+//            playerG->pause();
+//            pthread_mutex_unlock(&mutex);
             
+            [self silenceLowKeys];
+            volC = 0.5f;
             [self.keyPressArray insertObject:@"lowCNode" atIndex:0];
             [self.keyPressArray removeLastObject];
             [self changeModes];
@@ -559,17 +561,19 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             //[lowChannel stop];
             //[lowChannel play:lBKeyBuffer loop:YES];
-            pthread_mutex_lock(&mutex);
-            playerC->exitLoop();
-            playerD->loop(0, 8000, YES, 255, YES);
-            playerE->exitLoop();
-            playerF->exitLoop();
-            playerG->exitLoop();
-            playerC->pause();
-            playerE->pause();
-            playerF->pause();
-            playerG->pause();
-            pthread_mutex_unlock(&mutex);
+//            pthread_mutex_lock(&mutex);
+//            playerC->exitLoop();
+//            playerD->loop(0, 8000, YES, 255, YES);
+//            playerE->exitLoop();
+//            playerF->exitLoop();
+//            playerG->exitLoop();
+//            playerC->pause();
+//            playerE->pause();
+//            playerF->pause();
+//            playerG->pause();
+//            pthread_mutex_unlock(&mutex);
+            [self silenceLowKeys];
+            volD = 0.5f;
             self.mode = @"Defense";
             self.currentHero = @"Dvon";
 
@@ -582,17 +586,19 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             //[lowChannel stop];
             //[lowChannel play:lCKeyBuffer loop:YES];
             //STOP ALL OTHER LOW NODE SOUNDS
-            pthread_mutex_lock(&mutex);
-            playerC->exitLoop();
-            playerD->exitLoop();
-            playerE->loop(0, 8000, YES, 255, YES);
-            playerF->exitLoop();
-            playerG->exitLoop();
-            playerD->pause();
-            playerC->pause();
-            playerF->pause();
-            playerG->pause();
-            pthread_mutex_unlock(&mutex);
+//            pthread_mutex_lock(&mutex);
+//            playerC->exitLoop();
+//            playerD->exitLoop();
+//            playerE->loop(0, 8000, YES, 255, YES);
+//            playerF->exitLoop();
+//            playerG->exitLoop();
+//            playerD->pause();
+//            playerC->pause();
+//            playerF->pause();
+//            playerG->pause();
+//            pthread_mutex_unlock(&mutex);
+            [self silenceLowKeys];
+            volE = 0.5f;
             [self getPlayerCurrentKey];
 
             if([[self.keyPressArray objectAtIndex:0] isEqualToString:@"lowENode"]||[self.mode isEqualToString:@"Bag"]){
@@ -608,17 +614,19 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             //[lowChannel stop];
             //[lowChannel play:lDKeyBuffer loop:YES];
-            pthread_mutex_lock(&mutex);
-            playerC->exitLoop();
-            playerD->exitLoop();
-            playerE->exitLoop();
-            playerF->loop(0, 8000, YES, 255, YES);
-            playerG->exitLoop();
-            playerD->pause();
-            playerE->pause();
-            playerC->pause();
-            playerG->pause();
-            pthread_mutex_unlock(&mutex);
+//            pthread_mutex_lock(&mutex);
+//            playerC->exitLoop();
+//            playerD->exitLoop();
+//            playerE->exitLoop();
+//            playerF->loop(0, 8000, YES, 255, YES);
+//            playerG->exitLoop();
+//            playerD->pause();
+//            playerE->pause();
+//            playerC->pause();
+//            playerG->pause();
+//            pthread_mutex_unlock(&mutex);
+            [self silenceLowKeys];
+            volF = 0.5f;
             self.mode = @"Magic";
             self.currentHero = @"Gigi";
             
@@ -629,17 +637,19 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         }else if([n.name isEqualToString:@"lowGNode"])
         {
             //[lowChannel stop];
-            pthread_mutex_lock(&mutex);
-            playerC->exitLoop();
-            playerD->exitLoop();
-            playerE->exitLoop();
-            playerF->exitLoop();
-            playerG->loop(0, 8000, YES, 255, YES);
-            playerD->pause();
-            playerE->pause();
-            playerF->pause();
-            playerC->pause();
-            pthread_mutex_unlock(&mutex);
+//            pthread_mutex_lock(&mutex);
+//            playerC->exitLoop();
+//            playerD->exitLoop();
+//            playerE->exitLoop();
+//            playerF->exitLoop();
+//            playerG->loop(0, 8000, YES, 255, YES);
+//            playerD->pause();
+//            playerE->pause();
+//            playerF->pause();
+//            playerC->pause();
+//            pthread_mutex_unlock(&mutex);
+            [self silenceLowKeys];
+            volG = 0.5f;
             //[lowChannel play:lEKeyBuffer loop:YES];
             self.mode = @"Resonance";
             self.currentHero = @"All";
@@ -754,6 +764,14 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         [self animateCharacter];
     }
 
+}
+
+-(void)silenceLowKeys{
+    volC = 0.0f;
+    volD = 0.0f;
+    volE = 0.0f;
+    volF = 0.0f;
+    volG = 0.0f;
 }
 
 -(void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event{
@@ -1563,7 +1581,13 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         //[backgroundChannel play:backgroundBuffer loop:YES];
 
         pthread_mutex_lock(&mutex);
-            playerBack->play(YES);
+        playerBack->play(YES);
+        playerC->play(YES);
+        playerD->play(YES);
+        playerE->play(YES);
+        playerF->play(YES);
+        playerG->play(YES);
+        [self silenceLowKeys];
         pthread_mutex_unlock(&mutex);
     }
     
@@ -2273,9 +2297,9 @@ void playerEventCallbackG(void *clientData, SuperpoweredAdvancedAudioPlayerEvent
     //if (playerD->process(stereoBuffer, !silence, numberOfSamples, volD, masterBpm, msElapsedSinceLastBeatA)) silence2 = false;
     
     playerD->process(stereoBuffer, !silence, numberOfSamples, volD, masterBpm, msElapsedSinceLastBeatA);
-    playerE->process(stereoBuffer, !silence, numberOfSamples, volD, masterBpm, msElapsedSinceLastBeatA);
-    playerF->process(stereoBuffer, !silence, numberOfSamples, volD, masterBpm, msElapsedSinceLastBeatA);
-    playerG->process(stereoBuffer, !silence, numberOfSamples, volD, masterBpm, msElapsedSinceLastBeatA);
+    playerE->process(stereoBuffer, !silence, numberOfSamples, volE, masterBpm, msElapsedSinceLastBeatA);
+    playerF->process(stereoBuffer, !silence, numberOfSamples, volF, masterBpm, msElapsedSinceLastBeatA);
+    playerG->process(stereoBuffer, !silence, numberOfSamples, volG, masterBpm, msElapsedSinceLastBeatA);
     
     roll->bpm = flanger->bpm = masterBpm; // Syncing fx is one line.
     
