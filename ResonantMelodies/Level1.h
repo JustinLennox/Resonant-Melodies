@@ -22,7 +22,6 @@
 
 //Player Properties
 @property (strong, nonatomic) NSString *mode;
-@property (strong, nonatomic) NSString *currentHero;
 @property (strong, nonatomic) SKSpriteNode *player;
 @property (strong, nonatomic) SKNode *smallNode;
 @property (nonatomic) BOOL shouldPlayerMove;

@@ -82,9 +82,13 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 @implementation Level1{
     SKNode *node;
     AVAudioPlayer *backgroundAudioPlayer;
+    int _nextKeyLaser;
+    
+    //Animation Arrays
     NSArray *_musicModeAdagioWalkingFrames;
     NSArray *_musicModeAdagioIdleFrames;
-    int _nextKeyLaser;
+    NSArray *_fireModeAdagioIdleFrames;
+    
     // Sound Effects
     ALDevice* device;
     ALContext* context;
@@ -245,7 +249,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.player.position = CGPointMake(-self.player.size.width, CGRectGetMaxY([self childNodeWithName:@"lowENode"].frame) + 30);
     self.player.name = @"player";
     self.player.zPosition = [self childNodeWithName:@"lowENode"].zPosition + 0.1;
-    self.currentHero = @"Amos";
     [self addChild:self.player];
     
     self.bowTie = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"BowTie1.png"] size:CGSizeMake(40, 40)];
@@ -513,6 +516,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     //Setup the array to hold the walking frames
     NSMutableArray *walkFrames = [NSMutableArray array];
     NSMutableArray *idleFrames = [NSMutableArray arrayWithObjects:[SKTexture textureWithImageNamed:@"musicModeAdagioIdle1"], [SKTexture textureWithImageNamed:@"musicModeAdagioIdle2"], [SKTexture textureWithImageNamed:@"musicModeAdagioIdle1"], nil];
+    NSMutableArray *fireIdleFrames = [NSMutableArray arrayWithObjects:[SKTexture textureWithImageNamed:@"fireModeAdagioIdle1"], [SKTexture textureWithImageNamed:@"fireModeAdagioIdle2"], [SKTexture textureWithImageNamed:@"fireModeAdagioIdle1"], nil];
     
     //Load the TextureAtlas for the bear
     SKTextureAtlas *musicModeAtlas = [SKTextureAtlas atlasNamed:@"musicModeAdagio"];
@@ -529,24 +533,50 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     }
     _musicModeAdagioWalkingFrames = walkFrames;
     _musicModeAdagioIdleFrames =idleFrames;
+    _fireModeAdagioIdleFrames = fireIdleFrames;
+    
     NSLog(@"Walking frames: %@", walkFrames);
     [self.player setTexture:_musicModeAdagioIdleFrames[0]];
+    self.mode = @"Music";
+
     [self idleAdagio];
     
 
+}
 
+-(void)changeModeAnimation{
+    
+    [self idleAdagio];
+    
 }
 
 -(void)idleAdagio{
     
-    SKAction *idleAnimation =  [SKAction animateWithTextures:_musicModeAdagioIdleFrames
-                                                timePerFrame:0.1f
-                                                      resize:NO
-                                                     restore:YES];
-    SKAction *waitThree = [SKAction waitForDuration:3.0f];
+    [self.player removeActionForKey:@"adagioIdle"];
     
-    SKAction *idleSequence = [SKAction repeatActionForever:[SKAction sequence:@[idleAnimation, waitThree]]];
-    [self.player runAction:idleSequence withKey:@"musicModeAdagioIdle"];
+    if([self.mode isEqualToString:@"Music"]){
+    
+        SKAction *idleAnimation =  [SKAction animateWithTextures:_musicModeAdagioIdleFrames
+                                                    timePerFrame:0.1f
+                                                          resize:NO
+                                                         restore:YES];
+        SKAction *waitThree = [SKAction waitForDuration:3.0f];
+        
+        SKAction *idleSequence = [SKAction repeatActionForever:[SKAction sequence:@[idleAnimation, waitThree]]];
+        [self.player runAction:idleSequence withKey:@"adagioIdle"];
+        
+    }else if([self.mode isEqualToString:@"Fire"]){
+        
+        SKAction *idleAnimation =  [SKAction animateWithTextures:_fireModeAdagioIdleFrames
+                                                    timePerFrame:0.1f
+                                                          resize:NO
+                                                         restore:YES];
+        SKAction *waitThree = [SKAction waitForDuration:3.0f];
+        
+        SKAction *idleSequence = [SKAction repeatActionForever:[SKAction sequence:@[idleAnimation, waitThree]]];
+        [self.player runAction:idleSequence withKey:@"adagioIdle"];
+        
+    }
     
 }
 
@@ -595,8 +625,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             //[lowChannel stop];
             //[lowChannel play:lAKeyBuffer loop:YES];
-            self.mode = @"Attack";
-            self.currentHero = @"Amos";
+            self.mode = @"Fire";
             //playerC->exitLoop();
             //playerC->open([[[NSBundle mainBundle] pathForResource:@"Bass1.1" ofType:@"aif"] fileSystemRepresentation]);
 //            pthread_mutex_lock(&mutex);
@@ -634,8 +663,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 //            pthread_mutex_unlock(&mutex);
             [self silenceLowKeys];
             volD = 0.5f;
-            self.mode = @"Defense";
-            self.currentHero = @"Dvon";
+            self.mode = @"Wind";
 
             [self.keyPressArray insertObject:@"lowDNode" atIndex:0];
             [self.keyPressArray removeLastObject];
@@ -665,7 +693,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 [self movePlayer:@"lowENode"];
             }
             
-            self.mode = @"Bag";
+            self.mode = @"Water";
             [self.keyPressArray insertObject:@"lowENode" atIndex:0];
             [self changeModes];
             [self.keyPressArray removeLastObject];
@@ -687,8 +715,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 //            pthread_mutex_unlock(&mutex);
             [self silenceLowKeys];
             volF = 0.5f;
-            self.mode = @"Magic";
-            self.currentHero = @"Gigi";
+            self.mode = @"Earth";
             
             [self.keyPressArray insertObject:@"lowFNode" atIndex:0];
             [self.keyPressArray removeLastObject];
@@ -711,8 +738,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             [self silenceLowKeys];
             volG = 0.5f;
             //[lowChannel play:lEKeyBuffer loop:YES];
-            self.mode = @"Resonance";
-            self.currentHero = @"All";
+            self.mode = @"Music";
             
             [self.keyPressArray insertObject:@"lowGNode" atIndex:0];
             [self.keyPressArray removeLastObject];
@@ -1122,6 +1148,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 }
 
 -(void)changeModes{
+    [self changeModeAnimation];
     
     SKSpriteNode *rightArrow = (SKSpriteNode *)[self childNodeWithName:@"rightArrow"];
     SKSpriteNode *leftArrow = (SKSpriteNode *)[self childNodeWithName:@"leftArrow"];
@@ -1131,21 +1158,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     leftArrow.hidden = YES;
 
     
-    if([self.mode isEqualToString:@"Magic"]){
-        self.player.texture = [SKTexture textureWithImageNamed:@"gaia1.png"];
-        SKLabelNode *gigiLabel;
-        gigiLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-        gigiLabel.name = @"gigiLabel";
-        gigiLabel.text = @"Magic!";
-        gigiLabel.fontSize = 80;
-        gigiLabel.position = CGPointMake(CGRectGetMidX(self.frame),CGRectGetMidY(self.frame));
-        gigiLabel.fontColor = [SKColor greenColor];
-        [self addChild:gigiLabel];
-        
-        SKAction *fadeAction = [SKAction fadeAlphaTo:0.0f duration:0.5];
-        SKAction *moveUp = [SKAction moveToY:gigiLabel.position.y+10 duration:0.5];
-        SKAction *fadeUp = [SKAction group:@[moveUp, fadeAction]];
-        [gigiLabel runAction:fadeUp];
+    if([self.mode isEqualToString:@"Fire"]){
+        self.player.texture = [SKTexture textureWithImageNamed:@"fireModeAdagioIdle1.png"];
         
     }else if([self.mode isEqualToString:@"Attack"]){
         self.player.texture = [SKTexture textureWithImageNamed:@"dalf1.png"];
@@ -1649,6 +1663,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         playerG->play(YES);
         [self silenceLowKeys];
         pthread_mutex_unlock(&mutex);
+        volG = 0.5;
     }
     
     if(self.filterInt < 8){
