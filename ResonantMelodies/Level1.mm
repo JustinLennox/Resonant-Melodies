@@ -88,6 +88,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     NSArray *_musicModeAdagioWalkingFrames;
     NSArray *_musicModeAdagioIdleFrames;
     NSArray *_fireModeAdagioIdleFrames;
+    NSArray *_changeModeFireFrames;
     
     // Sound Effects
     ALDevice* device;
@@ -526,6 +527,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     NSMutableArray *idleFrames = [NSMutableArray arrayWithObjects:[SKTexture textureWithImageNamed:@"musicModeAdagioIdle1"], [SKTexture textureWithImageNamed:@"musicModeAdagioIdle2"], [SKTexture textureWithImageNamed:@"musicModeAdagioIdle1"], nil];
     NSMutableArray *fireIdleFrames = [NSMutableArray arrayWithObjects:[SKTexture textureWithImageNamed:@"fireModeAdagioIdle1"], [SKTexture textureWithImageNamed:@"fireModeAdagioIdle2"], [SKTexture textureWithImageNamed:@"fireModeAdagioIdle1"], nil];
     
+    
     //Load the TextureAtlas for the bear
     SKTextureAtlas *musicModeAtlas = [SKTextureAtlas atlasNamed:@"musicModeAdagio"];
     
@@ -542,22 +544,80 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     _musicModeAdagioWalkingFrames = walkFrames;
     _musicModeAdagioIdleFrames =idleFrames;
     _fireModeAdagioIdleFrames = fireIdleFrames;
+    _changeModeFireFrames = @[[SKTexture textureWithImageNamed:@"smoke_puff_0001.png"],
+                              [SKTexture textureWithImageNamed:@"smoke_puff_0002.png"],
+                              [SKTexture textureWithImageNamed:@"smoke_puff_0003.png"],
+                              [SKTexture textureWithImageNamed:@"smoke_puff_0004.png"],
+                              [SKTexture textureWithImageNamed:@"smoke_puff_0005.png"],
+                              [SKTexture textureWithImageNamed:@"smoke_puff_0006.png"],
+                              [SKTexture textureWithImageNamed:@"smoke_puff_0007.png"],
+                              [SKTexture textureWithImageNamed:@"smoke_puff_0008.png"],
+                              [SKTexture textureWithImageNamed:@"smoke_puff_0009.png"],
+                              [SKTexture textureWithImageNamed:@"smoke_puff_0010.png"],
+                              ];
     
     self.availableComboBlockArray = [[NSMutableArray alloc] init];
     
     NSLog(@"Walking frames: %@", walkFrames);
     [self.player setTexture:_musicModeAdagioIdleFrames[0]];
     self.mode = @"Music";
-
-    [self idleAdagio];
     
+    [self idleAdagio];
 
 }
 
 -(void)changeModeAnimation{
+    SKSpriteNode *tempPlayer = [SKSpriteNode spriteNodeWithColor:[UIColor clearColor] size:self.player.size];
+    tempPlayer.position = CGPointMake(self.player.position.x - 2, self.player.position.y + 4);
+    tempPlayer.zPosition = self.player.zPosition + 0.1;
+    [self addChild:tempPlayer];
+
+    if([self.mode isEqualToString:@"Fire"]){
+        SKAction *fireAnimation =  [SKAction animateWithTextures:_changeModeFireFrames
+                                                    timePerFrame:0.05f
+                                                          resize:NO
+                                                         restore:YES];
+        SKAction *finishChangeModes = [SKAction performSelector:@selector(finishChangeModes) onTarget:self];
+        SKAction *animationPlusFinish = [SKAction group:@[fireAnimation, finishChangeModes]];
+        
+        
+        [tempPlayer runAction:animationPlusFinish withKey:@"changeModesAnimation"];
+
+    }
+    if([self.mode isEqualToString:@"Fire"]){
+        
+    }else if([self.mode isEqualToString:@"Wind"]){
+        self.player.texture = [SKTexture textureWithImageNamed:@"windModeAdagioIdle1.png"];
+        [self idleAdagio];
+
+        
+        
+    }else if([self.mode isEqualToString:@"Water"]){
+        self.player.texture = [SKTexture textureWithImageNamed:@"waterModeAdagioIdle1.png"];
+        [self idleAdagio];
+
+        
+    }else if([self.mode isEqualToString:@"Earth"]){
+        self.player.texture = [SKTexture textureWithImageNamed:@"earthModeAdagioIdle1.png"];
+        [self idleAdagio];
+
+        
+        
+    }else if([self.mode isEqualToString:@"Music"]){
+        self.player.texture = [SKTexture textureWithImageNamed:@"musicModeAdagioIdle1.png"];
+        [self idleAdagio];
+
+    }
     
+}
+
+-(void)finishChangeModes{
+    if([self.mode isEqualToString:@"Fire"]){
+        NSLog(@"Finish change modes");
+        self.player.texture = [SKTexture textureWithImageNamed:@"fireModeAdagioIdle1.png"];
+    }
     [self idleAdagio];
-    
+
 }
 
 -(void)idleAdagio{
@@ -635,7 +695,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             //[lowChannel stop];
             //[lowChannel play:lAKeyBuffer loop:YES];
-            self.mode = @"Fire";
             //playerC->exitLoop();
             //playerC->open([[[NSBundle mainBundle] pathForResource:@"Bass1.1" ofType:@"aif"] fileSystemRepresentation]);
 //            pthread_mutex_lock(&mutex);
@@ -653,12 +712,17 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             [self silenceLowKeys];
             volC = 0.5f;
             self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
-
-            [self changeModes];
+            if(![self.mode isEqualToString:@"Fire"]){
+                self.mode = @"Fire";
+                [self changeModes];
+            }
             self.currentKeyDown = @"lowCNode";
         }else if([n.name isEqualToString:@"lowDNode"])
         {
-            self.mode = @"Wind";
+            if(![self.mode isEqualToString:@"Wind"]){
+                self.mode = @"Wind";
+                [self changeModes];
+            }
 
             //[lowChannel stop];
             //[lowChannel play:lBKeyBuffer loop:YES];
@@ -678,11 +742,13 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
             self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
 
-            [self changeModes];
             self.currentKeyDown = @"lowDNode";
         }else if([n.name isEqualToString:@"lowENode"])
         {
-            self.mode = @"Water";
+            if(![self.mode isEqualToString:@"Water"]){
+                self.mode = @"Water";
+                [self changeModes];
+            }
 
             //[lowChannel stop];
             //[lowChannel play:lCKeyBuffer loop:YES];
@@ -704,11 +770,13 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
             self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
 
-            [self changeModes];
             self.currentKeyDown = @"lowENode";
         }else if([n.name isEqualToString:@"lowFNode"])
         {
-            self.mode = @"Earth";
+            if(![self.mode isEqualToString:@"Earth"]){
+                self.mode = @"Earth";
+                [self changeModes];
+            }
             //[lowChannel stop];
             //[lowChannel play:lDKeyBuffer loop:YES];
 //            pthread_mutex_lock(&mutex);
@@ -727,10 +795,13 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             
             self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
 
-            [self changeModes];
             self.currentKeyDown = @"lowFNode";
         }else if([n.name containsString:@"lowGNode"])
         {
+            if(![self.mode isEqualToString:@"Music"]){
+                self.mode = @"Music";
+                [self changeModes];
+            }
             //[lowChannel stop];
 //            pthread_mutex_lock(&mutex);
 //            playerC->exitLoop();
@@ -746,11 +817,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             [self silenceLowKeys];
             volG = 0.5f;
             //[lowChannel play:lEKeyBuffer loop:YES];
-            self.mode = @"Music";
+            
             
             self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
 
-            [self changeModes];
             self.currentKeyDown = @"lowGNode";
         }else if([n.name containsString:@"highANode"])
         {
@@ -1271,23 +1341,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
     [self changeModeAnimation];
     
-    if([self.mode isEqualToString:@"Fire"]){
-        self.player.texture = [SKTexture textureWithImageNamed:@"fireModeAdagioIdle1.png"];
-        
-    }else if([self.mode isEqualToString:@"Wind"]){
-        self.player.texture = [SKTexture textureWithImageNamed:@"windModeAdagioIdle1.png"];
-        
-        
-    }else if([self.mode isEqualToString:@"Water"]){
-        self.player.texture = [SKTexture textureWithImageNamed:@"waterModeAdagioIdle1.png"];
-        
-    }else if([self.mode isEqualToString:@"Earth"]){
-        self.player.texture = [SKTexture textureWithImageNamed:@"earthModeAdagioIdle1.png"];
-        
-        
-    }else if([self.mode isEqualToString:@"Music"]){
-        self.player.texture = [SKTexture textureWithImageNamed:@"musicModeAdagioIdle1.png"];
-    }
 }
 
 

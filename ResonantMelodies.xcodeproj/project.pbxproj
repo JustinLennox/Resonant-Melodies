@@ -115,6 +115,10 @@
 		D0AC52AC1A8A0D7700CFED05 /* 1layer-8.png in Resources */ = {isa = PBXBuildFile; fileRef = D0AC52A51A8A0D7700CFED05 /* 1layer-8.png */; };
 		D0B92A381A81FF620001CCBE /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0B92A371A81FF620001CCBE /* SpriteKit.framework */; };
 		D0BFDF241B06B2AF002F95FB /* musicModeAdagio.atlas in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF231B06B2AF002F95FB /* musicModeAdagio.atlas */; };
+		D0BFDF281B07BCD8002F95FB /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF261B07BCD8002F95FB /* spark.png */; };
+		D0BFDF2A1B07BD3E002F95FB /* SmokeParticle.png in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF291B07BD3E002F95FB /* SmokeParticle.png */; };
+		D0BFDF2C1B07BD64002F95FB /* Confetti-2.png in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF2B1B07BD64002F95FB /* Confetti-2.png */; };
+		D0BFDF361B07BFD5002F95FB /* changeModesAtlas.atlas in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF351B07BFD5002F95FB /* changeModesAtlas.atlas */; };
 		D0C08F501A7770E600FD429D /* f.caf in Resources */ = {isa = PBXBuildFile; fileRef = D0C08F4F1A7770E600FD429D /* f.caf */; };
 		D0C08F521A77731600FD429D /* g.caf in Resources */ = {isa = PBXBuildFile; fileRef = D0C08F511A77731600FD429D /* g.caf */; };
 		D0C08F581A7775A600FD429D /* a.caf in Resources */ = {isa = PBXBuildFile; fileRef = D0C08F531A7775A600FD429D /* a.caf */; };
@@ -315,6 +319,10 @@
 		D0AC52A51A8A0D7700CFED05 /* 1layer-8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "1layer-8.png"; sourceTree = "<group>"; };
 		D0B92A371A81FF620001CCBE /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		D0BFDF231B06B2AF002F95FB /* musicModeAdagio.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = musicModeAdagio.atlas; sourceTree = "<group>"; };
+		D0BFDF261B07BCD8002F95FB /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spark.png; path = ../spark.png; sourceTree = "<group>"; };
+		D0BFDF291B07BD3E002F95FB /* SmokeParticle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SmokeParticle.png; sourceTree = "<group>"; };
+		D0BFDF2B1B07BD64002F95FB /* Confetti-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Confetti-2.png"; sourceTree = "<group>"; };
+		D0BFDF351B07BFD5002F95FB /* changeModesAtlas.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = changeModesAtlas.atlas; path = musicModeAdagio.atlas/changeModesAtlas.atlas; sourceTree = "<group>"; };
 		D0C08F4F1A7770E600FD429D /* f.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = f.caf; sourceTree = "<group>"; };
 		D0C08F511A77731600FD429D /* g.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = g.caf; sourceTree = "<group>"; };
 		D0C08F531A7775A600FD429D /* a.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = a.caf; sourceTree = "<group>"; };
@@ -579,6 +587,9 @@
 		D0B92A281A81F4950001CCBE /* Other */ = {
 			isa = PBXGroup;
 			children = (
+				D0BFDF2B1B07BD64002F95FB /* Confetti-2.png */,
+				D0BFDF261B07BCD8002F95FB /* spark.png */,
+				D0BFDF291B07BD3E002F95FB /* SmokeParticle.png */,
 				D01AF6D61B016EE200CF81D3 /* emptyCircle.png */,
 				D01AF6D21B0145B900CF81D3 /* circle.png */,
 				D01A0BBB1ABC0EB7004BEE8F /* bigTree.png */,
@@ -807,6 +818,7 @@
 		D0FA5CB61A75BDED000A5660 /* Heroes */ = {
 			isa = PBXGroup;
 			children = (
+				D0BFDF351B07BFD5002F95FB /* changeModesAtlas.atlas */,
 				D0BFDF231B06B2AF002F95FB /* musicModeAdagio.atlas */,
 				D0FA5CC31A76255A000A5660 /* gaia1.png */,
 				D0FA5CC51A7625CC000A5660 /* aragon1.png */,
@@ -1042,6 +1054,7 @@
 				D04C506C1A907AA500C931C3 /* Botie12.png in Resources */,
 				D01A0B551ABB2E98004BEE8F /* Top1C.aif in Resources */,
 				D07234D11A99E42500C19305 /* arrowRight.png in Resources */,
+				D0BFDF2A1B07BD3E002F95FB /* SmokeParticle.png in Resources */,
 				D04C50241A8FEF7A00C931C3 /* OstinatoParticle.sks in Resources */,
 				D0FCE35E1A9BB0660027398B /* defenseSymbol.png in Resources */,
 				D0C08F621A77791E00FD429D /* lA.caf in Resources */,
@@ -1101,6 +1114,7 @@
 				D01A0BB01ABB62E1004BEE8F /* Level1G.aif in Resources */,
 				D07234C81A99BC5100C19305 /* status_bar_weapon_fill.png in Resources */,
 				D0C08F591A7775A600FD429D /* b.caf in Resources */,
+				D0BFDF2C1B07BD64002F95FB /* Confetti-2.png in Resources */,
 				D01A0B631ABB2ED9004BEE8F /* Bass1G.aif in Resources */,
 				D0FCE3611A9BB0660027398B /* resonantSymbol.png in Resources */,
 				D01A0BBC1ABC0EB7004BEE8F /* bigTree.png in Resources */,
@@ -1131,6 +1145,7 @@
 				D04C50711A907AA500C931C3 /* Botie17.png in Resources */,
 				D01A0B651ABB2F1C004BEE8F /* Back1.mp3 in Resources */,
 				D0DF25241A874EBD00309754 /* bassA.caf in Resources */,
+				D0BFDF281B07BCD8002F95FB /* spark.png in Resources */,
 				D07234C61A99BC4C00C19305 /* status_bar_weapon.png in Resources */,
 				D0AC52791A88AD9600CFED05 /* SourceSansPro-Semibold.otf in Resources */,
 				D04C506B1A907AA500C931C3 /* Botie11.png in Resources */,
@@ -1154,6 +1169,7 @@
 				D04C501D1A8D282500C931C3 /* textBox.png in Resources */,
 				D0A9C06C1A7382890029B4EF /* gKey.png in Resources */,
 				D04C506A1A907AA500C931C3 /* Botie10.png in Resources */,
+				D0BFDF361B07BFD5002F95FB /* changeModesAtlas.atlas in Resources */,
 				D04C50701A907AA500C931C3 /* Botie16.png in Resources */,
 				D07234CF1A99C52400C19305 /* status_bar_health.png in Resources */,
 				D04C50331A8FFA0300C931C3 /* note1.png in Resources */,
