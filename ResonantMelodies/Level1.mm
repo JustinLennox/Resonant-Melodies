@@ -959,57 +959,58 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 }
 
 -(void)setAvailableComboNotes{
-    if([self.mode isEqualToString:@"Fire"]){
-        if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
-            self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"Fire":@"highCNode", @"Flame":@"highCNode"}];
-        }else{
-            for(id key in self.attackDictionary){
-                NSArray *combo = [self.attackDictionary objectForKey:key];
-                NSString *comboName = key;
-                BOOL matchFound = NO;
-                int startingInt = 0;
-                for(int i = 0; i < combo.count - 1; i++){
-                    if([self.keyPressArray[i] isEqualToString:combo[0]]){
-                        NSLog(@"Starting int:%d", startingInt);
-                        startingInt = i;
-                        matchFound = YES;
-                    }
-                }
-                if(matchFound){
-                    int x = 0;
-                    int furthestInt = 0;
-                    BOOL matching = YES;
-                    for(int i = startingInt; i >= 0; i--){
-                        matching = NO;
-                        if([self.keyPressArray[i] isEqualToString:combo[x]]){
-                            furthestInt = x;
-                            NSLog(@"Key press array i:%@, combox:%@", self.keyPressArray[i], combo[x]);
-                            NSLog(@"Furthest int:%d", furthestInt);
-                            matching = YES;
-
+    if(self.defending == NO){
+        if([self.mode isEqualToString:@"Fire"]){
+            if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
+                self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"Fire":@"highCNode", @"Flame":@"highCNode"}];
+            }else{
+                for(id key in self.attackDictionary){
+                    NSArray *combo = [self.attackDictionary objectForKey:key];
+                    NSString *comboName = key;
+                    BOOL matchFound = NO;
+                    int startingInt = 0;
+                    for(int i = 0; i < combo.count - 1; i++){
+                        if([self.keyPressArray[i] isEqualToString:combo[0]]){
+                            NSLog(@"Starting int:%d", startingInt);
+                            startingInt = i;
+                            matchFound = YES;
                         }
-                        x++;
                     }
-                    NSLog(@"Matchin:%d", matching);
-                    if(furthestInt + 1 < combo.count && matching){
-                        NSLog(@"Combo next letter: %@", [combo objectAtIndex:furthestInt+1]);
-                        [self.availableComboNoteDictionary setObject:[combo objectAtIndex:furthestInt+1] forKey:comboName];
+                    if(matchFound){
+                        int x = 0;
+                        int furthestInt = 0;
+                        BOOL matching = YES;
+                        for(int i = startingInt; i >= 0; i--){
+                            matching = NO;
+                            if([self.keyPressArray[i] isEqualToString:combo[x]]){
+                                furthestInt = x;
+                                NSLog(@"Key press array i:%@, combox:%@", self.keyPressArray[i], combo[x]);
+                                NSLog(@"Furthest int:%d", furthestInt);
+                                matching = YES;
+
+                            }
+                            x++;
+                        }
+                        NSLog(@"Matchin:%d", matching);
+                        if(furthestInt + 1 < combo.count && matching){
+                            NSLog(@"Combo next letter: %@", [combo objectAtIndex:furthestInt+1]);
+                            [self.availableComboNoteDictionary setObject:[combo objectAtIndex:furthestInt+1] forKey:comboName];
+                        }
                     }
                 }
             }
-        }
-    }else if([self.mode isEqualToString:@"Music"]){
-        NSLog(@"First object:%@",[self.keyPressArray objectAtIndex:0] );
+        }else if([self.mode isEqualToString:@"Music"]){
+            NSLog(@"First object:%@",[self.keyPressArray objectAtIndex:0] );
 
-        if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
-            NSLog(@"Music");
-            self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"Sleep":@"E"}];
-            NSLog(@"Music array");
+            if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
+                NSLog(@"Music");
+                self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"Sleep":@"E"}];
+                NSLog(@"Music array");
+            }
         }
+        
+        [self setAvailableComboBlocks];
     }
-    
-    [self setAvailableComboBlocks];
-
 }
 
 -(void)setAvailableComboBlocks{
@@ -1061,6 +1062,13 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{}];
 
 
+}
+
+-(void)resetCombos{
+    [self removeChildrenInArray:self.availableComboBlockArray];
+    NSLog(@"Combo note array:%@", self.availableComboNoteDictionary);
+    self.availableComboBlockArray = [[NSMutableArray alloc] init];
+    self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
 }
 
 #pragma mark- animations
@@ -1204,54 +1212,50 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
     SKSpriteNode *rightArrow = (SKSpriteNode *)[self childNodeWithName:@"rightArrow"];
     SKSpriteNode *leftArrow = (SKSpriteNode *)[self childNodeWithName:@"leftArrow"];
-    if([self.mode isEqualToString: @"Bag"])
-    {
+    rightArrow.hidden = NO;
+    leftArrow.hidden = NO;
+    rightArrow.alpha = 1.0f;
+    leftArrow.alpha = 1.0f;
+    
+    if(self.currentRoomNumber == 1){
         
-        rightArrow.hidden = NO;
-        leftArrow.hidden = NO;
-        rightArrow.alpha = 1.0f;
-        leftArrow.alpha = 1.0f;
+        leftArrow.alpha = 0.0f;
+        leftArrow.hidden = YES;
         
-        if(self.currentRoomNumber == 1){
-            
-            leftArrow.alpha = 0.0f;
-            leftArrow.hidden = YES;
-            
-        }else if(self.currentRoomNumber == 2){
-            
-            if([self childNodeWithName:@"enemy1"] && ([self childNodeWithName:@"enemy1"].hidden == NO) && !(self.roomCleared >= 2)){
-                rightArrow.alpha = 0.0f;
-                rightArrow.hidden = YES;
-            }
-            
-        }else if(self.currentRoomNumber == 3){
-            if([self childNodeWithName:@"enemy2"] && ([self childNodeWithName:@"enemy2"].hidden == NO) && !(self.roomCleared >= 3)){
-                rightArrow.alpha = 0.0f;
-                rightArrow.hidden = YES;
-            }
-        }else if(self.currentRoomNumber == 4){
-            if([self childNodeWithName:@"enemy3"] && ([self childNodeWithName:@"enemy3"].hidden == NO) && !(self.roomCleared >= 4)){
-                rightArrow.alpha = 0.0f;
-                rightArrow.hidden = YES;
-            }
-        }else if(self.currentRoomNumber == 5){
-            if([self childNodeWithName:@"enemy1"] && ([self childNodeWithName:@"enemy1"].hidden == NO) && [self childNodeWithName:@"enemy2"] && ([self childNodeWithName:@"enemy2"].hidden == NO) && !(self.roomCleared >= 5)){
-                rightArrow.alpha = 0.0f;
-                rightArrow.hidden = YES;
-            }
-        }else if(self.currentRoomNumber == 7){
-            if([self childNodeWithName:@"bigTree"] && ([self childNodeWithName:@"bigTree"].hidden == NO) && !(self.roomCleared >= 7)){
-                rightArrow.alpha = 0.0f;
-                rightArrow.hidden = YES;
-            }
-        }else if(self.currentRoomNumber == 8){
-            if([self childNodeWithName:@"boss"] && ([self childNodeWithName:@"boss"].hidden == NO) && !(self.roomCleared >= 8)){
-                rightArrow.alpha = 0.0f;
-                rightArrow.hidden = YES;
-            }
+    }else if(self.currentRoomNumber == 2){
+        
+        if([self childNodeWithName:@"enemy1"] && ([self childNodeWithName:@"enemy1"].hidden == NO) && !(self.roomCleared >= 2)){
+            rightArrow.alpha = 0.0f;
+            rightArrow.hidden = YES;
         }
         
+    }else if(self.currentRoomNumber == 3){
+        if([self childNodeWithName:@"enemy2"] && ([self childNodeWithName:@"enemy2"].hidden == NO) && !(self.roomCleared >= 3)){
+            rightArrow.alpha = 0.0f;
+            rightArrow.hidden = YES;
+        }
+    }else if(self.currentRoomNumber == 4){
+        if([self childNodeWithName:@"enemy3"] && ([self childNodeWithName:@"enemy3"].hidden == NO) && !(self.roomCleared >= 4)){
+            rightArrow.alpha = 0.0f;
+            rightArrow.hidden = YES;
+        }
+    }else if(self.currentRoomNumber == 5){
+        if([self childNodeWithName:@"enemy1"] && ([self childNodeWithName:@"enemy1"].hidden == NO) && [self childNodeWithName:@"enemy2"] && ([self childNodeWithName:@"enemy2"].hidden == NO) && !(self.roomCleared >= 5)){
+            rightArrow.alpha = 0.0f;
+            rightArrow.hidden = YES;
+        }
+    }else if(self.currentRoomNumber == 7){
+        if([self childNodeWithName:@"bigTree"] && ([self childNodeWithName:@"bigTree"].hidden == NO) && !(self.roomCleared >= 7)){
+            rightArrow.alpha = 0.0f;
+            rightArrow.hidden = YES;
+        }
+    }else if(self.currentRoomNumber == 8){
+        if([self childNodeWithName:@"boss"] && ([self childNodeWithName:@"boss"].hidden == NO) && !(self.roomCleared >= 8)){
+            rightArrow.alpha = 0.0f;
+            rightArrow.hidden = YES;
+        }
     }
+    
     
 }
 
@@ -1266,14 +1270,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 -(void)changeModes{
 
     [self changeModeAnimation];
-    
-    SKSpriteNode *rightArrow = (SKSpriteNode *)[self childNodeWithName:@"rightArrow"];
-    SKSpriteNode *leftArrow = (SKSpriteNode *)[self childNodeWithName:@"leftArrow"];
-    rightArrow.alpha = 0.0f;
-    rightArrow.hidden = YES;
-    leftArrow.alpha = 0.0f;
-    leftArrow.hidden = YES;
-
     
     if([self.mode isEqualToString:@"Fire"]){
         self.player.texture = [SKTexture textureWithImageNamed:@"fireModeAdagioIdle1.png"];
@@ -1673,6 +1669,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             [self.enemyToDeleteArray addObject:enemy];
             [enemy removeFromParent];
             [enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]].hidden = YES;
+            [self checkRoomTransitions];
         }else{
             enemy.canShoot = NO;
             SKSpriteNode *enemyHealthBar = (SKSpriteNode*)[enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]];
@@ -1775,6 +1772,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         [self silenceLowKeys];
         pthread_mutex_unlock(&mutex);
         volG = 0.5;
+        [self hideDefenseMarkers];
     }
     
     if(self.filterInt < 8){
@@ -1974,6 +1972,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 -(void)enemyAttack:(NSMutableDictionary *) enemyAttack{
     
+    [self resetCombos];
     for(Enemy *enemy in self.enemyArray){
         if(enemy.canShoot && !enemy.hidden){
             [self showDefenseMarkers];
