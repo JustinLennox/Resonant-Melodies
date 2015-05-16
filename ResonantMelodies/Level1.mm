@@ -854,8 +854,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
     
     self.touchBegan = CACurrentMediaTime();
-    [self setAvailableComboNotes];
     [self checkCombo];
+    [self setAvailableComboNotes];
+    NSLog(@"Key PRess ARray:%@", self.keyPressArray);
     if(!self.isAnimating){
         [self animateCharacter];
     }
@@ -958,16 +959,44 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 }
 
 -(void)setAvailableComboNotes{
-    NSLog(@"KeyPRessArray:%@", self.keyPressArray);
     if([self.mode isEqualToString:@"Fire"]){
         if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
-            self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"Fire":@"C", @"Flame":@"C"}];
-        }else if([[self.keyPressArray objectAtIndex:0] isEqualToString:@"highCNode"]){
-            self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"Fire":@"D"}];
-        }else if([[self.keyPressArray objectAtIndex:0] isEqualToString:@"highDNode"]){
-            self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"Fire":@"E"}];
+            self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"Fire":@"highCNode", @"Flame":@"highCNode"}];
         }else{
-            self.availableComboNoteDictionary = nil;
+            for(id key in self.attackDictionary){
+                NSArray *combo = [self.attackDictionary objectForKey:key];
+                NSString *comboName = key;
+                BOOL matchFound = NO;
+                int startingInt = 0;
+                for(int i = 0; i < combo.count - 1; i++){
+                    if([self.keyPressArray[i] isEqualToString:combo[0]]){
+                        NSLog(@"Starting int:%d", startingInt);
+                        startingInt = i;
+                        matchFound = YES;
+                    }
+                }
+                if(matchFound){
+                    int x = 0;
+                    int furthestInt = 0;
+                    BOOL matching = YES;
+                    for(int i = startingInt; i >= 0; i--){
+                        matching = NO;
+                        if([self.keyPressArray[i] isEqualToString:combo[x]]){
+                            furthestInt = x;
+                            NSLog(@"Key press array i:%@, combox:%@", self.keyPressArray[i], combo[x]);
+                            NSLog(@"Furthest int:%d", furthestInt);
+                            matching = YES;
+
+                        }
+                        x++;
+                    }
+                    NSLog(@"Matchin:%d", matching);
+                    if(furthestInt + 1 < combo.count && matching){
+                        NSLog(@"Combo next letter: %@", [combo objectAtIndex:furthestInt+1]);
+                        [self.availableComboNoteDictionary setObject:[combo objectAtIndex:furthestInt+1] forKey:comboName];
+                    }
+                }
+            }
         }
     }else if([self.mode isEqualToString:@"Music"]){
         NSLog(@"First object:%@",[self.keyPressArray objectAtIndex:0] );
@@ -986,13 +1015,13 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 -(void)setAvailableComboBlocks{
     
     NSMutableDictionary *keySpacing = [[NSMutableDictionary alloc] init];
-    NSLog(@"Avail combo%@", self.availableComboNoteDictionary);
     
     [self removeChildrenInArray:self.availableComboBlockArray];
+    NSLog(@"Combo note array:%@", self.availableComboNoteDictionary);
     self.availableComboBlockArray = [[NSMutableArray alloc] init];
     
     for(id key in self.availableComboNoteDictionary){
-        SKSpriteNode *keyNode = (SKSpriteNode *)[self childNodeWithName:[NSString stringWithFormat:@"high%@Node", [self.availableComboNoteDictionary objectForKey:key]]];
+        SKSpriteNode *keyNode = (SKSpriteNode *)[self childNodeWithName:[self.availableComboNoteDictionary objectForKey:key]];
         SKLabelNode *keyNodeLabel = (SKLabelNode *)[self childNodeWithName:[NSString stringWithFormat:@"%@Label", keyNode.name]];
         
         int ySpacing = 0;
@@ -1029,6 +1058,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         [self.availableComboBlockArray addObject:comboNameLabel];
     }
 
+    self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{}];
 
 
 }
@@ -1344,8 +1374,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 #pragma mark- combos
 
 -(void)checkCombo{
+    
     if(self.shouldShoot && ![self.mode isEqualToString:@"Bag"] && self.defending == NO){
-        
         if([self.mode isEqualToString: @"Fire"])
         {
             NSArray *combo1 = self.attackArray[0];
@@ -1369,6 +1399,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 [self.fireballArray addObject:fireball];
                 
                 self.playerMP -= 1;
+                self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
+
             }
             
             NSArray *combo2 = self.attackArray[1];
@@ -1393,6 +1425,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                    
                    [flame runAction:moveLaserActionWithDone withKey:@"laserFired"];
                    self.playerMP -= 2;
+                   self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
+
 
                }
         }
@@ -1425,12 +1459,14 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             
             }
         }
+    
     }
 }
 
 -(void)loadCombos{
     
     NSArray *attackCombo0 = @[@"highCNode", @"highDNode", @"highENode"];
+    self.attackDictionary = @{@"Fire":@[@"highCNode", @"highDNode", @"highENode"], @"Flame": @[@"highCNode", @"highENode", @"highGNode"]};
     NSArray *attackCombo1 = @[@"highCNode", @"highENode", @"highGNode"];
     self.attackArray = @[attackCombo0, attackCombo1];
     

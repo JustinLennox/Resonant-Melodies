@@ -49,6 +49,7 @@
 
 //Combo Properties
 @property (strong, nonatomic) NSArray *attackArray;
+@property (strong, nonatomic) NSDictionary *attackDictionary;
 @property (strong, nonatomic) NSArray *defenseArray;
 @property (strong, nonatomic) NSArray *magicArray;
 @property (strong, nonatomic) NSMutableArray *fireballArray;
