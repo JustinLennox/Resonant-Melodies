@@ -1161,22 +1161,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     if([self.mode isEqualToString:@"Fire"]){
         self.player.texture = [SKTexture textureWithImageNamed:@"fireModeAdagioIdle1.png"];
         
-    }else if([self.mode isEqualToString:@"Attack"]){
-        self.player.texture = [SKTexture textureWithImageNamed:@"dalf1.png"];
+    }else if([self.mode isEqualToString:@"Music"]){
+        self.player.texture = [SKTexture textureWithImageNamed:@"musicModeAdagioIdle1.png"];
         
-        SKLabelNode *amosLabel;
-        amosLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-        amosLabel.name = @"amosLabel";
-        amosLabel.text = @"Attack!";
-        amosLabel.fontSize = 80;
-        amosLabel.position = CGPointMake(CGRectGetMidX(self.frame),CGRectGetMidY(self.frame));
-        amosLabel.fontColor = [SKColor redColor];
-        [self addChild:amosLabel];
         
-        SKAction *fadeAction = [SKAction fadeAlphaTo:0.0f duration:0.5];
-        SKAction *moveUp = [SKAction moveToY:amosLabel.frame.origin.y+10 duration:0.5];
-        SKAction *fadeUp = [SKAction group:@[moveUp, fadeAction]];
-        [amosLabel runAction:fadeUp];
     }else if([self.mode isEqualToString:@"Defense"]){
         self.player.texture = [SKTexture textureWithImageNamed:@"aragon1.png"];
         
