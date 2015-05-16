@@ -82,7 +82,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 @implementation Level1{
     SKNode *node;
     AVAudioPlayer *backgroundAudioPlayer;
-    NSArray *_adagioWalkingFrames;
+    NSArray *_musicModeAdagioWalkingFrames;
+    NSArray *_musicModeAdagioIdleFrames;
     int _nextKeyLaser;
     // Sound Effects
     ALDevice* device;
@@ -240,10 +241,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.keyArray = @[[self childNodeWithName:@"lowCNode"], [self childNodeWithName:@"lowDNode"], [self childNodeWithName:@"lowENode"], [self childNodeWithName:@"lowFNode"], [self childNodeWithName:@"lowGNode"], [self childNodeWithName:@"highANode"], [self childNodeWithName:@"highBNode"], [self childNodeWithName:@"highCNode"], [self childNodeWithName:@"highDNode"], [self childNodeWithName:@"highENode"], [self childNodeWithName:@"highFNode"], [self childNodeWithName:@"highGNode"]];
     
 #pragma mark- set up player
-    self.player = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"dalf1.png"] size:CGSizeMake(70, 70)];
-    self.player.position = CGPointMake(-self.player.size.width, CGRectGetMidY(self.frame)-5);
+    self.player = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"dalf1.png"] size:CGSizeMake(100, 100)];
+    self.player.position = CGPointMake(-self.player.size.width, CGRectGetMaxY([self childNodeWithName:@"lowENode"].frame) + 30);
     self.player.name = @"player";
-    self.player.zPosition = 1.0f;
+    self.player.zPosition = [self childNodeWithName:@"lowENode"].zPosition + 0.1;
     self.currentHero = @"Amos";
     [self addChild:self.player];
     
@@ -511,37 +512,59 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 #pragma mark- animations
     //Setup the array to hold the walking frames
     NSMutableArray *walkFrames = [NSMutableArray array];
+    NSMutableArray *idleFrames = [NSMutableArray arrayWithObjects:[SKTexture textureWithImageNamed:@"musicModeAdagioIdle1"], [SKTexture textureWithImageNamed:@"musicModeAdagioIdle2"], [SKTexture textureWithImageNamed:@"musicModeAdagioIdle1"], nil];
     
     //Load the TextureAtlas for the bear
-    SKTextureAtlas *adagioAnimatedAtlas = [SKTextureAtlas atlasNamed:@"musicModeAdagio"];
+    SKTextureAtlas *musicModeAtlas = [SKTextureAtlas atlasNamed:@"musicModeAdagio"];
     
     //Load the animation frames from the TextureAtlas
-    int numImages = adagioAnimatedAtlas.textureNames.count;
+    int numImages = musicModeAtlas.textureNames.count;
     NSLog(@"num images:%d", numImages);
     for (int i=1; i <= numImages; i++) {
-        NSString *textureName = [NSString stringWithFormat:@"dalf%d", i];
-        SKTexture *temp = [adagioAnimatedAtlas textureNamed:textureName];
+        NSString *textureName = [NSString stringWithFormat:@"dalfWalk%d.png", i];
+        NSLog(@"Texture name:%@", textureName);
+        SKTexture *temp = [musicModeAtlas textureNamed:textureName];
         [walkFrames addObject:temp];
         NSLog(@"Yo");
     }
-    _adagioWalkingFrames = walkFrames;
+    _musicModeAdagioWalkingFrames = walkFrames;
+    _musicModeAdagioIdleFrames =idleFrames;
     NSLog(@"Walking frames: %@", walkFrames);
-    [self.player setTexture:_adagioWalkingFrames[0]];
+    [self.player setTexture:_musicModeAdagioIdleFrames[0]];
+    [self idleAdagio];
     
 
 
+}
+
+-(void)idleAdagio{
+    
+    SKAction *idleAnimation =  [SKAction animateWithTextures:_musicModeAdagioIdleFrames
+                                                timePerFrame:0.1f
+                                                      resize:NO
+                                                     restore:YES];
+    SKAction *waitThree = [SKAction waitForDuration:3.0f];
+    
+    SKAction *idleSequence = [SKAction repeatActionForever:[SKAction sequence:@[idleAnimation, waitThree]]];
+    [self.player runAction:idleSequence withKey:@"musicModeAdagioIdle"];
+    
 }
 
 -(void)walkAdagio{
         //This is our general runAction method to make our bear walk.
         //By using a withKey if this gets called while already running it will remove the first action before
         //starting this again.
+    if([self.player actionForKey:@"musicModeAdagioIdle"]){
+        [self.player removeActionForKey:@"musicModeAdagioIdle"];
         
-        [self.player runAction:[SKAction animateWithTextures:_adagioWalkingFrames
-                                                                        timePerFrame:0.1f
-                                                                              resize:NO
-                                                                             restore:YES] withKey:@"walkingInPlaceBear"];
+    }
+    SKAction *walkAnimation =  [SKAction repeatActionForever:[SKAction animateWithTextures:_musicModeAdagioWalkingFrames
+                                                timePerFrame:0.1f
+                                                      resize:NO
+                                                     restore:YES]];
 
+    [self.player runAction:walkAnimation withKey:@"musicModeAdagioWalk"];
+    
 }
 
 #pragma mark - handle touches
