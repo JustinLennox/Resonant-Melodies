@@ -9,6 +9,7 @@
 #import "GameViewController.h"
 #import "GameScene.h"
 #import "WorldOverview.h"
+#import "Level1.h"
 
 @implementation GameViewController
 
@@ -23,8 +24,8 @@
     /* Sprite Kit applies additional optimizations to improve rendering performance */
     skView.ignoresSiblingOrder = YES;
 
-    
-    SKScene *sampleScene = [[WorldOverview alloc] initWithSize:skView.bounds.size];
+    //Change to world overview
+    SKScene *sampleScene = [[Level1 alloc] initWithSize:skView.bounds.size];
     SKTransition *transition = [SKTransition flipVerticalWithDuration:0.5];
     [skView presentScene:sampleScene transition:transition];
     

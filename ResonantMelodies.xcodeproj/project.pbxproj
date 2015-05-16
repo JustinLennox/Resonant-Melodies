@@ -119,6 +119,11 @@
 		D0BFDF2A1B07BD3E002F95FB /* SmokeParticle.png in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF291B07BD3E002F95FB /* SmokeParticle.png */; };
 		D0BFDF2C1B07BD64002F95FB /* Confetti-2.png in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF2B1B07BD64002F95FB /* Confetti-2.png */; };
 		D0BFDF361B07BFD5002F95FB /* changeModesAtlas.atlas in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF351B07BFD5002F95FB /* changeModesAtlas.atlas */; };
+		D0BFDF3A1B07DEE3002F95FB /* blankKey.png in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF391B07DEE3002F95FB /* blankKey.png */; };
+		D0BFDF4A1B07FA19002F95FB /* Forest.png in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF491B07FA19002F95FB /* Forest.png */; };
+		D0BFDF4C1B07FD65002F95FB /* EMPTYCIRCLEWHITE.png in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF4B1B07FD65002F95FB /* EMPTYCIRCLEWHITE.png */; };
+		D0BFDF4E1B0802ED002F95FB /* keyFrame.png in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF4D1B0802ED002F95FB /* keyFrame.png */; };
+		D0BFDF541B0808C5002F95FB /* EMPTYCIRCLEBLUE.png in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF531B0808C5002F95FB /* EMPTYCIRCLEBLUE.png */; };
 		D0C08F501A7770E600FD429D /* f.caf in Resources */ = {isa = PBXBuildFile; fileRef = D0C08F4F1A7770E600FD429D /* f.caf */; };
 		D0C08F521A77731600FD429D /* g.caf in Resources */ = {isa = PBXBuildFile; fileRef = D0C08F511A77731600FD429D /* g.caf */; };
 		D0C08F581A7775A600FD429D /* a.caf in Resources */ = {isa = PBXBuildFile; fileRef = D0C08F531A7775A600FD429D /* a.caf */; };
@@ -323,6 +328,11 @@
 		D0BFDF291B07BD3E002F95FB /* SmokeParticle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SmokeParticle.png; sourceTree = "<group>"; };
 		D0BFDF2B1B07BD64002F95FB /* Confetti-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Confetti-2.png"; sourceTree = "<group>"; };
 		D0BFDF351B07BFD5002F95FB /* changeModesAtlas.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; name = changeModesAtlas.atlas; path = musicModeAdagio.atlas/changeModesAtlas.atlas; sourceTree = "<group>"; };
+		D0BFDF391B07DEE3002F95FB /* blankKey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blankKey.png; sourceTree = "<group>"; };
+		D0BFDF491B07FA19002F95FB /* Forest.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Forest.png; sourceTree = "<group>"; };
+		D0BFDF4B1B07FD65002F95FB /* EMPTYCIRCLEWHITE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = EMPTYCIRCLEWHITE.png; sourceTree = "<group>"; };
+		D0BFDF4D1B0802ED002F95FB /* keyFrame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = keyFrame.png; sourceTree = "<group>"; };
+		D0BFDF531B0808C5002F95FB /* EMPTYCIRCLEBLUE.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = EMPTYCIRCLEBLUE.png; sourceTree = "<group>"; };
 		D0C08F4F1A7770E600FD429D /* f.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = f.caf; sourceTree = "<group>"; };
 		D0C08F511A77731600FD429D /* g.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = g.caf; sourceTree = "<group>"; };
 		D0C08F531A7775A600FD429D /* a.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = a.caf; sourceTree = "<group>"; };
@@ -500,6 +510,8 @@
 		D0A9C06D1A73828E0029B4EF /* Keyboard Keys */ = {
 			isa = PBXGroup;
 			children = (
+				D0BFDF391B07DEE3002F95FB /* blankKey.png */,
+				D0BFDF4D1B0802ED002F95FB /* keyFrame.png */,
 				D0A9C05F1A7382890029B4EF /* aKey.png */,
 				D0A9C0601A7382890029B4EF /* bKey.png */,
 				D0A9C0611A7382890029B4EF /* cKey.png */,
@@ -573,6 +585,7 @@
 		D0AC52AD1A8A0D7A00CFED05 /* Background */ = {
 			isa = PBXGroup;
 			children = (
+				D0BFDF491B07FA19002F95FB /* Forest.png */,
 				D0AC529F1A8A0D7700CFED05 /* 1layer-1.png */,
 				D0AC52A01A8A0D7700CFED05 /* 1layer-2.png */,
 				D0AC52A11A8A0D7700CFED05 /* 1layer-4.png */,
@@ -587,10 +600,12 @@
 		D0B92A281A81F4950001CCBE /* Other */ = {
 			isa = PBXGroup;
 			children = (
+				D0BFDF4B1B07FD65002F95FB /* EMPTYCIRCLEWHITE.png */,
 				D0BFDF2B1B07BD64002F95FB /* Confetti-2.png */,
 				D0BFDF261B07BCD8002F95FB /* spark.png */,
 				D0BFDF291B07BD3E002F95FB /* SmokeParticle.png */,
 				D01AF6D61B016EE200CF81D3 /* emptyCircle.png */,
+				D0BFDF531B0808C5002F95FB /* EMPTYCIRCLEBLUE.png */,
 				D01AF6D21B0145B900CF81D3 /* circle.png */,
 				D01A0BBB1ABC0EB7004BEE8F /* bigTree.png */,
 				D01A0BBD1ABC1B12004BEE8F /* fireball.png */,
@@ -1071,9 +1086,11 @@
 				D0AC52AB1A8A0D7700CFED05 /* 1layer-7.png in Resources */,
 				D049C8351A9BA38F00CF7C93 /* redFill.png in Resources */,
 				D0AC52A91A8A0D7700CFED05 /* 1layer-5.png in Resources */,
+				D0BFDF3A1B07DEE3002F95FB /* blankKey.png in Resources */,
 				D01A0B621ABB2ED9004BEE8F /* Bass1F.aif in Resources */,
 				D0FCE35F1A9BB0660027398B /* magicSymbol.png in Resources */,
 				D0AC52781A88AD9600CFED05 /* SourceSansPro-Regular.otf in Resources */,
+				D0BFDF4A1B07FA19002F95FB /* Forest.png in Resources */,
 				D0FA5CC41A76255A000A5660 /* gaia1.png in Resources */,
 				D07234D51A99E6CD00C19305 /* greyBoard.png in Resources */,
 				D0FCE35D1A9BB0660027398B /* moveSymbol.png in Resources */,
@@ -1082,6 +1099,7 @@
 				D04C50561A9016A400C931C3 /* BowTie2.png in Resources */,
 				D0AC52A61A8A0D7700CFED05 /* 1layer-1.png in Resources */,
 				D01AF6D31B0145B900CF81D3 /* circle.png in Resources */,
+				D0BFDF541B0808C5002F95FB /* EMPTYCIRCLEBLUE.png in Resources */,
 				D0C08F501A7770E600FD429D /* f.caf in Resources */,
 				D0BFDF241B06B2AF002F95FB /* musicModeAdagio.atlas in Resources */,
 				D01A0B541ABB2E98004BEE8F /* Top1B.aif in Resources */,
@@ -1104,6 +1122,7 @@
 				D0FA5CC61A7625CC000A5660 /* aragon1.png in Resources */,
 				D01A0BA01ABB4071004BEE8F /* status_barpower.png in Resources */,
 				D04C50251A8FEF7A00C931C3 /* spark.png in Resources */,
+				D0BFDF4C1B07FD65002F95FB /* EMPTYCIRCLEWHITE.png in Resources */,
 				D04C50551A9016A400C931C3 /* BowTie1.png in Resources */,
 				D04C503C1A90061600C931C3 /* laserbeam_blue.png in Resources */,
 				D07234BE1A99BC2E00C19305 /* status_bar_life.png in Resources */,
@@ -1161,6 +1180,7 @@
 				D0A9C0661A7382890029B4EF /* aKey.png in Resources */,
 				D0C08F521A77731600FD429D /* g.caf in Resources */,
 				D07234BC1A99BC2600C19305 /* status_bar_defense_fill.png in Resources */,
+				D0BFDF4E1B0802ED002F95FB /* keyFrame.png in Resources */,
 				D01A0B4D1ABB2E8F004BEE8F /* Top1A.aif in Resources */,
 				D01A0B561ABB2E98004BEE8F /* Top1D.aif in Resources */,
 				D0A9C0681A7382890029B4EF /* cKey.png in Resources */,

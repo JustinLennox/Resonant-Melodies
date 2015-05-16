@@ -55,6 +55,16 @@
 @property (strong, nonatomic) NSMutableArray *fireballArray;
 @property (strong, nonatomic) NSMutableArray *availableComboBlockArray;
 @property (strong, nonatomic) NSMutableDictionary *availableComboNoteDictionary;
+@property (nonatomic) float fireMP;
+@property (nonatomic) float fireMPMax;
+@property (nonatomic) float windMP;
+@property (nonatomic) float windMPMax;
+@property (nonatomic) float waterMP;
+@property (nonatomic) float waterMPMax;
+@property (nonatomic) float earthMP;
+@property (nonatomic) float earthMPMax;
+@property (nonatomic) float musicMP;
+@property (nonatomic) float musicMPMax;
 @property (nonatomic) BOOL flameOn;
 @property (nonatomic) int filterInt;
 

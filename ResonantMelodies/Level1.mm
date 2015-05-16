@@ -156,7 +156,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
 #pragma mark- set up background
     
-    SKSpriteNode *backgroundImage = [SKSpriteNode spriteNodeWithImageNamed:@"Sakura Forest Game Background.png"];
+    SKSpriteNode *backgroundImage = [SKSpriteNode spriteNodeWithImageNamed:@"Forest.png"];
     backgroundImage.name = @"background";
     backgroundImage.size = CGSizeMake(self.view.frame.size.width, self.view.frame.size.height);
     backgroundImage.position = CGPointMake(0,0);
@@ -164,7 +164,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     backgroundImage.zPosition = -1.0f;
     [self addChild:backgroundImage];
     
-    SKSpriteNode *backgroundImage2 = [SKSpriteNode spriteNodeWithImageNamed:@"Sakura Forest Game Background.png"];
+    SKSpriteNode *backgroundImage2 = [SKSpriteNode spriteNodeWithImageNamed:@"Forest.png"];
     backgroundImage2.name = @"background2";
     backgroundImage2.position = CGPointMake(backgroundImage.size.width - 2,0);
     backgroundImage2.size = CGSizeMake(self.view.frame.size.width, self.view.frame.size.height);
@@ -231,31 +231,36 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.yPositionIncrement = [[UIScreen mainScreen] bounds].size.width/12;
     
     [self addChild: [self lowCNode]];
+    [self addKeyNameLabel:@"lowCNode"];
     [self addChild: [self lowDNode]];
+    [self addKeyNameLabel:@"lowDNode"];
     [self addChild: [self lowENode]];
+    [self addKeyNameLabel:@"lowENode"];
     [self addChild: [self lowFNode]];
+    [self addKeyNameLabel:@"lowFNode"];
     [self addChild: [self lowGNode]];
+    [self addKeyNameLabel:@"lowGNode"];
     [self addChild: [self highANode]];
-    [self addKeyNameLabel:@"A"];
+    [self addKeyNameLabel:@"highANode"];
     [self addChild: [self highBNode]];
-    [self addKeyNameLabel:@"B"];
+    [self addKeyNameLabel:@"highBNode"];
     [self addChild: [self highCNode]];
-    [self addKeyNameLabel:@"C"];
+    [self addKeyNameLabel:@"highCNode"];
     [self addChild: [self highDNode]];
-    [self addKeyNameLabel:@"D"];
+    [self addKeyNameLabel:@"highDNode"];
     [self addChild: [self highENode]];
-    [self addKeyNameLabel:@"E"];
+    [self addKeyNameLabel:@"highENode"];
     [self addChild: [self highFNode]];
-    [self addKeyNameLabel:@"F"];
+    [self addKeyNameLabel:@"highFNode"];
     [self addChild: [self highGNode]];
-    [self addKeyNameLabel:@"G"];
+    [self addKeyNameLabel:@"highGNode"];
 
     
     self.keyArray = @[[self childNodeWithName:@"lowCNode"], [self childNodeWithName:@"lowDNode"], [self childNodeWithName:@"lowENode"], [self childNodeWithName:@"lowFNode"], [self childNodeWithName:@"lowGNode"], [self childNodeWithName:@"highANode"], [self childNodeWithName:@"highBNode"], [self childNodeWithName:@"highCNode"], [self childNodeWithName:@"highDNode"], [self childNodeWithName:@"highENode"], [self childNodeWithName:@"highFNode"], [self childNodeWithName:@"highGNode"]];
     
 #pragma mark- set up player
     self.player = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"dalf1.png"] size:CGSizeMake(100, 100)];
-    self.player.position = CGPointMake(-self.player.size.width, CGRectGetMaxY([self childNodeWithName:@"lowENode"].frame) + 30);
+    self.player.position = CGPointMake(-self.player.size.width, CGRectGetMaxY([self childNodeWithName:@"lowENode"].frame) + 31);
     self.player.name = @"player";
     self.player.zPosition = [self childNodeWithName:@"lowENode"].zPosition + 0.1;
     [self addChild:self.player];
@@ -271,14 +276,67 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.playerHealthMax = 10;
     self.playerToNextLevel = 100;
     
+    
+#pragma  mark- MP
+
     self.playerMP = 3;
     self.playerMPMax = 3;
     
-    self.defenseMP = 3;
-    self.defenseMPMax = 3;
+    self.fireMP = 3.0f;
+    self.fireMPMax = 3.0f;
     
-    self.magicMP = 3;
-    self.magicMPMax = 3;
+    self.windMP = 3.0f;
+    self.windMPMax = 3.0f;
+    
+    self.earthMP = 3.0f;
+    self.earthMPMax = 3.0f;
+    
+    self.waterMP = 3.0f;
+    self.waterMPMax = 3.0f;
+    
+    self.musicMP = 3.0f;
+    self.musicMPMax = 3.0f;
+    
+    SKSpriteNode *fireBar = [SKSpriteNode spriteNodeWithColor:[UIColor redColor] size:[self childNodeWithName:@"highANode"].frame.size];
+    fireBar.zPosition = [self childNodeWithName:@"lowCNode"].zPosition + 0.1;
+    fireBar.position = CGPointMake([self childNodeWithName:@"lowCNode"].position.x,[self childNodeWithName:@"lowCNode"].position.y  - fireBar.frame.size.height/2.0f);
+    fireBar.name = @"lowCNodeMPBAR";
+    fireBar.anchorPoint = CGPointMake(0.5, 0);
+    fireBar.alpha = 0.5f;
+    [self addChild:fireBar];
+    
+    SKSpriteNode *windBar = [SKSpriteNode spriteNodeWithColor:[UIColor grayColor] size:[self childNodeWithName:@"highANode"].frame.size];
+    windBar.zPosition = [self childNodeWithName:@"lowDNode"].zPosition + 0.1;
+    windBar.position = CGPointMake([self childNodeWithName:@"lowDNode"].position.x,[self childNodeWithName:@"lowDNode"].position.y  - fireBar.frame.size.height/2.0f);
+    windBar.name = @"lowDNodeMPBAR";
+    windBar.anchorPoint = CGPointMake(0.5, 0);
+    windBar.alpha = 0.5f;
+    [self addChild:windBar];
+    
+    SKSpriteNode *waterBar = [SKSpriteNode spriteNodeWithColor:[UIColor blueColor] size:[self childNodeWithName:@"highANode"].frame.size];
+    waterBar.zPosition = [self childNodeWithName:@"lowENode"].zPosition + 0.1;
+    waterBar.position = CGPointMake([self childNodeWithName:@"lowENode"].position.x,[self childNodeWithName:@"lowENode"].position.y  - fireBar.frame.size.height/2.0f);
+    waterBar.name = @"lowENodeMPBAR";
+    waterBar.alpha = 0.5f;
+    waterBar.anchorPoint = CGPointMake(0.5, 0);
+    [self addChild:waterBar];
+    
+    SKSpriteNode *earthBar = [SKSpriteNode spriteNodeWithColor:[UIColor greenColor] size:[self childNodeWithName:@"highANode"].frame.size];
+    earthBar.zPosition = [self childNodeWithName:@"lowFNode"].zPosition + 0.1;
+    earthBar.position = CGPointMake([self childNodeWithName:@"lowFNode"].position.x,[self childNodeWithName:@"lowFNode"].position.y  - fireBar.frame.size.height/2.0f);
+    earthBar.name = @"lowFNodeMPBAR";
+    earthBar.anchorPoint = CGPointMake(0.5, 0);
+    earthBar.alpha = 0.5f;
+    [self addChild:earthBar];
+    
+    SKSpriteNode *musicBar = [SKSpriteNode spriteNodeWithColor:[UIColor purpleColor] size:[self childNodeWithName:@"highANode"].frame.size];
+    musicBar.zPosition = [self childNodeWithName:@"lowGNode"].zPosition + 0.1;
+    musicBar.position = CGPointMake([self childNodeWithName:@"lowGNode"].position.x,[self childNodeWithName:@"lowGNode"].position.y  - fireBar.frame.size.height/2.0f);
+    musicBar.name = @"lowGNodeMPBAR";
+    musicBar.alpha = 0.5f;
+    musicBar.anchorPoint = CGPointMake(0.5, 0);
+    [self addChild:musicBar];
+    
     
 #pragma mark- set tempo
     
@@ -443,44 +501,44 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     leftArrow.alpha = 0.0f;
     leftArrow.hidden = YES;
     
-    self.currentRoomNumber = 5;
-    [self loadRoom:5];
+    self.currentRoomNumber = 1;
+    [self loadRoom:1];
     
 #pragma mark- add key icons
-    SKSpriteNode *attackSymbol = [SKSpriteNode spriteNodeWithImageNamed:@"weaponSymbol.png"];
-    attackSymbol.size = CGSizeMake((self.frame.size.width/12)/1.5,(self.frame.size.height/2.25)/4);
-    attackSymbol.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"lowCNode"].frame), CGRectGetMaxY([self childNodeWithName:@"lowCNode"].frame) - attackSymbol.size.height/2 - 10);
-    attackSymbol.name = @"lowCNode";
-    attackSymbol.zPosition = 3.1f;
-    [self addChild:attackSymbol];
-    
-    SKSpriteNode *defenseSymbol = [SKSpriteNode spriteNodeWithImageNamed:@"defenseSymbol.png"];
-    defenseSymbol.size = CGSizeMake((self.frame.size.width/12)/1.5,(self.frame.size.height/2.25)/4);
-    defenseSymbol.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"lowDNode"].frame), CGRectGetMaxY([self childNodeWithName:@"lowDNode"].frame) - attackSymbol.size.height/2 - 10);
-    defenseSymbol.name = @"lowDNode";
-    defenseSymbol.zPosition = 3.1f;
-    [self addChild:defenseSymbol];
-    
-    SKSpriteNode *magicSymbol = [SKSpriteNode spriteNodeWithImageNamed:@"magicSymbol.png"];
-    magicSymbol.size = CGSizeMake((self.frame.size.width/12)/1.5,(self.frame.size.height/2.25)/4);
-    magicSymbol.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"lowFNode"].frame), CGRectGetMaxY([self childNodeWithName:@"lowFNode"].frame) - attackSymbol.size.height/2 - 10);
-    magicSymbol.name = @"lowFNode";
-    magicSymbol.zPosition = 3.1f;
-    [self addChild:magicSymbol];
-    
-    SKSpriteNode *moveSymbol = [SKSpriteNode spriteNodeWithImageNamed:@"moveSymbol.png"];
-    moveSymbol.size = CGSizeMake((self.frame.size.width/12)/1.5,(self.frame.size.height/2.25)/4);
-    moveSymbol.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"lowENode"].frame), CGRectGetMaxY([self childNodeWithName:@"lowENode"].frame) - attackSymbol.size.height/2 - 10);
-    moveSymbol.name = @"lowENode";
-    moveSymbol.zPosition = 3.1f;
-    [self addChild:moveSymbol];
-    
-    SKSpriteNode *resonantSymbol = [SKSpriteNode spriteNodeWithImageNamed:@"resonantSymbol.png"];
-    resonantSymbol.size = CGSizeMake((self.frame.size.width/12)/1.5,(self.frame.size.height/2.25)/4);
-    resonantSymbol.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"lowGNode"].frame), CGRectGetMaxY([self childNodeWithName:@"lowGNode"].frame) - attackSymbol.size.height/2 - 10);
-    resonantSymbol.name = @"lowGNode";
-    resonantSymbol.zPosition = 3.1f;
-    [self addChild:resonantSymbol];
+//    SKSpriteNode *attackSymbol = [SKSpriteNode spriteNodeWithImageNamed:@"weaponSymbol.png"];
+//    attackSymbol.size = CGSizeMake((self.frame.size.width/12)/1.5,(self.frame.size.height/2.25)/4);
+//    attackSymbol.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"lowCNode"].frame), CGRectGetMaxY([self childNodeWithName:@"lowCNode"].frame) - attackSymbol.size.height/2 - 10);
+//    attackSymbol.name = @"lowCNode";
+//    attackSymbol.zPosition = 3.1f;
+//    [self addChild:attackSymbol];
+//    
+//    SKSpriteNode *defenseSymbol = [SKSpriteNode spriteNodeWithImageNamed:@"defenseSymbol.png"];
+//    defenseSymbol.size = CGSizeMake((self.frame.size.width/12)/1.5,(self.frame.size.height/2.25)/4);
+//    defenseSymbol.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"lowDNode"].frame), CGRectGetMaxY([self childNodeWithName:@"lowDNode"].frame) - attackSymbol.size.height/2 - 10);
+//    defenseSymbol.name = @"lowDNode";
+//    defenseSymbol.zPosition = 3.1f;
+//    [self addChild:defenseSymbol];
+//    
+//    SKSpriteNode *magicSymbol = [SKSpriteNode spriteNodeWithImageNamed:@"magicSymbol.png"];
+//    magicSymbol.size = CGSizeMake((self.frame.size.width/12)/1.5,(self.frame.size.height/2.25)/4);
+//    magicSymbol.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"lowFNode"].frame), CGRectGetMaxY([self childNodeWithName:@"lowFNode"].frame) - attackSymbol.size.height/2 - 10);
+//    magicSymbol.name = @"lowFNode";
+//    magicSymbol.zPosition = 3.1f;
+//    [self addChild:magicSymbol];
+//    
+//    SKSpriteNode *moveSymbol = [SKSpriteNode spriteNodeWithImageNamed:@"moveSymbol.png"];
+//    moveSymbol.size = CGSizeMake((self.frame.size.width/12)/1.5,(self.frame.size.height/2.25)/4);
+//    moveSymbol.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"lowENode"].frame), CGRectGetMaxY([self childNodeWithName:@"lowENode"].frame) - attackSymbol.size.height/2 - 10);
+//    moveSymbol.name = @"lowENode";
+//    moveSymbol.zPosition = 3.1f;
+//    [self addChild:moveSymbol];
+//    
+//    SKSpriteNode *resonantSymbol = [SKSpriteNode spriteNodeWithImageNamed:@"resonantSymbol.png"];
+//    resonantSymbol.size = CGSizeMake((self.frame.size.width/12)/1.5,(self.frame.size.height/2.25)/4);
+//    resonantSymbol.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"lowGNode"].frame), CGRectGetMaxY([self childNodeWithName:@"lowGNode"].frame) - attackSymbol.size.height/2 - 10);
+//    resonantSymbol.name = @"lowGNode";
+//    resonantSymbol.zPosition = 3.1f;
+//    [self addChild:resonantSymbol];
 
 #pragma mark- declare other stuff
     
@@ -691,6 +749,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         self.touchDown = YES;
         
         SKNode *n = [self nodeAtPoint:[touch locationInNode:self]];
+        NSLog(@"N.name:%@", n.name);
         if([n.name containsString:@"lowCNode"])
         {
             //[lowChannel stop];
@@ -718,7 +777,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 [self changeModes];
             }
             self.currentKeyDown = @"lowCNode";
-        }else if([n.name isEqualToString:@"lowDNode"])
+        }else if([n.name containsString:@"lowDNode"])
         {
             if(![self.mode isEqualToString:@"Wind"]){
                 self.mode = @"Wind";
@@ -745,7 +804,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
 
             self.currentKeyDown = @"lowDNode";
-        }else if([n.name isEqualToString:@"lowENode"])
+        }else if([n.name containsString:@"lowENode"])
         {
             if(![self.mode isEqualToString:@"Water"]){
                 self.mode = @"Water";
@@ -774,7 +833,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
 
             self.currentKeyDown = @"lowENode";
-        }else if([n.name isEqualToString:@"lowFNode"])
+        }else if([n.name containsString:@"lowFNode"])
         {
             if(![self.mode isEqualToString:@"Earth"]){
                 self.mode = @"Earth";
@@ -1389,11 +1448,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 -(void)checkCombo{
     
-    if(self.shouldShoot && ![self.mode isEqualToString:@"Bag"] && self.defending == NO){
+    if(self.shouldShoot && self.defending == NO){
         if([self.mode isEqualToString: @"Fire"])
         {
             NSArray *combo1 = self.attackArray[0];
-            if((self.playerMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]])){
+            if((self.fireMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]])){
                 SKSpriteNode *fireball = [SKSpriteNode spriteNodeWithImageNamed:@"fireball.png"];
                 fireball.size = CGSizeMake(50, 50);
                 fireball.position = CGPointMake(self.player.position.x+fireball.size.width/2,self.player.position.y+0);
@@ -1411,14 +1470,14 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                     [self.fireballArray removeObjectAtIndex:0];
                 }
                 [self.fireballArray addObject:fireball];
-                
+                self.fireMP -= 1;
                 self.playerMP -= 1;
                 self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
 
             }
             
             NSArray *combo2 = self.attackArray[1];
-            if((self.playerMP >= 2) &&([self.keyPressArray[1] isEqualToString:combo2[2]]) && ([self.keyPressArray[2] isEqualToString:combo2[1]]) && ([self.keyPressArray[3] isEqualToString:combo2[0]]) && !self.flameOn)
+            if((self.fireMP >= 2) &&([self.keyPressArray[1] isEqualToString:combo2[2]]) && ([self.keyPressArray[2] isEqualToString:combo2[1]]) && ([self.keyPressArray[3] isEqualToString:combo2[0]]) && !self.flameOn)
                {
                    self.flameOn = YES;
                    SKSpriteNode *flame = [SKSpriteNode spriteNodeWithImageNamed:@"fireball.png"];
@@ -1721,6 +1780,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         SKAction *resizeMP = [SKAction resizeToWidth:((self.playerMP/self.playerMPMax) * self.mpBarFillMaxWidth) duration:0.2f];
         [self.mpBarFill runAction:resizeMP];
         
+        SKSpriteNode *fireBar = (SKSpriteNode *)[self childNodeWithName:@"lowCNodeMPBAR"];
+        float keyNodeHeight = [self childNodeWithName:@"lowCNode"].frame.size.height - 1;
+        SKAction *resizeMPBar = [SKAction resizeToHeight:((self.fireMP/self.fireMPMax) * keyNodeHeight) duration:0.2];
+        [fireBar runAction:resizeMPBar];
+        
         self.playerHealthLabel.text = [NSString stringWithFormat:@"Player Health: %.2f", self.playerHealth];
         self.attackMPLabel.text = [NSString stringWithFormat:@"Adagio MP: %.2f", self.attackMP];
         self.defenseMPLabel.text = [NSString stringWithFormat:@"Brio MP: %.2f", self.defenseMP];
@@ -1729,6 +1793,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.gameOver = YES;
             [self gameOver:@"playerDied"];
             self.playerHealth = 0;
+            SKAction *resizeHealth = [SKAction resizeToWidth:((self.playerHealth/self.playerHealthMax) * self.healthBarFillMaxWidth) duration:0.2f];
+            [self.healthBarFill runAction:resizeHealth];
         }
     }
     
@@ -1862,15 +1928,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
     if(self.beatCount%16 == 0){
         [self enemyAttack:@{}];
-        if(self.playerMP < self.playerMPMax){
-            self.playerMP++;
-        }
-        if(self.defenseMP < self.defenseMPMax){
-            self.defenseMP++;
-        }
-        if(self.magicMP < self.magicMPMax){
-            self.magicMP++;
-        }
+        [self refillMP:@"All" by: 1];
     }
     
     self.firstBeat = NO;
@@ -1880,6 +1938,26 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
      SKAction *moveCamera = [SKAction moveByX:([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:0];
      [camera runAction:moveCamera];
      [self centerOnNode:camera];*/
+}
+
+-(void)refillMP:(NSString *)bar by:(float)amount{
+    if([bar isEqualToString:@"All"]){
+        if(self.fireMP <= self.fireMPMax - 1){
+            self.fireMP += amount;
+        }
+        if(self.waterMP <= self.waterMPMax - 1){
+            self.waterMP += amount;
+        }
+        if(self.windMP <= self.windMPMax - 1){
+            self.windMP += amount;
+        }
+        if(self.earthMP <= self.earthMPMax - 1){
+            self.earthMP += amount;
+        }
+        if(self.musicMP <= self.musicMPMax - 1){
+            self.musicMP += amount;
+        }
+    }
 }
 
 
@@ -2042,7 +2120,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                     NSString *markerName = [NSString stringWithFormat:@"%@Marker", firstLetter];
                     SKSpriteNode *attackNote = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"circle.png"] size:markerSize];
                     attackNote.position = CGPointMake(CGRectGetMidX([self childNodeWithName:markerName].frame), self.scene.size.height + attackNote.frame.size.height);
-                    attackNote.alpha = 0.5f;
+                    attackNote.alpha = 0.8f;
                     attackNote.zPosition = 2.0f;
                     attackNote.name = [NSString stringWithFormat:@"%@", [key uppercaseString]];
                     [self.scene addChild:attackNote];
@@ -2227,9 +2305,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 -(SKSpriteNode *)lowCNode
 {
-    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"cKey"]];
+    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake(self.frame.size.width/12, self.frame.size.height/2.25)];
     keyNode.position = CGPointMake(([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
+    keyNode.alpha = 0.3;
     keyNode.name = @"lowCNode";//how the node is identified later
     keyNode.zPosition = 3.0;
     
@@ -2238,8 +2317,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 - (SKSpriteNode *)lowDNode
 {
-    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"dKey"]];
+    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake(self.frame.size.width/12, self.frame.size.height/2.25)];
+    keyNode.alpha = 0.3f;
     keyNode.position = CGPointMake(1*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"lowDNode";//how the node is identified later
     keyNode.zPosition = 3.0;
@@ -2248,9 +2328,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 - (SKSpriteNode *)lowENode
 {
-    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"eKey"]];
+    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake(self.frame.size.width/12, self.frame.size.height/2.25)];
     keyNode.position = CGPointMake(2*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
+    keyNode.alpha = 0.3f;
     keyNode.name = @"lowENode";//how the node is identified later
     keyNode.zPosition = 3.0;
     return keyNode;
@@ -2259,9 +2340,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 -(SKSpriteNode *)lowFNode
 {
-    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"fFKey"]];
+    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake([[UIScreen mainScreen] bounds].size.width/12, [[UIScreen mainScreen] bounds].size.height/2.25)];
     keyNode.position = CGPointMake(3*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
+    keyNode.alpha = 0.3F;
     keyNode.name = @"lowFNode";//how the node is identified later
     keyNode.zPosition = 3.0;
     return keyNode;
@@ -2269,9 +2351,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 -(SKSpriteNode *)lowGNode
 {
-    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"gKey"]];
+    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake([[UIScreen mainScreen] bounds].size.width/12, self.frame.size.height/2.25)];
     keyNode.position = CGPointMake(4*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5,(self.frame.size.height/2) - (self.frame.size.height/3.4));
+    keyNode.alpha = 0.3f;
     keyNode.name = @"lowGNode";//how the node is identified later
     keyNode.zPosition = 3.0;
     return keyNode;
@@ -2279,15 +2362,16 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 - (SKSpriteNode *)highANode
 {
-    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"aKey"]];
+    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake(self.frame.size.width/12, self.frame.size.height/2.25)];
     keyNode.position = CGPointMake(5*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highANode";//how the node is identified later
+    keyNode.alpha = 0.3f;
     keyNode.zPosition = 3.0;
     
     
-    SKSpriteNode *aMarker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
-    aMarker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + aMarker.frame.size.height/2.0f);
+    SKSpriteNode *aMarker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"EMPTYCIRCLEBLUE.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
+    aMarker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) - (aMarker.frame.size.height/2.0f) - 3);
     aMarker.name = @"aMarker";
     aMarker.zPosition = 2.0f;
     [self.scene addChild:aMarker];
@@ -2299,14 +2383,15 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 - (SKSpriteNode *)highBNode
 {
-    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"bKey"]];
+    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake(self.frame.size.width/12, self.frame.size.height/2.25)];
     keyNode.position = CGPointMake(6*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5,(self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highBNode";//how the node is identified later
     keyNode.zPosition = 3.0;
-    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
+    keyNode.alpha = 0.3f;
+    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"EMPTYCIRCLEBLUE.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
     
-    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
+    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) - Marker.frame.size.height/2.0f  - 3);
     Marker.name = @"bMarker";
     Marker.zPosition = 2.0f;
     [self.scene addChild:Marker];
@@ -2315,14 +2400,15 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 - (SKSpriteNode *)highCNode
 {
-    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"cKey"]];
+    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake(self.frame.size.width/12, self.frame.size.height/2.25)];
     keyNode.position = CGPointMake(7*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
+    keyNode.alpha = 0.3f;
     keyNode.name = @"highCNode";//how the node is identified later
     keyNode.zPosition = 3.0;
     
-    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
-    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
+    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"EMPTYCIRCLEBLUE.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
+    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) - Marker.frame.size.height/2.0f  - 3);
     Marker.name = @"cMarker";
     Marker.zPosition = 2.0f;
     [self.scene addChild:Marker];
@@ -2331,14 +2417,15 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 - (SKSpriteNode *)highDNode
 {
-    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"dKey"]];
+    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake(self.frame.size.width/12, self.frame.size.height/2.25)];
     keyNode.position = CGPointMake(8*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
+    keyNode.alpha = 0.3f;
     keyNode.name = @"highDNode";//how the node is identified later
     keyNode.zPosition = 3.0;
     
-    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
-    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
+    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"EMPTYCIRCLEBLUE.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
+    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) - Marker.frame.size.height/2.0f  - 3);
     Marker.name = @"dMarker";
     Marker.zPosition = 2.0f;
     [self.scene addChild:Marker];
@@ -2347,14 +2434,15 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 - (SKSpriteNode *)highENode
 {
-    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"eKey"]];
+    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake(self.frame.size.width/12, self.frame.size.height/2.25)];
     keyNode.position = CGPointMake(9*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
+    keyNode.alpha = 0.3f;
     keyNode.name = @"highENode";//how the node is identified later
     keyNode.zPosition = 3.0;
     
-    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
-    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
+    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"EMPTYCIRCLEBLUE.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
+    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) - Marker.frame.size.height/2.0f  - 3);
     Marker.name = @"eMarker";
     Marker.zPosition = 2.0f;
     [self.scene addChild:Marker];
@@ -2363,14 +2451,15 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 - (SKSpriteNode *)highFNode
 {
-    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"fFKey"]];
+    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake(self.frame.size.width/12, self.frame.size.height/2.25)];
     keyNode.position = CGPointMake(10*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highFNode";//how the node is identified later
+    keyNode.alpha = 0.3f;
     keyNode.zPosition = 3.0;
     
-    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
-    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
+    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"EMPTYCIRCLEBLUE.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
+    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) - Marker.frame.size.height/2.0f  - 3);
     Marker.name = @"fMarker";
     Marker.zPosition = 2.0f;
     [self.scene addChild:Marker];
@@ -2379,14 +2468,15 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 -(SKSpriteNode *)highGNode
 {
-    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"gKey"]];
+    SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake(self.frame.size.width/12, self.frame.size.height/2.25)];
     keyNode.position = CGPointMake(11*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highGNode";//how the node is identified later
+    keyNode.alpha = 0.3f;
     keyNode.zPosition = 3.0;
     
-    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
-    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
+    SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"EMPTYCIRCLEBLUE.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
+    Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) - Marker.frame.size.height/2.0f - 3);
     Marker.name = @"gMarker";
     Marker.zPosition = 2.0f;
     [self.scene addChild:Marker];
@@ -2394,10 +2484,24 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 }
 
 -(void)addKeyNameLabel: (NSString *)keyName{
-    SKSpriteNode *keyNode = (SKSpriteNode *)[self childNodeWithName:[NSString stringWithFormat:@"high%@Node", keyName]];
-    SKLabelNode *keyNameLabel = [SKLabelNode labelNodeWithText:keyName];
+    SKSpriteNode *keyNode = (SKSpriteNode *)[self childNodeWithName:keyName];
+    NSRange highRange = [keyName rangeOfString:@"high"];
+    NSRange lowRange = [keyName rangeOfString:@"low"];
+    NSString *keyLetter;
+    if(highRange.length > 0){
+        NSLog(@"high range:%@", NSStringFromRange( highRange));
+
+    }
+    if(highRange.length > 0){
+        keyLetter = [keyName substringWithRange:NSMakeRange(highRange.length, 1)];
+    }else if(lowRange.length > 0){
+        keyLetter = [keyName substringWithRange:NSMakeRange(lowRange.length, 1)];
+
+    }
+    SKLabelNode *keyNameLabel = [SKLabelNode labelNodeWithText:keyLetter];
+    keyNameLabel.fontColor = [UIColor whiteColor];
     keyNameLabel.position = CGPointMake(keyNode.position.x, CGRectGetMinY(keyNode.frame) + 10);
-    keyNameLabel.name = [NSString stringWithFormat:@"high%@NodeLabel", keyName];
+    keyNameLabel.name = [NSString stringWithFormat:@"%@Label", keyName];
     [self addChild:keyNameLabel];
     keyNameLabel.zPosition = 3.1;
 }
@@ -2752,7 +2856,7 @@ static inline float floatToFrequency(float value) {
         enemy2.zPosition = 1.0f;
         enemy2.health = 150;
         enemy2.healthMax = 150;
-        enemy2.attackDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"cenemy2":@1.0, @"denemy2":@1.0, @"eenemy2":@1.5, @"f2enemy2":@2.0, @"g2enemy2":@2.5, @"e2enemy2":@3.0, @"a3enemy2":@3.25, @"end":@8.75, @"name":@"Needle Shot", @"maxAttackDamage":@2.0, @"currentAttackDamage":@2.0}];
+        enemy2.attackDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"denemy2":@1.0, @"denemy2":@2.0, @"eenemy2":@1.5, @"f2enemy2":@3.0, @"g2enemy2":@3.5, @"a2enemy2":@4.0, @"end":@9.5, @"name":@"Needle Shot", @"maxAttackDamage":@2.0, @"currentAttackDamage":@2.0}];
         enemy2.hidden = NO;
         enemy2.canShoot = YES;
         enemy2.canMove = YES;
