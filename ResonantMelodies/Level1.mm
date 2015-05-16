@@ -1274,57 +1274,19 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     if([self.mode isEqualToString:@"Fire"]){
         self.player.texture = [SKTexture textureWithImageNamed:@"fireModeAdagioIdle1.png"];
         
+    }else if([self.mode isEqualToString:@"Wind"]){
+        self.player.texture = [SKTexture textureWithImageNamed:@"windModeAdagioIdle1.png"];
+        
+        
+    }else if([self.mode isEqualToString:@"Water"]){
+        self.player.texture = [SKTexture textureWithImageNamed:@"waterModeAdagioIdle1.png"];
+        
+    }else if([self.mode isEqualToString:@"Earth"]){
+        self.player.texture = [SKTexture textureWithImageNamed:@"earthModeAdagioIdle1.png"];
+        
+        
     }else if([self.mode isEqualToString:@"Music"]){
         self.player.texture = [SKTexture textureWithImageNamed:@"musicModeAdagioIdle1.png"];
-        
-        
-    }else if([self.mode isEqualToString:@"Defense"]){
-        self.player.texture = [SKTexture textureWithImageNamed:@"aragon1.png"];
-        
-        SKLabelNode *dvonLabel;
-        dvonLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-        dvonLabel.name = @"dvonLabel";
-        dvonLabel.text = @"Defense!";
-        dvonLabel.fontSize = 80;
-        dvonLabel.position = CGPointMake(CGRectGetMidX(self.frame),CGRectGetMidY(self.frame));
-        dvonLabel.fontColor = [SKColor blueColor];
-        [self addChild:dvonLabel];
-        
-        SKAction *fadeAction = [SKAction fadeAlphaTo:0.0f duration:0.5];
-        SKAction *moveUp = [SKAction moveToY:dvonLabel.frame.origin.y+10 duration:0.5];
-        SKAction *fadeUp = [SKAction group:@[moveUp, fadeAction]];
-        [dvonLabel runAction:fadeUp];
-    }else if([self.mode isEqualToString:@"Bag"]){
-        SKLabelNode *bagLabel;
-        bagLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-        bagLabel.name = @"bagLabel";
-        bagLabel.text = @"Move!";
-        bagLabel.fontSize = 80;
-        bagLabel.position = CGPointMake(CGRectGetMidX(self.frame),CGRectGetMidY(self.frame));
-        bagLabel.fontColor = [SKColor brownColor];
-        [self addChild:bagLabel];
-        [self checkRoomTransitions];
-        
-        SKAction *fadeAction = [SKAction fadeAlphaTo:0.0f duration:0.5];
-        SKAction *moveUp = [SKAction moveToY:bagLabel.frame.origin.y+10 duration:0.5];
-        SKAction *fadeUp = [SKAction group:@[moveUp, fadeAction]];
-        [bagLabel runAction:fadeUp];
-        
-    }else if([self.mode isEqualToString:@"Resonance"]){
-        SKLabelNode *resonanceLabel;
-        resonanceLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-        resonanceLabel.name = @"bagLabel";
-        resonanceLabel.text = @"Resonance!";
-        resonanceLabel.fontSize = 80;
-        resonanceLabel.position = CGPointMake(CGRectGetMidX(self.frame),CGRectGetMidY(self.frame));
-        resonanceLabel.fontColor = [SKColor whiteColor];
-        [self addChild:resonanceLabel];
-        
-        SKAction *fadeAction = [SKAction fadeAlphaTo:0.0f duration:0.5];
-        SKAction *moveUp = [SKAction moveToY:resonanceLabel.frame.origin.y+10 duration:0.5];
-        SKAction *fadeUp = [SKAction group:@[moveUp, fadeAction]];
-        [resonanceLabel runAction:fadeUp];
-        
     }
 }
 
