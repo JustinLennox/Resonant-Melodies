@@ -52,6 +52,8 @@
 @property (strong, nonatomic) NSArray *defenseArray;
 @property (strong, nonatomic) NSArray *magicArray;
 @property (strong, nonatomic) NSMutableArray *fireballArray;
+@property (strong, nonatomic) NSMutableArray *availableComboBlockArray;
+@property (strong, nonatomic) NSMutableDictionary *availableComboNoteDictionary;
 @property (nonatomic) BOOL flameOn;
 @property (nonatomic) int filterInt;
 

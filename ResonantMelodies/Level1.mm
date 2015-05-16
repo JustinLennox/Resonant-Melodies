@@ -235,12 +235,20 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     [self addChild: [self lowFNode]];
     [self addChild: [self lowGNode]];
     [self addChild: [self highANode]];
+    [self addKeyNameLabel:@"A"];
     [self addChild: [self highBNode]];
+    [self addKeyNameLabel:@"B"];
     [self addChild: [self highCNode]];
+    [self addKeyNameLabel:@"C"];
     [self addChild: [self highDNode]];
+    [self addKeyNameLabel:@"D"];
     [self addChild: [self highENode]];
+    [self addKeyNameLabel:@"E"];
     [self addChild: [self highFNode]];
+    [self addKeyNameLabel:@"F"];
     [self addChild: [self highGNode]];
+    [self addKeyNameLabel:@"G"];
+
     
     self.keyArray = @[[self childNodeWithName:@"lowCNode"], [self childNodeWithName:@"lowDNode"], [self childNodeWithName:@"lowENode"], [self childNodeWithName:@"lowFNode"], [self childNodeWithName:@"lowGNode"], [self childNodeWithName:@"highANode"], [self childNodeWithName:@"highBNode"], [self childNodeWithName:@"highCNode"], [self childNodeWithName:@"highDNode"], [self childNodeWithName:@"highENode"], [self childNodeWithName:@"highFNode"], [self childNodeWithName:@"highGNode"]];
     
@@ -434,7 +442,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     leftArrow.alpha = 0.0f;
     leftArrow.hidden = YES;
     
-    self.currentRoomNumber = 3;
+    self.currentRoomNumber = 1;
     [self loadRoom:1];
     
 #pragma mark- add key icons
@@ -535,6 +543,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     _musicModeAdagioIdleFrames =idleFrames;
     _fireModeAdagioIdleFrames = fireIdleFrames;
     
+    self.availableComboBlockArray = [[NSMutableArray alloc] init];
+    
     NSLog(@"Walking frames: %@", walkFrames);
     [self.player setTexture:_musicModeAdagioIdleFrames[0]];
     self.mode = @"Music";
@@ -621,7 +631,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         self.touchDown = YES;
         
         SKNode *n = [self nodeAtPoint:[touch locationInNode:self]];
-        if([n.name isEqualToString:@"lowCNode"])
+        if([n.name containsString:@"lowCNode"])
         {
             //[lowChannel stop];
             //[lowChannel play:lAKeyBuffer loop:YES];
@@ -642,12 +652,14 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             
             [self silenceLowKeys];
             volC = 0.5f;
-            [self.keyPressArray insertObject:@"lowCNode" atIndex:0];
-            [self.keyPressArray removeLastObject];
+            self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
+
             [self changeModes];
             self.currentKeyDown = @"lowCNode";
         }else if([n.name isEqualToString:@"lowDNode"])
         {
+            self.mode = @"Wind";
+
             //[lowChannel stop];
             //[lowChannel play:lBKeyBuffer loop:YES];
 //            pthread_mutex_lock(&mutex);
@@ -663,14 +675,15 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 //            pthread_mutex_unlock(&mutex);
             [self silenceLowKeys];
             volD = 0.5f;
-            self.mode = @"Wind";
 
-            [self.keyPressArray insertObject:@"lowDNode" atIndex:0];
-            [self.keyPressArray removeLastObject];
+            self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
+
             [self changeModes];
             self.currentKeyDown = @"lowDNode";
         }else if([n.name isEqualToString:@"lowENode"])
         {
+            self.mode = @"Water";
+
             //[lowChannel stop];
             //[lowChannel play:lCKeyBuffer loop:YES];
             //STOP ALL OTHER LOW NODE SOUNDS
@@ -689,17 +702,13 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             volE = 0.5f;
             [self getPlayerCurrentKey];
 
-            if([[self.keyPressArray objectAtIndex:0] isEqualToString:@"lowENode"]||[self.mode isEqualToString:@"Bag"]){
-                [self movePlayer:@"lowENode"];
-            }
-            
-            self.mode = @"Water";
-            [self.keyPressArray insertObject:@"lowENode" atIndex:0];
+            self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
+
             [self changeModes];
-            [self.keyPressArray removeLastObject];
             self.currentKeyDown = @"lowENode";
         }else if([n.name isEqualToString:@"lowFNode"])
         {
+            self.mode = @"Earth";
             //[lowChannel stop];
             //[lowChannel play:lDKeyBuffer loop:YES];
 //            pthread_mutex_lock(&mutex);
@@ -715,13 +724,12 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 //            pthread_mutex_unlock(&mutex);
             [self silenceLowKeys];
             volF = 0.5f;
-            self.mode = @"Earth";
             
-            [self.keyPressArray insertObject:@"lowFNode" atIndex:0];
-            [self.keyPressArray removeLastObject];
+            self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
+
             [self changeModes];
             self.currentKeyDown = @"lowFNode";
-        }else if([n.name isEqualToString:@"lowGNode"])
+        }else if([n.name containsString:@"lowGNode"])
         {
             //[lowChannel stop];
 //            pthread_mutex_lock(&mutex);
@@ -740,11 +748,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             //[lowChannel play:lEKeyBuffer loop:YES];
             self.mode = @"Music";
             
-            [self.keyPressArray insertObject:@"lowGNode" atIndex:0];
-            [self.keyPressArray removeLastObject];
+            self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
+
             [self changeModes];
             self.currentKeyDown = @"lowGNode";
-        }else if([n.name isEqualToString:@"highANode"])
+        }else if([n.name containsString:@"highANode"])
         {
             [channel play:aKeyBuffer];
             [self checkDefenseForKey:@"A"];
@@ -753,7 +761,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             [self.keyPressArray removeLastObject];
             [self movePlayer:@"highANode"];
             self.currentKeyDown = @"highANode";
-        }else if([n.name isEqualToString:@"highBNode"])
+        }else if([n.name containsString:@"highBNode"])
         {
             [channel play:bKeyBuffer];
             
@@ -763,7 +771,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             [self.keyPressArray removeLastObject];
             [self movePlayer:@"highBNode"];
             self.currentKeyDown = @"highBNode";
-        }else if([n.name isEqualToString:@"highCNode"])
+        }else if([n.name containsString:@"highCNode"])
         {
             [channel play:cKeyBuffer];
             
@@ -773,7 +781,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             [self.keyPressArray removeLastObject];
             [self movePlayer:@"highCNode"];
             self.currentKeyDown = @"highCNode";
-        }else if([n.name isEqualToString:@"highDNode"])
+        }else if([n.name containsString:@"highDNode"])
         {
             [channel play:dKeyBuffer];
             
@@ -783,7 +791,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             [self.keyPressArray removeLastObject];
             [self movePlayer:@"highDNode"];
             self.currentKeyDown = @"highDNode";
-        }else if([n.name isEqualToString:@"highENode"])
+        }else if([n.name containsString:@"highENode"])
         {
             [channel play:eKeyBuffer];
             [self shootLaser:keyLaserDamage withNote:@"E"];
@@ -792,7 +800,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             [self.keyPressArray removeLastObject];
             [self movePlayer:@"highENode"];
             self.currentKeyDown = @"highENode";
-        }else if([n.name isEqualToString:@"highFNode"])
+        }else if([n.name containsString:@"highFNode"])
         {
             [channel play:fKeyBuffer];
             
@@ -802,7 +810,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             [self.keyPressArray removeLastObject];
             [self movePlayer:@"highFNode"];
             self.currentKeyDown = @"highFNode";
-        }else if([n.name isEqualToString:@"highGNode"])
+        }else if([n.name containsString:@"highGNode"])
         {
             [channel play:gKeyBuffer];
             
@@ -844,7 +852,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         
     }
     
+    
     self.touchBegan = CACurrentMediaTime();
+    [self setAvailableComboNotes];
     [self checkCombo];
     if(!self.isAnimating){
         [self animateCharacter];
@@ -945,6 +955,82 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
     
     
+}
+
+-(void)setAvailableComboNotes{
+    NSLog(@"KeyPRessArray:%@", self.keyPressArray);
+    if([self.mode isEqualToString:@"Fire"]){
+        if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
+            self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"Fire":@"C", @"Flame":@"C"}];
+        }else if([[self.keyPressArray objectAtIndex:0] isEqualToString:@"highCNode"]){
+            self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"Fire":@"D"}];
+        }else if([[self.keyPressArray objectAtIndex:0] isEqualToString:@"highDNode"]){
+            self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"Fire":@"E"}];
+        }else{
+            self.availableComboNoteDictionary = nil;
+        }
+    }else if([self.mode isEqualToString:@"Music"]){
+        NSLog(@"First object:%@",[self.keyPressArray objectAtIndex:0] );
+
+        if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
+            NSLog(@"Music");
+            self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"Sleep":@"E"}];
+            NSLog(@"Music array");
+        }
+    }
+    
+    [self setAvailableComboBlocks];
+
+}
+
+-(void)setAvailableComboBlocks{
+    
+    NSMutableDictionary *keySpacing = [[NSMutableDictionary alloc] init];
+    NSLog(@"Avail combo%@", self.availableComboNoteDictionary);
+    
+    [self removeChildrenInArray:self.availableComboBlockArray];
+    self.availableComboBlockArray = [[NSMutableArray alloc] init];
+    
+    for(id key in self.availableComboNoteDictionary){
+        SKSpriteNode *keyNode = (SKSpriteNode *)[self childNodeWithName:[NSString stringWithFormat:@"high%@Node", [self.availableComboNoteDictionary objectForKey:key]]];
+        SKLabelNode *keyNodeLabel = (SKLabelNode *)[self childNodeWithName:[NSString stringWithFormat:@"%@Label", keyNode.name]];
+        
+        int ySpacing = 0;
+        if([keySpacing objectForKey:[self.availableComboNoteDictionary objectForKey:key]]){
+            int numOfKeys = [[keySpacing objectForKey:[self.availableComboNoteDictionary objectForKey:key]] intValue];
+            ySpacing = 20 * numOfKeys;
+            [keySpacing setObject:[NSNumber numberWithInt:(numOfKeys++)] forKey:[self.availableComboNoteDictionary objectForKey:key]];
+        }else{
+            [keySpacing setObject:@1 forKey:[self.availableComboNoteDictionary objectForKey:key]];
+        }
+        
+        SKSpriteNode *comboBlock = [SKSpriteNode spriteNodeWithColor:[UIColor redColor] size:CGSizeMake([self childNodeWithName:@"highANode"].frame.size.width, 20)];
+        if([self.mode isEqualToString:@"Fire"]){
+            comboBlock.color = [UIColor redColor];
+        }else if([self.mode isEqualToString:@"Music"]){
+            comboBlock.color = [UIColor purpleColor];
+        }
+        comboBlock.name = [NSString stringWithFormat:@"%@Combo%@", keyNode.name, key];
+        comboBlock.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNodeLabel.frame) + (comboBlock.frame.size.height/2.0f) + ySpacing);
+        comboBlock.zPosition = keyNode.zPosition + 0.1;
+        [self addChild:comboBlock];
+        ySpacing += 20;
+        
+        [self.availableComboBlockArray addObject:comboBlock];
+        
+        SKLabelNode *comboNameLabel = [SKLabelNode labelNodeWithText:key];
+        comboNameLabel.name = [NSString stringWithFormat:@"%@Combo%@Label", keyNode.name, key];
+        comboNameLabel.fontSize = 20.0f;
+        comboNameLabel.fontName = @"Georgia-Bold";
+        comboNameLabel.position = CGPointMake(comboBlock.position.x, CGRectGetMinY(comboBlock.frame));
+        comboNameLabel.zPosition = comboBlock.zPosition += 0.1;
+        
+        [self addChild:comboNameLabel];
+        [self.availableComboBlockArray addObject:comboNameLabel];
+    }
+
+
+
 }
 
 #pragma mark- animations
@@ -1148,6 +1234,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 }
 
 -(void)changeModes{
+
     [self changeModeAnimation];
     
     SKSpriteNode *rightArrow = (SKSpriteNode *)[self childNodeWithName:@"rightArrow"];
@@ -1259,7 +1346,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 -(void)checkCombo{
     if(self.shouldShoot && ![self.mode isEqualToString:@"Bag"] && self.defending == NO){
         
-        if([self.mode isEqualToString: @"Attack"])
+        if([self.mode isEqualToString: @"Fire"])
         {
             NSArray *combo1 = self.attackArray[0];
             if((self.playerMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]])){
@@ -2123,11 +2210,15 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNode.name = @"highANode";//how the node is identified later
     keyNode.zPosition = 3.0;
     
+    
     SKSpriteNode *aMarker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
     aMarker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + aMarker.frame.size.height/2.0f);
     aMarker.name = @"aMarker";
     aMarker.zPosition = 2.0f;
     [self.scene addChild:aMarker];
+    
+    
+    
     return keyNode;
 }
 
@@ -2139,6 +2230,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNode.name = @"highBNode";//how the node is identified later
     keyNode.zPosition = 3.0;
     SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
+    
     Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
     Marker.name = @"bMarker";
     Marker.zPosition = 2.0f;
@@ -2153,6 +2245,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNode.position = CGPointMake(7*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highCNode";//how the node is identified later
     keyNode.zPosition = 3.0;
+    
     SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
     Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
     Marker.name = @"cMarker";
@@ -2168,6 +2261,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNode.position = CGPointMake(8*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highDNode";//how the node is identified later
     keyNode.zPosition = 3.0;
+    
     SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
     Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
     Marker.name = @"dMarker";
@@ -2183,6 +2277,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNode.position = CGPointMake(9*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highENode";//how the node is identified later
     keyNode.zPosition = 3.0;
+    
     SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
     Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
     Marker.name = @"eMarker";
@@ -2198,6 +2293,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNode.position = CGPointMake(10*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highFNode";//how the node is identified later
     keyNode.zPosition = 3.0;
+    
     SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
     Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
     Marker.name = @"fMarker";
@@ -2213,12 +2309,22 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNode.position = CGPointMake(11*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"highGNode";//how the node is identified later
     keyNode.zPosition = 3.0;
+    
     SKSpriteNode *Marker = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"emptyCircle.png"] size:CGSizeMake(keyNode.frame.size.width - 10, keyNode.frame.size.width - 10)];
     Marker.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNode.frame) + Marker.frame.size.height/2.0f);
     Marker.name = @"gMarker";
     Marker.zPosition = 2.0f;
     [self.scene addChild:Marker];
     return keyNode;
+}
+
+-(void)addKeyNameLabel: (NSString *)keyName{
+    SKSpriteNode *keyNode = (SKSpriteNode *)[self childNodeWithName:[NSString stringWithFormat:@"high%@Node", keyName]];
+    SKLabelNode *keyNameLabel = [SKLabelNode labelNodeWithText:keyName];
+    keyNameLabel.position = CGPointMake(keyNode.position.x, CGRectGetMinY(keyNode.frame) + 10);
+    keyNameLabel.name = [NSString stringWithFormat:@"high%@NodeLabel", keyName];
+    [self addChild:keyNameLabel];
+    keyNameLabel.zPosition = 3.1;
 }
 
 #pragma mark- cutscenes
