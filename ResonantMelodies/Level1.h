@@ -117,6 +117,7 @@
 
 //Game Properties
 @property (nonatomic) BOOL shouldMove;
+@property (nonatomic) BOOL gameOver;
 @property (nonatomic, strong) NSArray *currentResonantArray;
 @property (nonatomic, strong) NSMutableArray *keyPressArray;
 @property (nonatomic) BOOL touchDown;

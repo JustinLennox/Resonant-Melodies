@@ -22,4 +22,7 @@
 @property (nonatomic) BOOL canShoot;
 @property (nonatomic) int sleepChance;
 @property (nonatomic) float attackDamage;
+
+-(void)moveEnemy: (int) moveInt withBPM: (float)BPM;
+
 @end

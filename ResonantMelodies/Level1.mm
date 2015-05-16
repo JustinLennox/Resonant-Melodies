@@ -443,8 +443,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     leftArrow.alpha = 0.0f;
     leftArrow.hidden = YES;
     
-    self.currentRoomNumber = 1;
-    [self loadRoom:1];
+    self.currentRoomNumber = 5;
+    [self loadRoom:5];
     
 #pragma mark- add key icons
     SKSpriteNode *attackSymbol = [SKSpriteNode spriteNodeWithImageNamed:@"weaponSymbol.png"];
@@ -561,8 +561,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     NSLog(@"Walking frames: %@", walkFrames);
     [self.player setTexture:_musicModeAdagioIdleFrames[0]];
     self.mode = @"Music";
-    
-    [self idleAdagio];
+    [self changeModes];
+    self.gameOver = NO;
 
 }
 
@@ -714,6 +714,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
             if(![self.mode isEqualToString:@"Fire"]){
                 self.mode = @"Fire";
+                NSLog(@"self.mode:%@", self.mode);
                 [self changeModes];
             }
             self.currentKeyDown = @"lowCNode";
@@ -721,6 +722,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             if(![self.mode isEqualToString:@"Wind"]){
                 self.mode = @"Wind";
+                NSLog(@"self.mode:%@", self.mode);
                 [self changeModes];
             }
 
@@ -747,6 +749,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             if(![self.mode isEqualToString:@"Water"]){
                 self.mode = @"Water";
+                NSLog(@"self.mode:%@", self.mode);
                 [self changeModes];
             }
 
@@ -775,6 +778,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             if(![self.mode isEqualToString:@"Earth"]){
                 self.mode = @"Earth";
+                NSLog(@"self.mode:%@", self.mode);
                 [self changeModes];
             }
             //[lowChannel stop];
@@ -800,6 +804,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             if(![self.mode isEqualToString:@"Music"]){
                 self.mode = @"Music";
+                NSLog(@"self.mode:%@", self.mode);
                 [self changeModes];
             }
             //[lowChannel stop];
@@ -926,7 +931,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.touchBegan = CACurrentMediaTime();
     [self checkCombo];
     [self setAvailableComboNotes];
-    NSLog(@"Key PRess ARray:%@", self.keyPressArray);
     if(!self.isAnimating){
         [self animateCharacter];
     }
@@ -1088,7 +1092,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     NSMutableDictionary *keySpacing = [[NSMutableDictionary alloc] init];
     
     [self removeChildrenInArray:self.availableComboBlockArray];
-    NSLog(@"Combo note array:%@", self.availableComboNoteDictionary);
     self.availableComboBlockArray = [[NSMutableArray alloc] init];
     
     for(id key in self.availableComboNoteDictionary){
@@ -1560,49 +1563,86 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     //Watch the enemy's movement
     self.lastBeat = playerBack->msElapsedSinceLastBeat;
 //    NSLog(@"Since last beat: %f", self.lastBeat);
-    for(Enemy *enemy in self.moveablesArray){
-        if([enemy intersectsNode:[self childNodeWithName:@"player"]]&&!enemy.hidden&&(enemy.zPosition==1.0f))
-        {
-            self.playerHealth--;
-            enemy.health = 0;
-            enemy.hidden = YES;
-            [self childNodeWithName:[NSString stringWithFormat:@"%@Label", enemy.name]].hidden = YES;
-        }else if([[self childNodeWithName:@"rightEdge"] intersectsNode:enemy])
-        {
-            SKAction *moveEnemy = [SKAction moveToX:CGRectGetMidX([self childNodeWithName:@"highGNode"].frame) duration:0.2f];
-            [enemy runAction:moveEnemy];
-        }else if([[self childNodeWithName:@"leftEdge"] intersectsNode:enemy])
-        {
-            enemy.hidden = YES;
-            [self childNodeWithName:[NSString stringWithFormat:@"%@Label", enemy.name]].hidden = YES;
+    if(!self.gameOver){
+        for(Enemy *enemy in self.moveablesArray){
+            if([enemy intersectsNode:[self childNodeWithName:@"player"]]&&!enemy.hidden&&(enemy.zPosition==1.0f))
+            {
+                self.playerHealth--;
+                enemy.health = 0;
+                enemy.hidden = YES;
+                [self childNodeWithName:[NSString stringWithFormat:@"%@Label", enemy.name]].hidden = YES;
+            }else if([[self childNodeWithName:@"rightEdge"] intersectsNode:enemy])
+            {
+                SKAction *moveEnemy = [SKAction moveToX:CGRectGetMidX([self childNodeWithName:@"highGNode"].frame) duration:0.2f];
+                [enemy runAction:moveEnemy];
+            }else if([[self childNodeWithName:@"leftEdge"] intersectsNode:enemy])
+            {
+                enemy.hidden = YES;
+                [self childNodeWithName:[NSString stringWithFormat:@"%@Label", enemy.name]].hidden = YES;
+            }
         }
-    }
-    
-    for (Enemy *enemy in self.enemyArray)
-    {
-        if (enemy.hidden) {
-            continue;
-        }
-        for (KeyLaser *keyLaser in _keyLasers)
+        
+        for (Enemy *enemy in self.enemyArray)
         {
-            if (keyLaser.hidden) {
+            if (enemy.hidden) {
                 continue;
             }
-
-            if([keyLaser intersectsNode:enemy])
+            for (KeyLaser *keyLaser in _keyLasers)
             {
-                if(!keyLaser.hidden){
-                    enemy.health -= keyLaser.damage;
-                    keyLaser.hidden = YES;
+                if (keyLaser.hidden) {
+                    continue;
+                }
 
+                if([keyLaser intersectsNode:enemy])
+                {
+                    if(!keyLaser.hidden){
+                        enemy.health -= keyLaser.damage;
+                        keyLaser.hidden = YES;
+
+                    }
+                    
+                }else if([keyLaser intersectsNode:[self childNodeWithName:@"rightEdge"]])
+                {
+                    if(!keyLaser.hidden){
+                        keyLaser.hidden = YES;
+                    }
+                    
                 }
                 
-            }else if([keyLaser intersectsNode:[self childNodeWithName:@"rightEdge"]])
+                for (EnemyShot *shot in self.enemyShotArray)
+                {
+                    if (shot.hidden) {
+                        continue;
+                    }
+
+                }
+
+
+            }
+            
+            if([self childNodeWithName:[NSString stringWithFormat: @"%@AttackLabel", enemy.name]]){
+                SKLabelNode *attackLabel = (SKLabelNode *)[self childNodeWithName:[NSString stringWithFormat: @"%@AttackLabel", enemy.name]];
+                attackLabel.position = CGPointMake(enemy.position.x, enemy.position.y + 10);
+            }
+            
+            if([[self childNodeWithName:@"flame"] intersectsNode:enemy])
             {
-                if(!keyLaser.hidden){
-                    keyLaser.hidden = YES;
+                enemy.health -= 1.7;
+            }
+            
+            for (SKSpriteNode *fireball in self.fireballArray)
+            {
+                if (fireball.hidden) {
+                    continue;
                 }
                 
+                if([fireball intersectsNode:enemy])
+                {
+                    if(!fireball.hidden){
+                        enemy.health -= 30;
+                        fireball.hidden = YES;
+                    }
+                }
             }
             
             for (EnemyShot *shot in self.enemyShotArray)
@@ -1610,120 +1650,86 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 if (shot.hidden) {
                     continue;
                 }
-
-            }
-
-
-        }
-        
-        if([self childNodeWithName:[NSString stringWithFormat: @"%@AttackLabel", enemy.name]]){
-            SKLabelNode *attackLabel = (SKLabelNode *)[self childNodeWithName:[NSString stringWithFormat: @"%@AttackLabel", enemy.name]];
-            attackLabel.position = CGPointMake(enemy.position.x, enemy.position.y + 10);
-        }
-        
-        if([[self childNodeWithName:@"flame"] intersectsNode:enemy])
-        {
-            enemy.health -= 1.7;
-        }
-        
-        for (SKSpriteNode *fireball in self.fireballArray)
-        {
-            if (fireball.hidden) {
-                continue;
-            }
-            
-            if([fireball intersectsNode:enemy])
-            {
-                if(!fireball.hidden){
-                    enemy.health -= 30;
-                    fireball.hidden = YES;
-                }
-            }
-        }
-        
-        for (EnemyShot *shot in self.enemyShotArray)
-        {
-            if (shot.hidden) {
-                continue;
-            }
-            
-            if([shot intersectsNode:self.player])
-            {
-                if(!shot.hidden){
-                    self.playerHealth -= shot.damage;
-                    shot.hidden = YES;
-                }
-            }else if([self childNodeWithName:@"wall"] && [shot intersectsNode:[self childNodeWithName:@"wall"]])
-            {
-                if(!shot.hidden){
-                    SKSpriteNode *wall = (SKSpriteNode *)[self childNodeWithName:@"wall"];
-                    if(shot.damage <= 0.25f){
+                
+                if([shot intersectsNode:self.player])
+                {
+                    if(!shot.hidden){
+                        self.playerHealth -= shot.damage;
                         shot.hidden = YES;
-                        wall.hidden = YES;
-                        [wall removeFromParent];
-                    }else{
-                        shot.damage -= 0.25f;
-                        wall.hidden = YES;
-                        [wall removeFromParent];
+                    }
+                }else if([self childNodeWithName:@"wall"] && [shot intersectsNode:[self childNodeWithName:@"wall"]])
+                {
+                    if(!shot.hidden){
+                        SKSpriteNode *wall = (SKSpriteNode *)[self childNodeWithName:@"wall"];
+                        if(shot.damage <= 0.25f){
+                            shot.hidden = YES;
+                            wall.hidden = YES;
+                            [wall removeFromParent];
+                        }else{
+                            shot.damage -= 0.25f;
+                            wall.hidden = YES;
+                            [wall removeFromParent];
+                        }
                     }
                 }
             }
+
+
+            if(enemy.health > 0){
+                SKSpriteNode *enemyHealthBar = (SKSpriteNode*)[enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]];
+                //enemyHealthLabel.text = [NSString stringWithFormat:@"%.2f", enemy.health];
+                //enemyHealthBar.size = CGSizeMake(enemy.health/enemy.healthMax * 50, 10);
+                SKAction *resizeHealth = [SKAction resizeToWidth:(enemy.health/enemy.healthMax * 50) duration:0.1f];
+                [enemyHealthBar runAction:resizeHealth];
+                //enemyHealthLabel.position = CGPointMake(CGRectGetMidX(enemy.frame) - enemyHealthLabel.size.width/2, CGRectGetMaxY(enemy.frame) + enemyHealthLabel.size.height/2 + 5);
+            }else if (enemy.health <= 0){
+                enemy.canShoot = NO;
+                enemy.hidden = YES;
+                [self.enemyToDeleteArray addObject:enemy];
+                [enemy removeFromParent];
+                [enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]].hidden = YES;
+                [self checkRoomTransitions];
+            }else{
+                enemy.canShoot = NO;
+                SKSpriteNode *enemyHealthBar = (SKSpriteNode*)[enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]];
+                enemyHealthBar.alpha = 0.0f;
+                enemyHealthBar.hidden = YES;
+            }
+
         }
 
-
-        if(enemy.health > 0){
-            SKSpriteNode *enemyHealthBar = (SKSpriteNode*)[enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]];
-            //enemyHealthLabel.text = [NSString stringWithFormat:@"%.2f", enemy.health];
-            //enemyHealthBar.size = CGSizeMake(enemy.health/enemy.healthMax * 50, 10);
-            SKAction *resizeHealth = [SKAction resizeToWidth:(enemy.health/enemy.healthMax * 50) duration:0.1f];
-            [enemyHealthBar runAction:resizeHealth];
-            //enemyHealthLabel.position = CGPointMake(CGRectGetMidX(enemy.frame) - enemyHealthLabel.size.width/2, CGRectGetMaxY(enemy.frame) + enemyHealthLabel.size.height/2 + 5);
-        }else if (enemy.health <= 0){
-            enemy.canShoot = NO;
-            enemy.hidden = YES;
-            [self.enemyToDeleteArray addObject:enemy];
-            [enemy removeFromParent];
-            [enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]].hidden = YES;
-            [self checkRoomTransitions];
+        //Update the touch held length && check interactables
+        if(self.touchDown){
+            self.touchLength = CACurrentMediaTime() - self.touchBegan;
+            if(self.currentKeyDown){
+              //[self checkInteractables:self.currentKeyDown];
+            }
         }else{
-            enemy.canShoot = NO;
-            SKSpriteNode *enemyHealthBar = (SKSpriteNode*)[enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]];
-            enemyHealthBar.alpha = 0.0f;
-            enemyHealthBar.hidden = YES;
+            self.touchLength = 0;
         }
-
-    }
-
-    //Update the touch held length && check interactables
-    if(self.touchDown){
-        self.touchLength = CACurrentMediaTime() - self.touchBegan;
-        if(self.currentKeyDown){
-          //[self checkInteractables:self.currentKeyDown];
-        }
-    }else{
-        self.touchLength = 0;
-    }
-    
-    //Update Health & MP Labels
-    //[self.playerHealthBar.healthBar setFrame:CGRectMake(self.playerHealthBar.frame.origin.x, self.playerHealthBar.frame.origin.y, self.playerHealth/self.playerHealthMax * self.playerHealthBar.healthBar.frame.size.width, self.playerHealthBar.healthBar.frame.size.height)];
-    //SKAction *resize = [SKAction resizeToWidth:((self.playerHealth/self.playerHealthMax) * self.healthBarFill.size.width) duration:0.2f];
-    //[self.healthBarFill runAction:resize];
-    //self.healthBarFill.anchorPoint = CGPointMake(0.0, 0.5);
-   // self.healthBarFill.size = CGSizeMake((self.playerHealth/self.playerHealthMax)*self.healthBarFillMaxWidth, self.healthBarFill.size.height);
-
-    SKAction *resizeHealth = [SKAction resizeToWidth:((self.playerHealth/self.playerHealthMax) * self.healthBarFillMaxWidth) duration:0.2f];
-    [self.healthBarFill runAction:resizeHealth];
-    
-    SKAction *resizeMP = [SKAction resizeToWidth:((self.playerMP/self.playerMPMax) * self.mpBarFillMaxWidth) duration:0.2f];
-    [self.mpBarFill runAction:resizeMP];
-    
-    self.playerHealthLabel.text = [NSString stringWithFormat:@"Player Health: %.2f", self.playerHealth];
-    self.attackMPLabel.text = [NSString stringWithFormat:@"Adagio MP: %.2f", self.attackMP];
-    self.defenseMPLabel.text = [NSString stringWithFormat:@"Brio MP: %.2f", self.defenseMP];
-    self.magicMPLabel.text = [NSString stringWithFormat:@"Vif MP: %.2f", self.magicMP];
-    if(self.playerHealth <= 0){
-        [self.player removeFromParent];
         
+        //Update Health & MP Labels
+        //[self.playerHealthBar.healthBar setFrame:CGRectMake(self.playerHealthBar.frame.origin.x, self.playerHealthBar.frame.origin.y, self.playerHealth/self.playerHealthMax * self.playerHealthBar.healthBar.frame.size.width, self.playerHealthBar.healthBar.frame.size.height)];
+        //SKAction *resize = [SKAction resizeToWidth:((self.playerHealth/self.playerHealthMax) * self.healthBarFill.size.width) duration:0.2f];
+        //[self.healthBarFill runAction:resize];
+        //self.healthBarFill.anchorPoint = CGPointMake(0.0, 0.5);
+       // self.healthBarFill.size = CGSizeMake((self.playerHealth/self.playerHealthMax)*self.healthBarFillMaxWidth, self.healthBarFill.size.height);
+
+        SKAction *resizeHealth = [SKAction resizeToWidth:((self.playerHealth/self.playerHealthMax) * self.healthBarFillMaxWidth) duration:0.2f];
+        [self.healthBarFill runAction:resizeHealth];
+        
+        SKAction *resizeMP = [SKAction resizeToWidth:((self.playerMP/self.playerMPMax) * self.mpBarFillMaxWidth) duration:0.2f];
+        [self.mpBarFill runAction:resizeMP];
+        
+        self.playerHealthLabel.text = [NSString stringWithFormat:@"Player Health: %.2f", self.playerHealth];
+        self.attackMPLabel.text = [NSString stringWithFormat:@"Adagio MP: %.2f", self.attackMP];
+        self.defenseMPLabel.text = [NSString stringWithFormat:@"Brio MP: %.2f", self.defenseMP];
+        self.magicMPLabel.text = [NSString stringWithFormat:@"Vif MP: %.2f", self.magicMP];
+        if(self.playerHealth <= 0){
+            self.gameOver = YES;
+            [self gameOver:@"playerDied"];
+            self.playerHealth = 0;
+        }
     }
     
     [self removeDefeatedEnemies];
@@ -1770,6 +1776,14 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 //
     [self beat];
     
+}
+
+
+-(void)gameOver: (NSString *)reason{
+    
+    if([reason isEqualToString:@"playerDied"]){
+        self.player.hidden = YES;
+    }
 }
 
 -(void)beat{
@@ -1940,43 +1954,54 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 -(void)moveEnemies{
     
     SKAction *moveAngle = [[SKAction alloc] init];
+    for(Enemy *enemy in self.enemyArray){
+        
+        
+        if([enemy.type isEqualToString:@"scooter"] && enemy.canMove){
+            [enemy moveEnemy:self.enemyMoveInt withBPM:self.BPM];
+        }
+    }
     
     switch (self.enemyMoveInt) {
         case 1:
         {
             self.enemyMoveInt++;
             moveAngle = [SKAction moveByX:-([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:(60.0f/self.BPM)/2.0f];
+            
             break;
         }
         case 2:
         {
             self.enemyMoveInt++;
             moveAngle = [SKAction moveByX:-([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:(60.0f/self.BPM)/2.0f];
+
             break;
         }
         case 3:
         {
             self.enemyMoveInt++;
             moveAngle = [SKAction moveByX:([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:(60.0f/self.BPM)/2.0f];
+
+            
             break;
         }
         case 4:
         {
             self.enemyMoveInt = 1;
             moveAngle = [SKAction moveByX:([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:(60.0f/self.BPM)/2.0f];
+
             break;
         }
         default:
             break;
     }
-    
-    SKAction *moveScooter = [SKAction moveByX:-([[UIScreen mainScreen] bounds].size.width/12) y:0 duration:(60.0f/self.BPM)/2.0f];
+
     
     
     for(Enemy *enemy in self.moveablesArray){
         
             if([enemy.type isEqualToString:@"scooter"] && enemy.canMove){
-                [enemy runAction:moveScooter];
+
             }else if([enemy.type isEqualToString:@"angle"] && enemy.canMove){
                 [enemy runAction:moveAngle];
             }
@@ -1987,9 +2012,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 -(void)enemyAttack:(NSMutableDictionary *) enemyAttack{
     
-    [self resetCombos];
     for(Enemy *enemy in self.enemyArray){
-        if(enemy.canShoot && !enemy.hidden){
+        if(enemy.canShoot && !enemy.hidden && enemy.attackDictionary != nil){
+            [self resetCombos];
             [self showDefenseMarkers];
             enemyAttack = enemy.attackDictionary;
             [enemyAttack setObject:[enemyAttack objectForKey:@"maxAttackDamage"] forKey:@"currentAttackDamage"];
@@ -2697,10 +2722,9 @@ static inline float floatToFrequency(float value) {
         Enemy *enemy1 = [Enemy spriteNodeWithImageNamed:@"scooter.png"];
         enemy1.name = @"enemy1";
         enemy1.size = CGSizeMake(50,50);
-        enemy1.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highGNode"].frame), CGRectGetMaxY([self childNodeWithName:@"highGNode"].frame) + enemy1.size.height/2 + 10);
+        enemy1.position = CGPointMake(CGRectGetMidX([self childNodeWithName:@"highENode"].frame), CGRectGetMaxY([self childNodeWithName:@"highENode"].frame) + enemy1.size.height/2 + 10);
         enemy1.zPosition = 1.0f;
         enemy1.health = 100;
-        enemy1.attackDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"cenemy1":@1.0, @"denemy1":@1.0, @"eenemy1":@1.5, @"f2enemy1":@2.0, @"g2enemy1":@2.5, @"e2enemy1":@3.0, @"a3enemy1":@3.25, @"end":@8.75, @"name":@"Needle Shot", @"maxAttackDamage":@2.0, @"currentAttackDamage":@2.0}];
         enemy1.healthMax = 100;
         enemy1.hidden = NO;
         enemy1.type = @"scooter";
