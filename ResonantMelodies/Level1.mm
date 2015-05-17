@@ -136,6 +136,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 #pragma mark- beginning init
 -(void)didMoveToView:(SKView *)view {
+    
     NSLog(@"Before %@", NSStringFromCGSize(self.size));
     self.smallNode = [[SKNode alloc] init];
     self.size = CGSizeMake([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
@@ -621,6 +622,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.mode = @"Music";
     [self changeModes];
     self.gameOver = NO;
+    self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
+    [self hideDefenseMarkers];
 
 }
 
@@ -1094,8 +1097,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 -(void)setAvailableComboNotes{
     if(self.defending == NO){
         if([self.mode isEqualToString:@"Fire"]){
+            NSDictionary *beginningCombos = @{@"Fire":@"highCNode", @"Flame":@"highCNode"};
             if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
-                self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"Fire":@"highCNode", @"Flame":@"highCNode"}];
+                self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
             }else{
                 for(id key in self.attackDictionary){
                     NSArray *combo = [self.attackDictionary objectForKey:key];
@@ -1128,7 +1132,11 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                         if(furthestInt + 1 < combo.count && matching){
                             NSLog(@"Combo next letter: %@", [combo objectAtIndex:furthestInt+1]);
                             [self.availableComboNoteDictionary setObject:[combo objectAtIndex:furthestInt+1] forKey:comboName];
+                        }else{
+                            self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
                         }
+                    }else{
+                        self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
                     }
                 }
             }
@@ -1449,6 +1457,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 -(void)checkCombo{
     
     if(self.shouldShoot && self.defending == NO){
+        BOOL comboSuccess = NO;
         if([self.mode isEqualToString: @"Fire"])
         {
             NSArray *combo1 = self.attackArray[0];
@@ -1472,7 +1481,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 [self.fireballArray addObject:fireball];
                 self.fireMP -= 1;
                 self.playerMP -= 1;
-                self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
+                comboSuccess = YES;
 
             }
             
@@ -1498,8 +1507,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                    
                    [flame runAction:moveLaserActionWithDone withKey:@"laserFired"];
                    self.playerMP -= 2;
-                   self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
-
+                   comboSuccess = YES;
 
                }
         }
@@ -1519,18 +1527,22 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 }
             }
         }
-        if([self.mode isEqualToString: @"Magic"])
+        if([self.mode isEqualToString: @"Music"])
         {
             NSArray *combo1 = self.magicArray[0];
-            if((self.playerMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]]) && self.filterInt == 100)
+            if((self.musicMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]]) && self.filterInt == 100)
             {
                 //We increase the player's health by a certain amount each beat. This is done in the beat function
                 filter->enable(true);
                 self.filterInt = 0;
-                self.playerMP-= 1;
-                
+                self.musicMP-= 1;
+                comboSuccess = YES;
             
             }
+        }
+        if(comboSuccess){
+            self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
+            [self setAvailableComboNotes];
         }
     
     }
@@ -1868,6 +1880,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         pthread_mutex_unlock(&mutex);
         volG = 0.5;
         [self hideDefenseMarkers];
+        self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
+
     }
     
     if(self.filterInt < 8){
@@ -1967,6 +1981,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         node.hidden = YES;
         node.zPosition = -10.0f;
     }];
+    self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
+    [self setAvailableComboNotes];
 }
 
 -(void)showDefenseMarkers{
@@ -2149,10 +2165,12 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 -(void)enemyAttack{
     
+    [self enumerateChildNodesWithName:@"*AttackLabel" usingBlock:^(SKNode *node, BOOL *stop) {
+        [node removeFromParent];
+    }];
+    
     for(Enemy *enemy in self.enemyArray)
     {
-        SKLabelNode *enemyAttackLabel = (SKLabelNode *)[self childNodeWithName:[NSString stringWithFormat:@"%@AttackLabel", enemy.name]];
-        [enemyAttackLabel removeFromParent];
         
         if([[enemy.attackDictionary objectForKey:@"currentAttackDamage"] floatValue] < 0.01f){
             SKLabelNode *blockedAttack = [SKLabelNode labelNodeWithText:@"Blocked!"];
@@ -2790,6 +2808,8 @@ static inline float floatToFrequency(float value) {
 
 -(void)loadRoom:(int)roomNumber{
     
+    self.enemyMoveInt = 1;
+    
     if(self.currentRoomNumber == 1){
         
         Interactable *sign1 = [[Interactable alloc] init];
@@ -2847,8 +2867,6 @@ static inline float floatToFrequency(float value) {
             self.roomCleared = 2;
         }
         
-        self.enemyMoveInt = 1;
-        
         Enemy *enemy2 = [Enemy spriteNodeWithImageNamed:@"angle.png"];
         enemy2.name = @"enemy2";
         enemy2.size = CGSizeMake(50,50);
@@ -2900,7 +2918,6 @@ static inline float floatToFrequency(float value) {
             self.roomCleared = 4;
         }
         
-        self.enemyMoveInt = 1;
         
         Enemy *enemy1 = [Enemy spriteNodeWithImageNamed:@"angle.png"];
         enemy1.name = @"enemy1";
@@ -3011,7 +3028,6 @@ static inline float floatToFrequency(float value) {
             self.roomCleared = 7;
         }
         
-        self.enemyMoveInt = 1;
         
         Enemy *enemy1 = [Enemy spriteNodeWithImageNamed:@"orc01.png"];
         enemy1.name = @"boss";

@@ -23,7 +23,7 @@
     if(self.canMove){
         if([self.type isEqualToString:@"scooter"])
         {
-            
+            NSLog(@"Oh he can move");
             SKAction *moveScooter = [[SKAction alloc] init];
             switch (moveInt) {
                 case 1:
