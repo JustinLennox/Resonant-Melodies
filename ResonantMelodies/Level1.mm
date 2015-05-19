@@ -299,7 +299,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.musicMPMax = 3.0f;
     
     SKSpriteNode *fireBar = [SKSpriteNode spriteNodeWithColor:[UIColor redColor] size:[self childNodeWithName:@"highANode"].frame.size];
-    fireBar.zPosition = [self childNodeWithName:@"lowCNode"].zPosition + 0.1;
+    fireBar.zPosition = [self childNodeWithName:@"lowCNode"].zPosition - 0.1;
     fireBar.position = CGPointMake([self childNodeWithName:@"lowCNode"].position.x,[self childNodeWithName:@"lowCNode"].position.y  - fireBar.frame.size.height/2.0f);
     fireBar.name = @"lowCNodeMPBAR";
     fireBar.anchorPoint = CGPointMake(0.5, 0);
@@ -307,7 +307,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     [self addChild:fireBar];
     
     SKSpriteNode *windBar = [SKSpriteNode spriteNodeWithColor:[UIColor grayColor] size:[self childNodeWithName:@"highANode"].frame.size];
-    windBar.zPosition = [self childNodeWithName:@"lowDNode"].zPosition + 0.1;
+    windBar.zPosition = [self childNodeWithName:@"lowDNode"].zPosition - 0.1;
     windBar.position = CGPointMake([self childNodeWithName:@"lowDNode"].position.x,[self childNodeWithName:@"lowDNode"].position.y  - fireBar.frame.size.height/2.0f);
     windBar.name = @"lowDNodeMPBAR";
     windBar.anchorPoint = CGPointMake(0.5, 0);
@@ -315,7 +315,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     [self addChild:windBar];
     
     SKSpriteNode *waterBar = [SKSpriteNode spriteNodeWithColor:[UIColor blueColor] size:[self childNodeWithName:@"highANode"].frame.size];
-    waterBar.zPosition = [self childNodeWithName:@"lowENode"].zPosition + 0.1;
+    waterBar.zPosition = [self childNodeWithName:@"lowENode"].zPosition - 0.1;
     waterBar.position = CGPointMake([self childNodeWithName:@"lowENode"].position.x,[self childNodeWithName:@"lowENode"].position.y  - fireBar.frame.size.height/2.0f);
     waterBar.name = @"lowENodeMPBAR";
     waterBar.alpha = 0.5f;
@@ -323,7 +323,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     [self addChild:waterBar];
     
     SKSpriteNode *earthBar = [SKSpriteNode spriteNodeWithColor:[UIColor greenColor] size:[self childNodeWithName:@"highANode"].frame.size];
-    earthBar.zPosition = [self childNodeWithName:@"lowFNode"].zPosition + 0.1;
+    earthBar.zPosition = [self childNodeWithName:@"lowFNode"].zPosition - 0.1;
     earthBar.position = CGPointMake([self childNodeWithName:@"lowFNode"].position.x,[self childNodeWithName:@"lowFNode"].position.y  - fireBar.frame.size.height/2.0f);
     earthBar.name = @"lowFNodeMPBAR";
     earthBar.anchorPoint = CGPointMake(0.5, 0);
@@ -331,7 +331,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     [self addChild:earthBar];
     
     SKSpriteNode *musicBar = [SKSpriteNode spriteNodeWithColor:[UIColor purpleColor] size:[self childNodeWithName:@"highANode"].frame.size];
-    musicBar.zPosition = [self childNodeWithName:@"lowGNode"].zPosition + 0.1;
+    musicBar.zPosition = [self childNodeWithName:@"lowGNode"].zPosition - 0.1;
     musicBar.position = CGPointMake([self childNodeWithName:@"lowGNode"].position.x,[self childNodeWithName:@"lowGNode"].position.y  - fireBar.frame.size.height/2.0f);
     musicBar.name = @"lowGNodeMPBAR";
     musicBar.alpha = 0.5f;
@@ -632,6 +632,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     tempPlayer.position = CGPointMake(self.player.position.x - 2, self.player.position.y + 4);
     tempPlayer.zPosition = self.player.zPosition + 0.1;
     [self addChild:tempPlayer];
+    
+    [self.player removeActionForKey:@"changeModesAnimation"];
 
     if([self.mode isEqualToString:@"Fire"]){
         SKAction *fireAnimation =  [SKAction animateWithTextures:_changeModeFireFrames
@@ -644,30 +646,62 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         
         [tempPlayer runAction:animationPlusFinish withKey:@"changeModesAnimation"];
 
-    }
-    if([self.mode isEqualToString:@"Fire"]){
-        
     }else if([self.mode isEqualToString:@"Wind"]){
         self.player.texture = [SKTexture textureWithImageNamed:@"windModeAdagioIdle1.png"];
-        [self idleAdagio];
+
+        SKAction *fireAnimation =  [SKAction animateWithTextures:_changeModeFireFrames
+                                                    timePerFrame:0.05f
+                                                          resize:NO
+                                                         restore:YES];
+        SKAction *finishChangeModes = [SKAction performSelector:@selector(finishChangeModes) onTarget:self];
+        SKAction *animationPlusFinish = [SKAction group:@[fireAnimation, finishChangeModes]];
+        
+        
+        [tempPlayer runAction:animationPlusFinish withKey:@"changeModesAnimation"];
 
         
         
     }else if([self.mode isEqualToString:@"Water"]){
         self.player.texture = [SKTexture textureWithImageNamed:@"waterModeAdagioIdle1.png"];
-        [self idleAdagio];
+
+        SKAction *fireAnimation =  [SKAction animateWithTextures:_changeModeFireFrames
+                                                    timePerFrame:0.05f
+                                                          resize:NO
+                                                         restore:YES];
+        SKAction *finishChangeModes = [SKAction performSelector:@selector(finishChangeModes) onTarget:self];
+        SKAction *animationPlusFinish = [SKAction group:@[fireAnimation, finishChangeModes]];
+        
+        
+        [tempPlayer runAction:animationPlusFinish withKey:@"changeModesAnimation"];
 
         
     }else if([self.mode isEqualToString:@"Earth"]){
         self.player.texture = [SKTexture textureWithImageNamed:@"earthModeAdagioIdle1.png"];
-        [self idleAdagio];
+
+        SKAction *fireAnimation =  [SKAction animateWithTextures:_changeModeFireFrames
+                                                    timePerFrame:0.05f
+                                                          resize:NO
+                                                         restore:YES];
+        SKAction *finishChangeModes = [SKAction performSelector:@selector(finishChangeModes) onTarget:self];
+        SKAction *animationPlusFinish = [SKAction group:@[fireAnimation, finishChangeModes]];
+        
+        
+        [tempPlayer runAction:animationPlusFinish withKey:@"changeModesAnimation"];
 
         
         
     }else if([self.mode isEqualToString:@"Music"]){
         self.player.texture = [SKTexture textureWithImageNamed:@"musicModeAdagioIdle1.png"];
-        [self idleAdagio];
 
+        SKAction *fireAnimation =  [SKAction animateWithTextures:_changeModeFireFrames
+                                                    timePerFrame:0.05f
+                                                          resize:NO
+                                                         restore:YES];
+        SKAction *finishChangeModes = [SKAction performSelector:@selector(finishChangeModes) onTarget:self];
+        SKAction *animationPlusFinish = [SKAction group:@[fireAnimation, finishChangeModes]];
+        
+        
+        [tempPlayer runAction:animationPlusFinish withKey:@"changeModesAnimation"];
     }
     
 }
@@ -752,9 +786,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         self.touchDown = YES;
         
         SKNode *n = [self nodeAtPoint:[touch locationInNode:self]];
-        NSLog(@"N.name:%@", n.name);
+        NSLog(@"Mode:%@", self.mode);
         if([n.name containsString:@"lowCNode"])
         {
+            [self childNodeWithName:@"lowCNode"].alpha = 0.7f;
             //[lowChannel stop];
             //[lowChannel play:lAKeyBuffer loop:YES];
             //playerC->exitLoop();
@@ -782,6 +817,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.currentKeyDown = @"lowCNode";
         }else if([n.name containsString:@"lowDNode"])
         {
+            [self childNodeWithName:@"lowDNode"].alpha = 0.7f;
+
             if(![self.mode isEqualToString:@"Wind"]){
                 self.mode = @"Wind";
                 NSLog(@"self.mode:%@", self.mode);
@@ -809,6 +846,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.currentKeyDown = @"lowDNode";
         }else if([n.name containsString:@"lowENode"])
         {
+            [self childNodeWithName:@"lowENode"].alpha = 0.7f;
+
             if(![self.mode isEqualToString:@"Water"]){
                 self.mode = @"Water";
                 NSLog(@"self.mode:%@", self.mode);
@@ -838,6 +877,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.currentKeyDown = @"lowENode";
         }else if([n.name containsString:@"lowFNode"])
         {
+            [self childNodeWithName:@"lowFNode"].alpha = 0.7f;
+
             if(![self.mode isEqualToString:@"Earth"]){
                 self.mode = @"Earth";
                 NSLog(@"self.mode:%@", self.mode);
@@ -864,6 +905,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.currentKeyDown = @"lowFNode";
         }else if([n.name containsString:@"lowGNode"])
         {
+            [self childNodeWithName:@"lowGNode"].alpha = 0.7f;
+
             if(![self.mode isEqualToString:@"Music"]){
                 self.mode = @"Music";
                 NSLog(@"self.mode:%@", self.mode);
@@ -891,6 +934,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.currentKeyDown = @"lowGNode";
         }else if([n.name containsString:@"highANode"])
         {
+            [self childNodeWithName:@"highANode"].alpha = 0.7f;
+
             [channel play:aKeyBuffer];
             [self checkDefenseForKey:@"A"];
             [self shootLaser:keyLaserDamage withNote:@"A"];
@@ -900,6 +945,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.currentKeyDown = @"highANode";
         }else if([n.name containsString:@"highBNode"])
         {
+            [self childNodeWithName:@"highBNode"].alpha = 0.7f;
+
             [channel play:bKeyBuffer];
             
             [self shootLaser:keyLaserDamage withNote:@"B"];
@@ -910,6 +957,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.currentKeyDown = @"highBNode";
         }else if([n.name containsString:@"highCNode"])
         {
+            [self childNodeWithName:@"highCNode"].alpha = 0.7f;
+
             [channel play:cKeyBuffer];
             
             [self shootLaser:keyLaserDamage withNote:@"C"];
@@ -920,6 +969,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.currentKeyDown = @"highCNode";
         }else if([n.name containsString:@"highDNode"])
         {
+            [self childNodeWithName:@"highDNode"].alpha = 0.7f;
+
             [channel play:dKeyBuffer];
             
             [self shootLaser:keyLaserDamage withNote:@"D"];
@@ -930,6 +981,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.currentKeyDown = @"highDNode";
         }else if([n.name containsString:@"highENode"])
         {
+            [self childNodeWithName:@"highENode"].alpha = 0.7f;
+
             [channel play:eKeyBuffer];
             [self shootLaser:keyLaserDamage withNote:@"E"];
             [self.keyPressArray insertObject:@"highENode" atIndex:0];
@@ -939,6 +992,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.currentKeyDown = @"highENode";
         }else if([n.name containsString:@"highFNode"])
         {
+            [self childNodeWithName:@"highFNode"].alpha = 0.7f;
+
             [channel play:fKeyBuffer];
             
             [self shootLaser:keyLaserDamage withNote:@"F"];
@@ -949,6 +1004,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.currentKeyDown = @"highFNode";
         }else if([n.name containsString:@"highGNode"])
         {
+            [self childNodeWithName:@"highGNode"].alpha = 0.7f;
+
             [channel play:gKeyBuffer];
             
             [self shootLaser:keyLaserDamage withNote:@"G"];
@@ -1011,6 +1068,46 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.touchDown = NO;
     [self hideInteractables];
     [self checkResonantMelody];
+    for (UITouch *touch in touches) {
+        SKNode *n = [self nodeAtPoint:[touch locationInNode:self]];
+        if([n.name containsString:@"lowCNode"])
+        {
+            [self childNodeWithName:@"lowCNode"].alpha = 0.3f;
+        }else if([n.name containsString:@"lowDNode"]){
+            [self childNodeWithName:@"lowDNode"].alpha = 0.3f;
+
+        }else if([n.name containsString:@"lowENode"]){
+            [self childNodeWithName:@"lowENode"].alpha = 0.3f;
+
+        }else if([n.name containsString:@"lowFNode"]){
+            [self childNodeWithName:@"lowFNode"].alpha = 0.3f;
+
+        }else if([n.name containsString:@"lowGNode"]){
+            [self childNodeWithName:@"lowGNode"].alpha = 0.3f;
+
+        }else if([n.name containsString:@"highANode"]){
+            [self childNodeWithName:@"highANode"].alpha = 0.3f;
+            
+        }else if([n.name containsString:@"highBNode"]){
+            [self childNodeWithName:@"highBNode"].alpha = 0.3f;
+            
+        }else if([n.name containsString:@"highCNode"]){
+            [self childNodeWithName:@"highCNode"].alpha = 0.3f;
+            
+        }else if([n.name containsString:@"highDNode"]){
+            [self childNodeWithName:@"highDNode"].alpha = 0.3f;
+            
+        }else if([n.name containsString:@"highENode"]){
+            [self childNodeWithName:@"highENode"].alpha = 0.3f;
+            
+        }else if([n.name containsString:@"highFNode"]){
+            [self childNodeWithName:@"highFNode"].alpha = 0.3f;
+            
+        }else if([n.name containsString:@"highGNode"]){
+            [self childNodeWithName:@"highGNode"].alpha = 0.3f;
+            
+        }
+    }
 }
 
 -(void)checkDefenseForKey:(NSString *)keyName{
@@ -1101,7 +1198,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
                 self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
             }else{
-                for(id key in self.attackDictionary){
+                NSMutableArray *tempComboArray = [[NSMutableArray alloc] init];
+                BOOL foundAMatch = NO;
+                for(id key in self.attackDictionary)
+                {
                     NSArray *combo = [self.attackDictionary objectForKey:key];
                     NSString *comboName = key;
                     BOOL matchFound = NO;
@@ -1113,7 +1213,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                             matchFound = YES;
                         }
                     }
-                    if(matchFound){
+                    
+                    if(matchFound)
+                    {
                         int x = 0;
                         int furthestInt = 0;
                         BOOL matching = YES;
@@ -1130,23 +1232,21 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                         }
                         NSLog(@"Matchin:%d", matching);
                         if(furthestInt + 1 < combo.count && matching){
+                            foundAMatch = YES;
                             NSLog(@"Combo next letter: %@", [combo objectAtIndex:furthestInt+1]);
                             [self.availableComboNoteDictionary setObject:[combo objectAtIndex:furthestInt+1] forKey:comboName];
-                        }else{
-                            self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
                         }
-                    }else{
-                        self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
                     }
+                }
+                
+                if(!foundAMatch){
+                    self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
                 }
             }
         }else if([self.mode isEqualToString:@"Music"]){
-            NSLog(@"First object:%@",[self.keyPressArray objectAtIndex:0] );
 
             if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
-                NSLog(@"Music");
                 self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"Sleep":@"E"}];
-                NSLog(@"Music array");
             }
         }
         
@@ -1480,7 +1580,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 }
                 [self.fireballArray addObject:fireball];
                 self.fireMP -= 1;
-                self.playerMP -= 1;
                 comboSuccess = YES;
 
             }
@@ -1506,7 +1605,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                    SKAction *moveLaserActionWithDone = [SKAction sequence:@[growAction, shrinkAction, doneAction]];
                    
                    [flame runAction:moveLaserActionWithDone withKey:@"laserFired"];
-                   self.playerMP -= 2;
+                   self.fireMP -= 2;
                    comboSuccess = YES;
 
                }
@@ -1792,8 +1891,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         SKAction *resizeMP = [SKAction resizeToWidth:((self.playerMP/self.playerMPMax) * self.mpBarFillMaxWidth) duration:0.2f];
         [self.mpBarFill runAction:resizeMP];
         
-        SKSpriteNode *fireBar = (SKSpriteNode *)[self childNodeWithName:@"lowCNodeMPBAR"];
         float keyNodeHeight = [self childNodeWithName:@"lowCNode"].frame.size.height - 1;
+        SKSpriteNode *fireBar = (SKSpriteNode *)[self childNodeWithName:@"lowCNodeMPBAR"];
         SKAction *resizeMPBar = [SKAction resizeToHeight:((self.fireMP/self.fireMPMax) * keyNodeHeight) duration:0.2];
         [fireBar runAction:resizeMPBar];
         
@@ -2521,7 +2620,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNameLabel.position = CGPointMake(keyNode.position.x, CGRectGetMinY(keyNode.frame) + 10);
     keyNameLabel.name = [NSString stringWithFormat:@"%@Label", keyName];
     [self addChild:keyNameLabel];
-    keyNameLabel.zPosition = 3.1;
+    keyNameLabel.zPosition = keyNode.zPosition - 0.1;
 }
 
 #pragma mark- cutscenes
