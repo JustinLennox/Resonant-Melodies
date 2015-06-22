@@ -1194,23 +1194,27 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 -(void)setAvailableComboNotes{
     if(self.defending == NO){
         if([self.mode isEqualToString:@"Fire"]){
-            NSDictionary *beginningCombos = @{@"Fire":@"highCNode", @"Flame":@"highCNode"};
+            NSDictionary *beginningCombos = @{@"Fire":@"highCNode"};
             if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
                 self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
             }else{
-                NSMutableArray *tempComboArray = [[NSMutableArray alloc] init];
                 BOOL foundAMatch = NO;
-                for(id key in self.attackDictionary)
+                for(id key in self.fireComboDictionary)
                 {
-                    NSArray *combo = [self.attackDictionary objectForKey:key];
+                    NSArray *combo = [self.fireComboDictionary objectForKey:key];
                     NSString *comboName = key;
                     BOOL matchFound = NO;
                     int startingInt = 0;
                     for(int i = 0; i < combo.count - 1; i++){
                         if([self.keyPressArray[i] isEqualToString:combo[0]]){
-                            NSLog(@"Starting int:%d", startingInt);
-                            startingInt = i;
-                            matchFound = YES;
+                            if([self.keyPressArray[0] isEqualToString:self.keyPressArray[1]] && [self.keyPressArray[0] isEqualToString:combo[0]]){
+                                startingInt = 0;
+                                matchFound = YES;
+                            }else{
+                                startingInt = i;
+                                NSLog(@"Starting int:%d", startingInt);
+                                matchFound = YES;
+                            }
                         }
                     }
                     
@@ -1245,8 +1249,58 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             }
         }else if([self.mode isEqualToString:@"Music"]){
 
+            NSDictionary *beginningCombos = @{@"Rest":@"highENode"};
             if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
-                self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"Sleep":@"E"}];
+                self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
+            }else{
+                BOOL foundAMatch = NO;
+                for(id key in self.musicComboDictionary)
+                {
+                    NSArray *combo = [self.musicComboDictionary objectForKey:key];
+                    NSString *comboName = key;
+                    BOOL matchFound = NO;
+                    int startingInt = 0;
+                    for(int i = 0; i < combo.count - 1; i++){
+                        if([self.keyPressArray[i] isEqualToString:combo[0]]){
+                            if([self.keyPressArray[0] isEqualToString:self.keyPressArray[1]] && [self.keyPressArray[0] isEqualToString:combo[0]]){
+                                startingInt = 0;
+                                matchFound = YES;
+                            }else{
+                                startingInt = i;
+                                NSLog(@"Starting int:%d", startingInt);
+                                matchFound = YES;
+                            }
+                        }
+                    }
+                    
+                    if(matchFound)
+                    {
+                        int x = 0;
+                        int furthestInt = 0;
+                        BOOL matching = YES;
+                        for(int i = startingInt; i >= 0; i--){
+                            matching = NO;
+                            if([self.keyPressArray[i] isEqualToString:combo[x]]){
+                                furthestInt = x;
+                                NSLog(@"Key press array i:%@, combox:%@", self.keyPressArray[i], combo[x]);
+                                NSLog(@"Furthest int:%d", furthestInt);
+                                matching = YES;
+                                
+                            }
+                            x++;
+                        }
+                        NSLog(@"Matchin:%d", matching);
+                        if(furthestInt + 1 < combo.count && matching){
+                            foundAMatch = YES;
+                            NSLog(@"Combo next letter: %@", [combo objectAtIndex:furthestInt+1]);
+                            [self.availableComboNoteDictionary setObject:[combo objectAtIndex:furthestInt+1] forKey:comboName];
+                        }
+                    }
+                }
+                
+                if(!foundAMatch){
+                    self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
+                }
             }
         }
         
@@ -1560,7 +1614,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         BOOL comboSuccess = NO;
         if([self.mode isEqualToString: @"Fire"])
         {
-            NSArray *combo1 = self.attackArray[0];
+            NSArray *combo1 = self.fireComboArray[0];
             if((self.fireMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]])){
                 SKSpriteNode *fireball = [SKSpriteNode spriteNodeWithImageNamed:@"fireball.png"];
                 fireball.size = CGSizeMake(50, 50);
@@ -1584,7 +1638,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
             }
             
-            NSArray *combo2 = self.attackArray[1];
+            NSArray *combo2 = self.fireComboArray[1];
             if((self.fireMP >= 2) &&([self.keyPressArray[1] isEqualToString:combo2[2]]) && ([self.keyPressArray[2] isEqualToString:combo2[1]]) && ([self.keyPressArray[3] isEqualToString:combo2[0]]) && !self.flameOn)
                {
                    self.flameOn = YES;
@@ -1628,7 +1682,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         }
         if([self.mode isEqualToString: @"Music"])
         {
-            NSArray *combo1 = self.magicArray[0];
+            NSArray *combo1 = self.musicComboArray[0];
             if((self.musicMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]]) && self.filterInt == 100)
             {
                 //We increase the player's health by a certain amount each beat. This is done in the beat function
@@ -1649,16 +1703,17 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 -(void)loadCombos{
     
-    NSArray *attackCombo0 = @[@"highCNode", @"highDNode", @"highENode"];
-    self.attackDictionary = @{@"Fire":@[@"highCNode", @"highDNode", @"highENode"], @"Flame": @[@"highCNode", @"highENode", @"highGNode"]};
-    NSArray *attackCombo1 = @[@"highCNode", @"highENode", @"highGNode"];
-    self.attackArray = @[attackCombo0, attackCombo1];
+    NSArray *fireCombo0 = @[@"highCNode", @"highDNode", @"highENode"];
+    NSArray *fireCombo1 = @[@"highCNode", @"highENode", @"highGNode"];
+    self.fireComboArray = @[fireCombo0, fireCombo1];
+    self.fireComboDictionary = @{@"Fire":@[@"highCNode", @"highDNode", @"highENode"], @"Flame": @[@"highCNode", @"highENode", @"highFNode", @"highBNode"]};
     
-    NSArray *defenseCombo0 = @[@"highENode", @"highDNode", @"highCNode"];
-    self.defenseArray = @[defenseCombo0];
+    NSArray *musicCombo0 = @[@"highENode", @"highFNode",@"highGNode"];
+    self.musicComboArray = @[musicCombo0];
+    self.musicComboDictionary = @{@"Rest":@[@"highENode", @"highFNode", @"highGNode"]};
+
     
-    NSArray *magicCombo0 =  @[@"highENode", @"highFNode", @"highGNode"];
-    self.magicArray = @[magicCombo0];
+
 }
 
 -(void)sleepCombo{

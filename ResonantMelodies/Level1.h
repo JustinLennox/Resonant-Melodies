@@ -50,6 +50,12 @@
 //Combo Properties
 @property (strong, nonatomic) NSArray *attackArray;
 @property (strong, nonatomic) NSDictionary *attackDictionary;
+@property (strong, nonatomic) NSDictionary *fireComboDictionary;
+@property (strong, nonatomic) NSArray *fireComboArray;
+@property (strong, nonatomic) NSDictionary *waterComboDictionary;
+@property (strong, nonatomic) NSArray *waterComboArray;
+@property (strong, nonatomic) NSDictionary *musicComboDictionary;
+@property (strong, nonatomic) NSArray *musicComboArray;
 @property (strong, nonatomic) NSArray *defenseArray;
 @property (strong, nonatomic) NSArray *magicArray;
 @property (strong, nonatomic) NSMutableArray *fireballArray;
