@@ -56,6 +56,10 @@
 @property (strong, nonatomic) NSArray *waterComboArray;
 @property (strong, nonatomic) NSDictionary *musicComboDictionary;
 @property (strong, nonatomic) NSArray *musicComboArray;
+@property (strong, nonatomic) NSDictionary *windComboDictionary;
+@property (strong, nonatomic) NSArray *windComboArray;
+@property (strong, nonatomic) NSDictionary *earthComboDictionary;
+@property (strong, nonatomic) NSArray *earthComboArray;
 @property (strong, nonatomic) NSArray *defenseArray;
 @property (strong, nonatomic) NSArray *magicArray;
 @property (strong, nonatomic) NSMutableArray *fireballArray;
@@ -151,6 +155,7 @@
 @property (nonatomic) BOOL touchingDown;
 @property (nonatomic) float roomCleared;
 @property (strong, nonatomic) NSMutableArray *enemyToDeleteArray;
+@property (strong, nonatomic) NSMutableArray *propArray;
 
 //Partner Properties
 @property (nonatomic) int bowTieIncrement;

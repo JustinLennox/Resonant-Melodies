@@ -113,6 +113,9 @@
 		D0AC52AA1A8A0D7700CFED05 /* 1layer-6.png in Resources */ = {isa = PBXBuildFile; fileRef = D0AC52A31A8A0D7700CFED05 /* 1layer-6.png */; };
 		D0AC52AB1A8A0D7700CFED05 /* 1layer-7.png in Resources */ = {isa = PBXBuildFile; fileRef = D0AC52A41A8A0D7700CFED05 /* 1layer-7.png */; };
 		D0AC52AC1A8A0D7700CFED05 /* 1layer-8.png in Resources */ = {isa = PBXBuildFile; fileRef = D0AC52A51A8A0D7700CFED05 /* 1layer-8.png */; };
+		D0ACC6281B38C45D007720AA /* fireball.atlas in Resources */ = {isa = PBXBuildFile; fileRef = D0ACC6271B38C45D007720AA /* fireball.atlas */; };
+		D0ACC62B1B38C710007720AA /* whiplash.atlas in Resources */ = {isa = PBXBuildFile; fileRef = D0ACC62A1B38C710007720AA /* whiplash.atlas */; };
+		D0ACC62F1B38D0B0007720AA /* watergun.atlas in Resources */ = {isa = PBXBuildFile; fileRef = D0ACC62E1B38D0B0007720AA /* watergun.atlas */; };
 		D0B92A381A81FF620001CCBE /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0B92A371A81FF620001CCBE /* SpriteKit.framework */; };
 		D0BFDF241B06B2AF002F95FB /* musicModeAdagio.atlas in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF231B06B2AF002F95FB /* musicModeAdagio.atlas */; };
 		D0BFDF281B07BCD8002F95FB /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF261B07BCD8002F95FB /* spark.png */; };
@@ -322,6 +325,9 @@
 		D0AC52A31A8A0D7700CFED05 /* 1layer-6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "1layer-6.png"; sourceTree = "<group>"; };
 		D0AC52A41A8A0D7700CFED05 /* 1layer-7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "1layer-7.png"; sourceTree = "<group>"; };
 		D0AC52A51A8A0D7700CFED05 /* 1layer-8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "1layer-8.png"; sourceTree = "<group>"; };
+		D0ACC6271B38C45D007720AA /* fireball.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = fireball.atlas; sourceTree = "<group>"; };
+		D0ACC62A1B38C710007720AA /* whiplash.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = whiplash.atlas; sourceTree = "<group>"; };
+		D0ACC62E1B38D0B0007720AA /* watergun.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = watergun.atlas; sourceTree = "<group>"; };
 		D0B92A371A81FF620001CCBE /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		D0BFDF231B06B2AF002F95FB /* musicModeAdagio.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = musicModeAdagio.atlas; sourceTree = "<group>"; };
 		D0BFDF261B07BCD8002F95FB /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spark.png; path = ../spark.png; sourceTree = "<group>"; };
@@ -597,6 +603,16 @@
 			name = Background;
 			sourceTree = "<group>";
 		};
+		D0ACC6291B38C6F9007720AA /* Combos */ = {
+			isa = PBXGroup;
+			children = (
+				D0ACC62E1B38D0B0007720AA /* watergun.atlas */,
+				D0ACC62A1B38C710007720AA /* whiplash.atlas */,
+				D0ACC6271B38C45D007720AA /* fireball.atlas */,
+			);
+			name = Combos;
+			sourceTree = "<group>";
+		};
 		D0B92A281A81F4950001CCBE /* Other */ = {
 			isa = PBXGroup;
 			children = (
@@ -743,6 +759,7 @@
 				D0FA5CB61A75BDED000A5660 /* Heroes */,
 				D0D2F7DC1A716FBE00A87C21 /* Backgrounds */,
 				D0D2F7C01A716C3400A87C21 /* Images.xcassets */,
+				D0ACC6291B38C6F9007720AA /* Combos */,
 				D0FA5CC21A760E16000A5660 /* Interactives */,
 				D0B92A281A81F4950001CCBE /* Other */,
 				D0D2F7C21A716C3400A87C21 /* LaunchScreen.xib */,
@@ -1144,6 +1161,7 @@
 				D01A0BAE1ABB62E1004BEE8F /* Level1E.aif in Resources */,
 				D04C506F1A907AA500C931C3 /* Botie15.png in Resources */,
 				D01A0BAF1ABB62E1004BEE8F /* Level1F.aif in Resources */,
+				D0ACC62F1B38D0B0007720AA /* watergun.atlas in Resources */,
 				D0AC52AA1A8A0D7700CFED05 /* 1layer-6.png in Resources */,
 				D04C50691A907AA500C931C3 /* Botie9.png in Resources */,
 				D04C50591A9016A400C931C3 /* BowTie5.png in Resources */,
@@ -1156,6 +1174,7 @@
 				D0AC52A81A8A0D7700CFED05 /* 1layer-4.png in Resources */,
 				D04C506E1A907AA500C931C3 /* Botie14.png in Resources */,
 				D0C08F631A77791E00FD429D /* lB.caf in Resources */,
+				D0ACC6281B38C45D007720AA /* fireball.atlas in Resources */,
 				D0DF25121A848D2C00309754 /* dialogue_woodpost.png in Resources */,
 				D04C502B1A8FF6F400C931C3 /* fire.sks in Resources */,
 				D0FCE3601A9BB0660027398B /* weaponSymbol.png in Resources */,
@@ -1196,6 +1215,7 @@
 				D04C50571A9016A400C931C3 /* BowTie3.png in Resources */,
 				D04C507D1A92BA7600C931C3 /* scooter.png in Resources */,
 				D01A0B5F1ABB2ED9004BEE8F /* Bass1C.aif in Resources */,
+				D0ACC62B1B38C710007720AA /* whiplash.atlas in Resources */,
 				D01A0BB21ABBEDFF004BEE8F /* redNote.png in Resources */,
 				D01A0BAB1ABB62E1004BEE8F /* Level1B.aif in Resources */,
 				D0C08F661A77791E00FD429D /* lE.caf in Resources */,
