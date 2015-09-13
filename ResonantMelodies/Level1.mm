@@ -2123,6 +2123,12 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
     //Watch the enemy's movement
     self.lastBeat = playerBack->msElapsedSinceLastBeat;
+    double closestBeat = (playerBack->closestBeatMs(CACurrentMediaTime()*1000, 0)) - CACurrentMediaTime()*1000;
+//    NSLog(@"Closest Beat : %f", closestBeat - CACurrentMediaTime()*1000);
+    NSLog(@"last beat:%f, bpm:%f", self.lastBeat, closestBeat);
+    if(self.lastBeat == (60.0f/self.BPM)*1000){
+        NSLog(@"2Beat");
+    }
 //    NSLog(@"Since last beat: %f", self.lastBeat);
     if(!self.gameOver){
         for(Enemy *enemy in self.moveablesArray){
@@ -2275,13 +2281,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             self.touchLength = 0;
         }
         
-        //Update Health & MP Labels
-        //[self.playerHealthBar.healthBar setFrame:CGRectMake(self.playerHealthBar.frame.origin.x, self.playerHealthBar.frame.origin.y, self.playerHealth/self.playerHealthMax * self.playerHealthBar.healthBar.frame.size.width, self.playerHealthBar.healthBar.frame.size.height)];
-        //SKAction *resize = [SKAction resizeToWidth:((self.playerHealth/self.playerHealthMax) * self.healthBarFill.size.width) duration:0.2f];
-        //[self.healthBarFill runAction:resize];
-        //self.healthBarFill.anchorPoint = CGPointMake(0.0, 0.5);
-       // self.healthBarFill.size = CGSizeMake((self.playerHealth/self.playerHealthMax)*self.healthBarFillMaxWidth, self.healthBarFill.size.height);
-
+    
         SKAction *resizeHealth = [SKAction resizeToWidth:((self.playerHealth/self.playerHealthMax) * self.healthBarFillMaxWidth) duration:0.2f];
         [self.healthBarFill runAction:resizeHealth];
         
@@ -2329,21 +2329,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 #pragma mark- tempo methods
 
 -(void)beatTimer: (NSTimer *) timer{
-    
+    NSLog(@"Beat");
     double lastBeat = playerBack->msElapsedSinceLastBeat;
-//    NSLog(@"Timer since last beat: %f", lastBeat);
-//    NSLog(@"Closest beat:%f", playerBack->closestBeatMs(CACurrentMediaTime()*1000, 0));
-//    NSLog(@"CURRENT MEDIA TIME:%f", CACurrentMediaTime()*1000);
 
-//    NSTimer *beatTimer = [[NSTimer alloc] initWithFireDate:[NSDate dateWithTimeIntervalSinceNow:(60.00f/self.BPM)]
-//                             interval:(60.00f/self.BPM)
-//                               target:self
-//                             selector:@selector(beatTimer:)
-//                             userInfo:nil
-//                              repeats:NO];
-//    NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
-//    [runLoop addTimer:timer forMode:NSDefaultRunLoopMode];
-//
     if(lastBeat < 100){
 //        NSLog(@"Delay:%f", ((60.00f/self.BPM) - (lastBeat * 0.001)));
         [self performSelector:@selector(beatTimer:) withObject:nil afterDelay:((60.00f/self.BPM) - (lastBeat * 0.001))];
@@ -2356,14 +2344,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
     }
     
-//    double ranCol = (double)arc4random_uniform(255);
-//    double ranCol2 = (double)arc4random_uniform(255);
-//    double ranCol3 = (double)arc4random_uniform(255);
-//
-//
-//    self.player.color = [SKColor colorWithRed:(ranCol/255.0f) green:(ranCol2/255.0f) blue:(ranCol3/255.0f) alpha:1.0f];
-//    self.player.colorBlendFactor = 1.0f;
-//
     [self beat];
     
 }
