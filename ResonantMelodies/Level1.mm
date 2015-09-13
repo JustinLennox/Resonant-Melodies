@@ -40,26 +40,6 @@
 #define HEADROOM_DECIBEL 3.0f
 static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
-/*@implementation SKScene (Unarchive)
-
-
-+ (instancetype)unarchiveFromFile:(NSString *)file {
-    Retrieve scene file path from the application bundle
-    NSString *nodePath = [[NSBundle mainBundle] pathForResource:file ofType:@"sks"];
-     Unarchive the file to an SKScene object
-    NSData *data = [NSData dataWithContentsOfFile:nodePath
-                                          options:NSDataReadingMappedIfSafe
-                                            error:nil];
-    NSKeyedUnarchiver *arch = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-    [arch setClass:self forClassName:@"SKScene"];
-    SKScene *scene = [arch decodeObjectForKey:NSKeyedArchiveRootObjectKey];
-    [arch finishDecoding];
-    
-    return scene;
-}
-
-@end*/
-
 @implementation SKScene (Unarchive)
 
 + (instancetype)unarchiveFromFile:(NSString *)file {
@@ -80,15 +60,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 @end
 
 @implementation Level1{
-    SKNode *node;
-    AVAudioPlayer *backgroundAudioPlayer;
-    int _nextKeyLaser;
     
-    //Animation Arrays
-    NSArray *_musicModeAdagioWalkingFrames;
-    NSArray *_musicModeAdagioIdleFrames;
-    NSArray *_fireModeAdagioIdleFrames;
-    NSArray *_changeModeFireFrames;
+    int _nextKeyLaser;
     
     // Sound Effects
     ALDevice* device;
@@ -210,7 +183,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     backgroundChannel = [ALChannelSource channelWithSources:1];
     
     // Preload the buffers so we don't have to load and play them later.
-    lAKeyBuffer = [[OpenALManager sharedInstance] bufferFromFile:lAKeySound];
+//    lAKeyBuffer = [[OpenALManager sharedInstance] bufferFromFile:lAKeySound];
     lBKeyBuffer = [[OpenALManager sharedInstance] bufferFromFile:lBKeySound];
     lCKeyBuffer = [[OpenALManager sharedInstance] bufferFromFile:lCKeySound];
     lDKeyBuffer = [[OpenALManager sharedInstance] bufferFromFile:lDKeySound];
@@ -260,9 +233,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.keyArray = @[[self childNodeWithName:@"lowCNode"], [self childNodeWithName:@"lowDNode"], [self childNodeWithName:@"lowENode"], [self childNodeWithName:@"lowFNode"], [self childNodeWithName:@"lowGNode"], [self childNodeWithName:@"highANode"], [self childNodeWithName:@"highBNode"], [self childNodeWithName:@"highCNode"], [self childNodeWithName:@"highDNode"], [self childNodeWithName:@"highENode"], [self childNodeWithName:@"highFNode"], [self childNodeWithName:@"highGNode"]];
     
 #pragma mark- set up player
-    self.player = [SKSpriteNode spriteNodeWithTexture:[SKTexture textureWithImageNamed:@"dalf1.png"] size:CGSizeMake(100, 100)];
+    self.player = [[Hero alloc] init];
     self.player.position = CGPointMake(-self.player.size.width, CGRectGetMaxY([self childNodeWithName:@"lowENode"].frame) + 31);
-    self.player.name = @"player";
     self.player.zPosition = [self childNodeWithName:@"lowENode"].zPosition + 0.1;
     [self addChild:self.player];
     
@@ -581,45 +553,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.filterInt = 100;
     [self playCutscene:@"intro"];
     
-#pragma mark- animations
-    //Setup the array to hold the walking frames
-    NSMutableArray *walkFrames = [NSMutableArray array];
-    NSMutableArray *idleFrames = [NSMutableArray arrayWithObjects:[SKTexture textureWithImageNamed:@"musicModeAdagioIdle1"], [SKTexture textureWithImageNamed:@"musicModeAdagioIdle2"], [SKTexture textureWithImageNamed:@"musicModeAdagioIdle1"], nil];
-    NSMutableArray *fireIdleFrames = [NSMutableArray arrayWithObjects:[SKTexture textureWithImageNamed:@"fireModeAdagioIdle1"], [SKTexture textureWithImageNamed:@"fireModeAdagioIdle2"], [SKTexture textureWithImageNamed:@"fireModeAdagioIdle1"], nil];
-    
-    //Load the TextureAtlas for the bear
-    SKTextureAtlas *musicModeAtlas = [SKTextureAtlas atlasNamed:@"musicModeAdagio"];
-    
-    //Load the animation frames from the TextureAtlas
-    int numImages = musicModeAtlas.textureNames.count;
-    NSLog(@"num images:%d", numImages);
-    for (int i=1; i <= numImages; i++) {
-        NSString *textureName = [NSString stringWithFormat:@"dalfWalk%d.png", i];
-        NSLog(@"Texture name:%@", textureName);
-        SKTexture *temp = [musicModeAtlas textureNamed:textureName];
-        [walkFrames addObject:temp];
-        NSLog(@"Yo");
-    }
-    _musicModeAdagioWalkingFrames = walkFrames;
-    _musicModeAdagioIdleFrames =idleFrames;
-    _fireModeAdagioIdleFrames = fireIdleFrames;
-    _changeModeFireFrames = @[[SKTexture textureWithImageNamed:@"smoke_puff_0001.png"],
-                              [SKTexture textureWithImageNamed:@"smoke_puff_0002.png"],
-                              [SKTexture textureWithImageNamed:@"smoke_puff_0003.png"],
-                              [SKTexture textureWithImageNamed:@"smoke_puff_0004.png"],
-                              [SKTexture textureWithImageNamed:@"smoke_puff_0005.png"],
-                              [SKTexture textureWithImageNamed:@"smoke_puff_0006.png"],
-                              [SKTexture textureWithImageNamed:@"smoke_puff_0007.png"],
-                              [SKTexture textureWithImageNamed:@"smoke_puff_0008.png"],
-                              [SKTexture textureWithImageNamed:@"smoke_puff_0009.png"],
-                              [SKTexture textureWithImageNamed:@"smoke_puff_0010.png"],
-                              ];
-    
     self.availableComboBlockArray = [[NSMutableArray alloc] init];
     
-    NSLog(@"Walking frames: %@", walkFrames);
-    [self.player setTexture:_musicModeAdagioIdleFrames[0]];
-    self.mode = @"Fire";
+    [self.player setTexture:self.player.musicModeAdagioIdleFrames[0]];
+    self.player.mode = @"Fire";
     [self changeModes];
     self.gameOver = NO;
     self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
@@ -627,242 +564,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 }
 
--(void)changeModeAnimation{
-    SKSpriteNode *tempPlayer = [SKSpriteNode spriteNodeWithColor:[UIColor clearColor] size:self.player.size];
-    tempPlayer.position = CGPointMake(self.player.position.x - 2, self.player.position.y + 4);
-    tempPlayer.zPosition = self.player.zPosition + 0.1;
-    [self addChild:tempPlayer];
-    
-    [self.player removeActionForKey:@"changeModesAnimation"];
-
-    if([self.mode isEqualToString:@"Fire"]){
-        SKAction *fireAnimation =  [SKAction animateWithTextures:_changeModeFireFrames
-                                                    timePerFrame:0.05f
-                                                          resize:NO
-                                                         restore:YES];
-        SKAction *finishChangeModes = [SKAction performSelector:@selector(finishChangeModes) onTarget:self];
-        SKAction *animationPlusFinish = [SKAction group:@[fireAnimation, finishChangeModes]];
-        
-        
-        [tempPlayer runAction:animationPlusFinish withKey:@"changeModesAnimation"];
-
-    }else if([self.mode isEqualToString:@"Wind"]){
-        self.player.texture = [SKTexture textureWithImageNamed:@"windModeAdagioIdle1.png"];
-
-        SKAction *fireAnimation =  [SKAction animateWithTextures:_changeModeFireFrames
-                                                    timePerFrame:0.05f
-                                                          resize:NO
-                                                         restore:YES];
-        SKAction *finishChangeModes = [SKAction performSelector:@selector(finishChangeModes) onTarget:self];
-        SKAction *animationPlusFinish = [SKAction group:@[fireAnimation, finishChangeModes]];
-        
-        
-        [tempPlayer runAction:animationPlusFinish withKey:@"changeModesAnimation"];
-
-        
-        
-    }else if([self.mode isEqualToString:@"Water"]){
-        self.player.texture = [SKTexture textureWithImageNamed:@"waterModeAdagioIdle1.png"];
-
-        SKAction *fireAnimation =  [SKAction animateWithTextures:_changeModeFireFrames
-                                                    timePerFrame:0.05f
-                                                          resize:NO
-                                                         restore:YES];
-        SKAction *finishChangeModes = [SKAction performSelector:@selector(finishChangeModes) onTarget:self];
-        SKAction *animationPlusFinish = [SKAction group:@[fireAnimation, finishChangeModes]];
-        
-        
-        [tempPlayer runAction:animationPlusFinish withKey:@"changeModesAnimation"];
-
-        
-    }else if([self.mode isEqualToString:@"Earth"]){
-        self.player.texture = [SKTexture textureWithImageNamed:@"earthModeAdagioIdle1.png"];
-
-        SKAction *fireAnimation =  [SKAction animateWithTextures:_changeModeFireFrames
-                                                    timePerFrame:0.05f
-                                                          resize:NO
-                                                         restore:YES];
-        SKAction *finishChangeModes = [SKAction performSelector:@selector(finishChangeModes) onTarget:self];
-        SKAction *animationPlusFinish = [SKAction group:@[fireAnimation, finishChangeModes]];
-        
-        
-        [tempPlayer runAction:animationPlusFinish withKey:@"changeModesAnimation"];
-
-        
-        
-    }else if([self.mode isEqualToString:@"Music"]){
-        self.player.texture = [SKTexture textureWithImageNamed:@"musicModeAdagioIdle1.png"];
-
-        SKAction *fireAnimation =  [SKAction animateWithTextures:_changeModeFireFrames
-                                                    timePerFrame:0.05f
-                                                          resize:NO
-                                                         restore:YES];
-        SKAction *finishChangeModes = [SKAction performSelector:@selector(finishChangeModes) onTarget:self];
-        SKAction *animationPlusFinish = [SKAction group:@[fireAnimation, finishChangeModes]];
-        
-        
-        [tempPlayer runAction:animationPlusFinish withKey:@"changeModesAnimation"];
-    }
-    
-}
-
--(void)fireballAnimation:(SKSpriteNode *)fireSprite{
-    
-    NSMutableArray *fireballFrames = [NSMutableArray arrayWithObjects:
-                                      [SKTexture textureWithImageNamed:@"fireball_0001"],
-                                      [SKTexture textureWithImageNamed:@"fireball_0002"],
-                                      [SKTexture textureWithImageNamed:@"fireball_0003"],
-                                      [SKTexture textureWithImageNamed:@"fireball_0004"],
-                                      [SKTexture textureWithImageNamed:@"fireball_0005"],
-                                      [SKTexture textureWithImageNamed:@"fireball_0006"],
-                                      nil];
-    
-    SKAction *fireAnimation =  [SKAction animateWithTextures:fireballFrames
-                                                timePerFrame:0.05f
-                                                      resize:NO
-                                                     restore:YES];
-    [fireSprite runAction:[SKAction repeatActionForever:fireAnimation]];
-}
-
--(void)whiplashAnimation:(SKSpriteNode *)whiplashSprite{
-    
-    NSMutableArray *whiplashFrames = [NSMutableArray arrayWithObjects:
-                                      [SKTexture textureWithImageNamed:@"cut_b_0001"],
-                                      [SKTexture textureWithImageNamed:@"cut_b_0002"],
-                                      [SKTexture textureWithImageNamed:@"cut_b_0003"],
-                                      [SKTexture textureWithImageNamed:@"cut_b_0004"],
-                                      [SKTexture textureWithImageNamed:@"cut_b_0005"],
-                                      nil];
-    
-    SKAction *whiplashAnimation =  [SKAction animateWithTextures:whiplashFrames
-                                                timePerFrame:0.05f
-                                                      resize:NO
-                                                     restore:YES];
-    [whiplashSprite runAction:whiplashAnimation];
-
-    
-}
-
--(void)watergunAnimation:(SKSpriteNode *)watergunSprite{
-    
-    NSMutableArray *watergunFrames = [NSMutableArray arrayWithObjects:
-                                      [SKTexture textureWithImageNamed:@"watergun_0001"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0002"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0003"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0004"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0005"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0006"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0007"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0008"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0010"],
-                                      
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0008"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0010"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0008"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0010"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0008"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0010"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0008"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0010"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0008"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0010"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0008"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0010"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0008"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0010"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0008"],
-                                      [SKTexture textureWithImageNamed:@"watergun_0009"],
-                                      nil];
-    
-//    NSMutableArray *watergunFrames2 = [NSMutableArray arrayWithObjects:
-//                                       [SKTexture textureWithImageNamed:@"watergun_0010"],
-//                                       [SKTexture textureWithImageNamed:@"watergun_0009"],
-//                                       [SKTexture textureWithImageNamed:@"watergun_0008"],
-//                                       [SKTexture textureWithImageNamed:@"watergun_0009"],
-//                                       nil];
-    
-    SKAction *watergunAnimation1 =  [SKAction animateWithTextures:watergunFrames
-                                                    timePerFrame:0.05f
-                                                          resize:NO
-                                                         restore:YES];
-
-    
-    [watergunSprite runAction:[SKAction repeatActionForever:watergunAnimation1]];
-    
-    
-}
-
--(void)finishChangeModes{
-    if([self.mode isEqualToString:@"Fire"]){
-        NSLog(@"Finish change modes");
-        self.player.texture = [SKTexture textureWithImageNamed:@"fireModeAdagioIdle1.png"];
-    }
-    [self idleAdagio];
-
-}
-
--(void)idleAdagio{
-    
-    [self.player removeActionForKey:@"adagioIdle"];
-    
-    if([self.mode isEqualToString:@"Music"]){
-    
-        SKAction *idleAnimation =  [SKAction animateWithTextures:_musicModeAdagioIdleFrames
-                                                    timePerFrame:0.1f
-                                                          resize:NO
-                                                         restore:YES];
-        SKAction *waitThree = [SKAction waitForDuration:3.0f];
-        
-        SKAction *idleSequence = [SKAction repeatActionForever:[SKAction sequence:@[idleAnimation, waitThree]]];
-        [self.player runAction:idleSequence withKey:@"adagioIdle"];
-        
-    }else if([self.mode isEqualToString:@"Fire"]){
-        
-        SKAction *idleAnimation =  [SKAction animateWithTextures:_fireModeAdagioIdleFrames
-                                                    timePerFrame:0.1f
-                                                          resize:NO
-                                                         restore:YES];
-        SKAction *waitThree = [SKAction waitForDuration:3.0f];
-        
-        SKAction *idleSequence = [SKAction repeatActionForever:[SKAction sequence:@[idleAnimation, waitThree]]];
-        [self.player runAction:idleSequence withKey:@"adagioIdle"];
-        
-    }
-    
-}
-
--(void)walkAdagio{
-        //This is our general runAction method to make our bear walk.
-        //By using a withKey if this gets called while already running it will remove the first action before
-        //starting this again.
-    if([self.player actionForKey:@"musicModeAdagioIdle"]){
-        [self.player removeActionForKey:@"musicModeAdagioIdle"];
-        
-    }
-    SKAction *walkAnimation =  [SKAction repeatActionForever:[SKAction animateWithTextures:_musicModeAdagioWalkingFrames
-                                                timePerFrame:0.1f
-                                                      resize:NO
-                                                     restore:YES]];
-
-    [self.player runAction:walkAnimation withKey:@"musicModeAdagioWalk"];
-    
-}
 
 #pragma mark - handle touches
 
@@ -888,7 +589,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         self.touchDown = YES;
         
         SKNode *n = [self nodeAtPoint:[touch locationInNode:self]];
-        NSLog(@"Mode:%@", self.mode);
+        NSLog(@"Mode:%@", self.player.mode);
         if([n.name containsString:@"lowCNode"])
         {
             [self childNodeWithName:@"lowCNode"].alpha = 0.7f;
@@ -911,9 +612,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             [self silenceLowKeys];
             volC = 0.5f;
             self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
-            if(![self.mode isEqualToString:@"Fire"]){
-                self.mode = @"Fire";
-                NSLog(@"self.mode:%@", self.mode);
+            if(![self.player.mode isEqualToString:@"Fire"]){
+                self.player.mode = @"Fire";
+                NSLog(@"self.player.mode:%@", self.player.mode);
                 [self changeModes];
             }
             self.currentKeyDown = @"lowCNode";
@@ -921,9 +622,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             [self childNodeWithName:@"lowDNode"].alpha = 0.7f;
 
-            if(![self.mode isEqualToString:@"Wind"]){
-                self.mode = @"Wind";
-                NSLog(@"self.mode:%@", self.mode);
+            if(![self.player.mode isEqualToString:@"Wind"]){
+                self.player.mode = @"Wind";
+                NSLog(@"self.player.mode:%@", self.player.mode);
                 [self changeModes];
             }
 
@@ -950,9 +651,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             [self childNodeWithName:@"lowENode"].alpha = 0.7f;
 
-            if(![self.mode isEqualToString:@"Water"]){
-                self.mode = @"Water";
-                NSLog(@"self.mode:%@", self.mode);
+            if(![self.player.mode isEqualToString:@"Water"]){
+                self.player.mode = @"Water";
+                NSLog(@"self.player.mode:%@", self.player.mode);
                 [self changeModes];
             }
 
@@ -981,9 +682,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             [self childNodeWithName:@"lowFNode"].alpha = 0.7f;
 
-            if(![self.mode isEqualToString:@"Earth"]){
-                self.mode = @"Earth";
-                NSLog(@"self.mode:%@", self.mode);
+            if(![self.player.mode isEqualToString:@"Earth"]){
+                self.player.mode = @"Earth";
+                NSLog(@"self.player.mode:%@", self.player.mode);
                 [self changeModes];
             }
             //[lowChannel stop];
@@ -1009,9 +710,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         {
             [self childNodeWithName:@"lowGNode"].alpha = 0.7f;
 
-            if(![self.mode isEqualToString:@"Music"]){
-                self.mode = @"Music";
-                NSLog(@"self.mode:%@", self.mode);
+            if(![self.player.mode isEqualToString:@"Music"]){
+                self.player.mode = @"Music";
+                NSLog(@"self.player.mode:%@", self.player.mode);
                 [self changeModes];
             }
             //[lowChannel stop];
@@ -1315,7 +1016,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 -(void)setAvailableComboNotes{
     if(self.defending == NO){
-        if([self.mode isEqualToString:@"Fire"]){
+        if([self.player.mode isEqualToString:@"Fire"]){
             NSDictionary *beginningCombos = @{@"Fireball":@"highCNode"};
             if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
                 self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
@@ -1369,7 +1070,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                     self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
                 }
             }
-        }else if([self.mode isEqualToString:@"Music"]){
+        }else if([self.player.mode isEqualToString:@"Music"]){
 
             NSDictionary *beginningCombos = @{@"Rest":@"highENode"};
             if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
@@ -1424,7 +1125,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                     self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
                 }
             }
-        }else if([self.mode isEqualToString:@"Wind"]){
+        }else if([self.player.mode isEqualToString:@"Wind"]){
             
             NSDictionary *beginningCombos = @{@"Whiplash":@"highDNode"};
             if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
@@ -1479,7 +1180,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                     self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
                 }
             }
-        }else if([self.mode isEqualToString:@"Water"]){
+        }else if([self.player.mode isEqualToString:@"Water"]){
             
             NSDictionary *beginningCombos = @{@"Watergun":@"highENode"};
             if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
@@ -1534,7 +1235,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                     self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
                 }
             }
-        }else if([self.mode isEqualToString:@"Earth"]){
+        }else if([self.player.mode isEqualToString:@"Earth"]){
             
             NSDictionary *beginningCombos = @{@"Rock":@"highGNode"};
             if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
@@ -1617,15 +1318,15 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         }
         
         SKSpriteNode *comboBlock = [SKSpriteNode spriteNodeWithColor:[UIColor redColor] size:CGSizeMake([self childNodeWithName:@"highANode"].frame.size.width, 20)];
-        if([self.mode isEqualToString:@"Fire"]){
+        if([self.player.mode isEqualToString:@"Fire"]){
             comboBlock.color = [UIColor redColor];
-        }else if([self.mode isEqualToString:@"Music"]){
+        }else if([self.player.mode isEqualToString:@"Music"]){
             comboBlock.color = [UIColor purpleColor];
-        }else if([self.mode isEqualToString:@"Wind"]){
+        }else if([self.player.mode isEqualToString:@"Wind"]){
             comboBlock.color = [UIColor grayColor];
-        }else if([self.mode isEqualToString:@"Water"]){
+        }else if([self.player.mode isEqualToString:@"Water"]){
             comboBlock.color = [UIColor blueColor];
-        }else if([self.mode isEqualToString:@"Earth"]){
+        }else if([self.player.mode isEqualToString:@"Earth"]){
             comboBlock.color = [UIColor greenColor];
         }
         comboBlock.name = [NSString stringWithFormat:@"%@Combo%@", keyNode.name, key];
@@ -1662,7 +1363,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 #pragma mark- animations
 -(void)animateCharacter{
     self.isAnimating = YES;
-    if([self.mode isEqualToString:@"Attack"]){
+    if([self.player.mode isEqualToString:@"Attack"]){
         NSArray *animatedImages = [NSArray arrayWithObjects:
                                    [SKTexture textureWithImageNamed:@"dalf1.png"],
                                    [SKTexture textureWithImageNamed:@"dalf03.png"],
@@ -1753,19 +1454,19 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         NSUInteger length = enemy.resonantArray.count;
         switch (length) {
             case 1:
-                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.mode isEqualToString:@"Resonance"]);
+                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.player.mode isEqualToString:@"Resonance"]);
                 break;
             case 2:
-                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.mode isEqualToString:@"Resonance"]);
+                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.player.mode isEqualToString:@"Resonance"]);
                 break;
             case 3:
-                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:2]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:2] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.mode isEqualToString:@"Resonance"]);
+                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:2]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:2] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.player.mode isEqualToString:@"Resonance"]);
                 break;
             case 4:
-                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:3]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:2]]) && ([[self.keyPressArray objectAtIndex:2] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:3] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.mode isEqualToString:@"Resonance"]);
+                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:3]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:2]]) && ([[self.keyPressArray objectAtIndex:2] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:3] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.player.mode isEqualToString:@"Resonance"]);
                 break;
             case 7:
-                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:6]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:5]]) && ([[self.keyPressArray objectAtIndex:2] isEqualToString:[enemy.resonantArray objectAtIndex:4]]) && ([[self.keyPressArray objectAtIndex:3] isEqualToString:[enemy.resonantArray objectAtIndex:3]]) && ([[self.keyPressArray objectAtIndex:4] isEqualToString:[enemy.resonantArray objectAtIndex:2]]) && ([[self.keyPressArray objectAtIndex:5] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:6] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.mode isEqualToString:@"Resonance"]);
+                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:6]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:5]]) && ([[self.keyPressArray objectAtIndex:2] isEqualToString:[enemy.resonantArray objectAtIndex:4]]) && ([[self.keyPressArray objectAtIndex:3] isEqualToString:[enemy.resonantArray objectAtIndex:3]]) && ([[self.keyPressArray objectAtIndex:4] isEqualToString:[enemy.resonantArray objectAtIndex:2]]) && ([[self.keyPressArray objectAtIndex:5] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:6] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.player.mode isEqualToString:@"Resonance"]);
                 break;
             default:
                 break;
@@ -1852,13 +1553,13 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 -(void)changeModes{
 
-    [self changeModeAnimation];
+    [self.player changeModeAnimation];
     
 }
 
 
 -(void)shootLaser:(float)keyLaserDamage withNote:(NSString*)laserNote{
-    if(self.shouldShoot && ![self.mode isEqualToString:@"Bag"] && ![self.mode isEqualToString:@"Resonance"] && self.defending == NO){
+    if(self.shouldShoot && ![self.player.mode isEqualToString:@"Bag"] && ![self.player.mode isEqualToString:@"Resonance"] && self.defending == NO){
         KeyLaser *keyLaser = [_keyLasers objectAtIndex:_nextKeyLaser];
         _nextKeyLaser++;
         if (_nextKeyLaser >= self.keyLasers.count) {
@@ -1872,7 +1573,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             keyLaser.texture = [SKTexture textureWithImage:[UIImage imageNamed:@"note1.png"]];
         }
         keyLaser.damage = keyLaserDamage;
-        if([self.mode isEqualToString:@"Defense"]){
+        if([self.player.mode isEqualToString:@"Defense"]){
             keyLaser.note = laserNote;
         }else{
             keyLaser.note = @"";
@@ -1901,12 +1602,12 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
     if(self.shouldShoot && self.defending == NO){
         BOOL comboSuccess = NO;
-        if([self.mode isEqualToString: @"Fire"])
+        if([self.player.mode isEqualToString: @"Fire"])
         {
             NSArray *combo1 = self.fireComboArray[0];
             if((self.fireMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]])){
                 SKSpriteNode *fireball = [SKSpriteNode spriteNodeWithImageNamed:@"fireball_0001"];
-                [self fireballAnimation:fireball];
+                [self.player fireballAnimation:fireball];
                 fireball.size = CGSizeMake(75, 75);
                 fireball.position = CGPointMake(self.player.position.x+fireball.size.width/2,self.player.position.y+0);
                 fireball.name = @"fireball";
@@ -1954,7 +1655,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
                }
         }
-        if([self.mode isEqualToString: @"Music"])
+        if([self.player.mode isEqualToString: @"Music"])
         {
             NSArray *combo1 = self.musicComboArray[0];
             if((self.musicMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]]) && self.filterInt == 100)
@@ -1967,7 +1668,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             
             }
         }
-        if([self.mode isEqualToString: @"Wind"])
+        if([self.player.mode isEqualToString: @"Wind"])
         {
             NSLog(@"Wind");
             NSArray *combo1 = self.windComboArray[0];
@@ -1979,7 +1680,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 whiplashSprite.position = CGPointMake(self.player.position.x + 20, self.player.position.y);
                 whiplashSprite.zPosition = self.player.zPosition + 0.1f;
                 [self addChild:whiplashSprite];
-                [self whiplashAnimation:whiplashSprite];
+                [self.player whiplashAnimation:whiplashSprite];
                 SKAction *wait = [SKAction waitForDuration:0.25f];
                 [whiplashSprite runAction:wait completion:^{
                     [whiplashSprite removeFromParent];
@@ -1997,12 +1698,12 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 
             }
         }
-        if([self.mode isEqualToString: @"Water"])
+        if([self.player.mode isEqualToString: @"Water"])
         {
             NSArray *combo1 = self.waterComboArray[0];
             if((self.waterMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]])){
                 SKSpriteNode *watergun = [SKSpriteNode spriteNodeWithImageNamed:@"watergun_0001.png"];
-                [self watergunAnimation:watergun];
+                [self.player watergunAnimation:watergun];
                 watergun.name = @"watergun";
                 watergun.size = CGSizeMake(75, 75);
                 watergun.position = CGPointMake(self.player.position.x+watergun.size.width/2,self.player.position.y+0);
@@ -2509,7 +2210,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 #pragma mark- Move Player
 -(void)movePlayer:(NSString *)keyNode{
 
-    if([self.mode isEqualToString:@"Bag"] && self.shouldPlayerMove){
+    if([self.player.mode isEqualToString:@"Bag"] && self.shouldPlayerMove){
         
         if([self.player actionForKey:@"movePlayer"]){
             [self.player removeActionForKey:@"movePlayer"];
@@ -2524,7 +2225,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         SKAction *movePlayer = [SKAction moveTo:CGPointMake(CGRectGetMidX(keySprite.frame), CGRectGetMidY(self.frame)-5) duration:moveDuration];
         
         [self.player runAction:movePlayer withKey:@"movePlayer"];
-        [self walkAdagio];
+        [self.player walkAdagio];
     }
     
 }

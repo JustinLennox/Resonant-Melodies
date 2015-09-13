@@ -17,12 +17,13 @@
 #import <OpenAL/al.h>
 #import <OpenAL/alc.h>
 #import "KeyLaser.h"
+#import "Hero.h"
 
 @interface Level1 : SKScene
 
 //Player Properties
 @property (strong, nonatomic) NSString *mode;
-@property (strong, nonatomic) SKSpriteNode *player;
+@property (strong, nonatomic) Hero *player;
 @property (strong, nonatomic) SKNode *smallNode;
 @property (nonatomic) BOOL shouldPlayerMove;
 @property (strong, nonatomic) NSString *currentPlayerKey;

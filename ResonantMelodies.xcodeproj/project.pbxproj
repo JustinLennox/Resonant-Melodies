@@ -116,6 +116,7 @@
 		D0ACC6281B38C45D007720AA /* fireball.atlas in Resources */ = {isa = PBXBuildFile; fileRef = D0ACC6271B38C45D007720AA /* fireball.atlas */; };
 		D0ACC62B1B38C710007720AA /* whiplash.atlas in Resources */ = {isa = PBXBuildFile; fileRef = D0ACC62A1B38C710007720AA /* whiplash.atlas */; };
 		D0ACC62F1B38D0B0007720AA /* watergun.atlas in Resources */ = {isa = PBXBuildFile; fileRef = D0ACC62E1B38D0B0007720AA /* watergun.atlas */; };
+		D0B049611BA632EB0025D1E3 /* Hero.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B049601BA632EB0025D1E3 /* Hero.m */; settings = {ASSET_TAGS = (); }; };
 		D0B92A381A81FF620001CCBE /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0B92A371A81FF620001CCBE /* SpriteKit.framework */; };
 		D0BFDF241B06B2AF002F95FB /* musicModeAdagio.atlas in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF231B06B2AF002F95FB /* musicModeAdagio.atlas */; };
 		D0BFDF281B07BCD8002F95FB /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = D0BFDF261B07BCD8002F95FB /* spark.png */; };
@@ -328,6 +329,8 @@
 		D0ACC6271B38C45D007720AA /* fireball.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = fireball.atlas; sourceTree = "<group>"; };
 		D0ACC62A1B38C710007720AA /* whiplash.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = whiplash.atlas; sourceTree = "<group>"; };
 		D0ACC62E1B38D0B0007720AA /* watergun.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = watergun.atlas; sourceTree = "<group>"; };
+		D0B0495F1BA632EB0025D1E3 /* Hero.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hero.h; sourceTree = "<group>"; };
+		D0B049601BA632EB0025D1E3 /* Hero.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Hero.m; sourceTree = "<group>"; };
 		D0B92A371A81FF620001CCBE /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		D0BFDF231B06B2AF002F95FB /* musicModeAdagio.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = musicModeAdagio.atlas; sourceTree = "<group>"; };
 		D0BFDF261B07BCD8002F95FB /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = spark.png; path = ../spark.png; sourceTree = "<group>"; };
@@ -734,12 +737,13 @@
 		D0D2F7AD1A716C3400A87C21 /* ResonantMelodies */ = {
 			isa = PBXGroup;
 			children = (
-				D07234C91A99BCFB00C19305 /* CustomProgressBar.h */,
-				D07234CA1A99BCFB00C19305 /* CustomProgressBar.m */,
 				D0D2F7B21A716C3400A87C21 /* AppDelegate.h */,
 				D0D2F7B31A716C3400A87C21 /* AppDelegate.m */,
+				D0B92A291A81F4B60001CCBE /* Level1 */,
 				D0D2F7BA1A716C3400A87C21 /* GameViewController.h */,
 				D0D2F7BB1A716C3400A87C21 /* GameViewController.m */,
+				D0B0495F1BA632EB0025D1E3 /* Hero.h */,
+				D0B049601BA632EB0025D1E3 /* Hero.m */,
 				D0887C521AA7EBA300DC4D2E /* SceneOne.sks */,
 				D0FA5CBA1A7608E7000A5660 /* WorldOverview.h */,
 				D0FA5CBB1A7608E7000A5660 /* WorldOverview.m */,
@@ -755,8 +759,9 @@
 				D0D2F7B61A716C3400A87C21 /* GameScene.m */,
 				D0D2F7BD1A716C3400A87C21 /* Main.storyboard */,
 				D0B92A2B1A81F5750001CCBE /* Intro */,
-				D0B92A291A81F4B60001CCBE /* Level1 */,
 				D0FA5CB61A75BDED000A5660 /* Heroes */,
+				D07234C91A99BCFB00C19305 /* CustomProgressBar.h */,
+				D07234CA1A99BCFB00C19305 /* CustomProgressBar.m */,
 				D0D2F7DC1A716FBE00A87C21 /* Backgrounds */,
 				D0D2F7C01A716C3400A87C21 /* Images.xcassets */,
 				D0ACC6291B38C6F9007720AA /* Combos */,
@@ -1253,6 +1258,7 @@
 				D0FA5EBC1A77259F000A5660 /* OALSimpleAudio.m in Sources */,
 				D0FA5EBA1A77259F000A5660 /* OALAudioTrackNotifications.m in Sources */,
 				D0FA5EB81A77259F000A5660 /* OALUtilityActions.m in Sources */,
+				D0B049611BA632EB0025D1E3 /* Hero.m in Sources */,
 				D0FA5EC41A77259F000A5660 /* ALSource.m in Sources */,
 				D0FA5CBC1A7608E7000A5660 /* WorldOverview.m in Sources */,
 				D0FA5EB91A77259F000A5660 /* OALAudioTrack.m in Sources */,
@@ -1405,6 +1411,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				HEADER_SEARCH_PATHS = "./**";
 				INFOPLIST_FILE = ResonantMelodies/Info.plist;
@@ -1426,6 +1433,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				ENABLE_BITCODE = NO;
 				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				HEADER_SEARCH_PATHS = "./**";
 				INFOPLIST_FILE = ResonantMelodies/Info.plist;
