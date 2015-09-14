@@ -16,9 +16,36 @@
             [self setTexture:[SKTexture textureWithImageNamed:@"dalf1.png"]];
             [self setSize:CGSizeMake(100, 100)];
             self.name = @"player";
+            [self setStats];
             [self setUpAnimations];
+            
         }
     return self;
+}
+
+-(void)setStats{
+    self.level = 1;
+    self.experience = 0;
+    self.health = 10;
+    self.healthMax = 10;
+    self.toNextLevel = 100;
+    
+    //MPs
+    self.fireMP = 3.0f;
+    self.fireMPMax = 3.0f;
+    
+    self.windMP = 3.0f;
+    self.windMPMax = 3.0f;
+    
+    self.earthMP = 3.0f;
+    self.earthMPMax = 3.0f;
+    
+    self.waterMP = 3.0f;
+    self.waterMPMax = 3.0f;
+    
+    self.musicMP = 3.0f;
+    self.musicMPMax = 3.0f;
+
 }
 
 #pragma mark- Hero Animations

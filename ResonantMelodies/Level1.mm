@@ -111,10 +111,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 -(void)didMoveToView:(SKView *)view {
     
     NSLog(@"Before %@", NSStringFromCGSize(self.size));
-    self.smallNode = [[SKNode alloc] init];
     self.size = CGSizeMake([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
     NSLog(@"After %@", NSStringFromCGSize(self.size));
-    [self addChild:self.smallNode];
 
 #pragma mark- set up camera
    // self.anchorPoint = CGPointMake (0,0);
@@ -242,71 +240,48 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.bowTie.position = CGPointMake(CGRectGetMinX(self.player.frame) - 10, CGRectGetMaxY(self.player.frame));
     self.bowTie.name = @"bowTie";
     [self addChild:self.bowTie];
-
-    self.playerLevel = 1;
-    self.playerExperience = 0;
-    self.playerHealth = 10;
-    self.playerHealthMax = 10;
-    self.playerToNextLevel = 100;
     
     
 #pragma  mark- MP
 
-    self.playerMP = 3;
-    self.playerMPMax = 3;
-    
-    self.fireMP = 3.0f;
-    self.fireMPMax = 3.0f;
-    
-    self.windMP = 3.0f;
-    self.windMPMax = 3.0f;
-    
-    self.earthMP = 3.0f;
-    self.earthMPMax = 3.0f;
-    
-    self.waterMP = 3.0f;
-    self.waterMPMax = 3.0f;
-    
-    self.musicMP = 3.0f;
-    self.musicMPMax = 3.0f;
-    
-    SKSpriteNode *fireBar = [SKSpriteNode spriteNodeWithColor:[UIColor redColor] size:[self childNodeWithName:@"highANode"].frame.size];
+    float barAlpha = 0.5f;
+    SKSpriteNode *fireBar = [SKSpriteNode spriteNodeWithColor:[UIColor colorWithRed:(231.0f/255.0f) green:(76.0f/255.0f) blue:(60.0f/255.0f) alpha:1.0f] size:[self childNodeWithName:@"highANode"].frame.size];
     fireBar.zPosition = [self childNodeWithName:@"lowCNode"].zPosition - 0.1;
     fireBar.position = CGPointMake([self childNodeWithName:@"lowCNode"].position.x,[self childNodeWithName:@"lowCNode"].position.y  - fireBar.frame.size.height/2.0f);
     fireBar.name = @"lowCNodeMPBAR";
+    fireBar.alpha = barAlpha;
     fireBar.anchorPoint = CGPointMake(0.5, 0);
-    fireBar.alpha = 0.5f;
     [self addChild:fireBar];
     
-    SKSpriteNode *windBar = [SKSpriteNode spriteNodeWithColor:[UIColor darkGrayColor] size:[self childNodeWithName:@"highANode"].frame.size];
+    SKSpriteNode *windBar = [SKSpriteNode spriteNodeWithColor:[UIColor colorWithRed:(236.0f/255.0f) green:(240.0f/255.0f) blue:(241.0f/255.0f) alpha:1.0f] size:[self childNodeWithName:@"highANode"].frame.size];
     windBar.zPosition = [self childNodeWithName:@"lowDNode"].zPosition - 0.1;
     windBar.position = CGPointMake([self childNodeWithName:@"lowDNode"].position.x,[self childNodeWithName:@"lowDNode"].position.y  - fireBar.frame.size.height/2.0f);
     windBar.name = @"lowDNodeMPBAR";
+    windBar.alpha = barAlpha;
     windBar.anchorPoint = CGPointMake(0.5, 0);
-    windBar.alpha = 0.5f;
     [self addChild:windBar];
     
-    SKSpriteNode *waterBar = [SKSpriteNode spriteNodeWithColor:[UIColor blueColor] size:[self childNodeWithName:@"highANode"].frame.size];
+    SKSpriteNode *waterBar = [SKSpriteNode spriteNodeWithColor:[UIColor colorWithRed:(52.0f/255.0f) green:(152.0f/255.0f) blue:(219.0f/255.0f) alpha:1.0f] size:[self childNodeWithName:@"highANode"].frame.size];
     waterBar.zPosition = [self childNodeWithName:@"lowENode"].zPosition - 0.1;
     waterBar.position = CGPointMake([self childNodeWithName:@"lowENode"].position.x,[self childNodeWithName:@"lowENode"].position.y  - fireBar.frame.size.height/2.0f);
     waterBar.name = @"lowENodeMPBAR";
-    waterBar.alpha = 0.5f;
+    waterBar.alpha = barAlpha;
     waterBar.anchorPoint = CGPointMake(0.5, 0);
     [self addChild:waterBar];
     
-    SKSpriteNode *earthBar = [SKSpriteNode spriteNodeWithColor:[UIColor greenColor] size:[self childNodeWithName:@"highANode"].frame.size];
+    SKSpriteNode *earthBar = [SKSpriteNode spriteNodeWithColor:[UIColor colorWithRed:(46.0f/255.0f) green:(204.0f/255.0f) blue:(113.0f/255.0f) alpha:1.0f] size:[self childNodeWithName:@"highANode"].frame.size];
     earthBar.zPosition = [self childNodeWithName:@"lowFNode"].zPosition - 0.1;
     earthBar.position = CGPointMake([self childNodeWithName:@"lowFNode"].position.x,[self childNodeWithName:@"lowFNode"].position.y  - fireBar.frame.size.height/2.0f);
     earthBar.name = @"lowFNodeMPBAR";
     earthBar.anchorPoint = CGPointMake(0.5, 0);
-    earthBar.alpha = 0.5f;
+    earthBar.alpha = barAlpha;
     [self addChild:earthBar];
     
-    SKSpriteNode *musicBar = [SKSpriteNode spriteNodeWithColor:[UIColor purpleColor] size:[self childNodeWithName:@"highANode"].frame.size];
+    SKSpriteNode *musicBar = [SKSpriteNode spriteNodeWithColor:[UIColor colorWithRed:(155.0f/255.0f) green:(89.0f/255.0f) blue:(182.0f/255.0f) alpha:1.0f] size:[self childNodeWithName:@"highANode"].frame.size];
     musicBar.zPosition = [self childNodeWithName:@"lowGNode"].zPosition - 0.1;
     musicBar.position = CGPointMake([self childNodeWithName:@"lowGNode"].position.x,[self childNodeWithName:@"lowGNode"].position.y  - fireBar.frame.size.height/2.0f);
     musicBar.name = @"lowGNodeMPBAR";
-    musicBar.alpha = 0.5f;
+    musicBar.alpha = barAlpha;
     musicBar.anchorPoint = CGPointMake(0.5, 0);
     [self addChild:musicBar];
     
@@ -513,7 +488,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 //    resonantSymbol.zPosition = 3.1f;
 //    [self addChild:resonantSymbol];
 
-#pragma mark- declare other stuff
+#pragma mark- Miscellaneous Properties
     
     SKLabelNode *signLabel;
     signLabel.alpha = 0.0f;
@@ -593,22 +568,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         if([n.name containsString:@"lowCNode"])
         {
             [self childNodeWithName:@"lowCNode"].alpha = 0.7f;
-            //[lowChannel stop];
-            //[lowChannel play:lAKeyBuffer loop:YES];
-            //playerC->exitLoop();
-            //playerC->open([[[NSBundle mainBundle] pathForResource:@"Bass1.1" ofType:@"aif"] fileSystemRepresentation]);
-//            pthread_mutex_lock(&mutex);
-//            playerC->loop(0, 8000, YES, 255, YES);
-//            playerD->exitLoop();
-//            playerE->exitLoop();
-//            playerF->exitLoop();
-//            playerG->exitLoop();
-//            playerD->pause();
-//            playerE->pause();
-//            playerF->pause();
-//            playerG->pause();
-//            pthread_mutex_unlock(&mutex);
-            
             [self silenceLowKeys];
             volC = 0.5f;
             self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
@@ -627,20 +586,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 NSLog(@"self.player.mode:%@", self.player.mode);
                 [self changeModes];
             }
-
-            //[lowChannel stop];
-            //[lowChannel play:lBKeyBuffer loop:YES];
-//            pthread_mutex_lock(&mutex);
-//            playerC->exitLoop();
-//            playerD->loop(0, 8000, YES, 255, YES);
-//            playerE->exitLoop();
-//            playerF->exitLoop();
-//            playerG->exitLoop();
-//            playerC->pause();
-//            playerE->pause();
-//            playerF->pause();
-//            playerG->pause();
-//            pthread_mutex_unlock(&mutex);
             [self silenceLowKeys];
             volD = 0.5f;
 
@@ -656,21 +601,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 NSLog(@"self.player.mode:%@", self.player.mode);
                 [self changeModes];
             }
-
-            //[lowChannel stop];
-            //[lowChannel play:lCKeyBuffer loop:YES];
-            //STOP ALL OTHER LOW NODE SOUNDS
-//            pthread_mutex_lock(&mutex);
-//            playerC->exitLoop();
-//            playerD->exitLoop();
-//            playerE->loop(0, 8000, YES, 255, YES);
-//            playerF->exitLoop();
-//            playerG->exitLoop();
-//            playerD->pause();
-//            playerC->pause();
-//            playerF->pause();
-//            playerG->pause();
-//            pthread_mutex_unlock(&mutex);
             [self silenceLowKeys];
             volE = 0.5f;
             [self getPlayerCurrentKey];
@@ -715,21 +645,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 NSLog(@"self.player.mode:%@", self.player.mode);
                 [self changeModes];
             }
-            //[lowChannel stop];
-//            pthread_mutex_lock(&mutex);
-//            playerC->exitLoop();
-//            playerD->exitLoop();
-//            playerE->exitLoop();
-//            playerF->exitLoop();
-//            playerG->loop(0, 8000, YES, 255, YES);
-//            playerD->pause();
-//            playerE->pause();
-//            playerF->pause();
-//            playerC->pause();
-//            pthread_mutex_unlock(&mutex);
+
             [self silenceLowKeys];
             volG = 0.5f;
-            //[lowChannel play:lEKeyBuffer loop:YES];
             
             
             self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
@@ -834,20 +752,21 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         }else if([n.name isEqualToString:@"bowTie"]){
             [channel play:bowtieBuffer];
             
-            if((self.playerMP < self.playerMPMax) && self.bowTieIncrement == 3)
+            if(self.bowTieIncrement == 3)
             {
-                if(self.fireMP <= self.fireMPMax - 1){
-                    self.fireMP++;
-                }else if(self.waterMP <= self.waterMPMax - 1){
-                    self.waterMP++;
-                }else if(self.windMP <= self.windMPMax - 1){
-                    self.windMP++;
-                }else if(self.earthMP <= self.earthMPMax - 1){
-                    self.earthMP++;
-                }else if(self.musicMP <= self.musicMPMax - 1){
-                    self.musicMP++;
+                if(self.player.fireMP <= self.player.fireMPMax - 1){
+                    self.player.fireMP++;
+                }else if(self.player.waterMP <= self.player.waterMPMax - 1){
+                    self.player.waterMP++;
+                }else if(self.player.windMP <= self.player.windMPMax - 1){
+                    self.player.windMP++;
+                }else if(self.player.earthMP <= self.player.earthMPMax - 1){
+                    self.player.earthMP++;
+                }else if(self.player.musicMP <= self.player.musicMPMax - 1){
+                    self.player.musicMP++;
                 }
-                    self.bowTieIncrement = 0;
+                self.bowTieIncrement = 0;
+                
             }
 
             [self.keyPressArray insertObject:@"bowTie" atIndex:0];
@@ -873,9 +792,6 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.touchBegan = CACurrentMediaTime();
     [self checkCombo];
     [self setAvailableComboNotes];
-    if(!self.isAnimating){
-        [self animateCharacter];
-    }
 
 }
 
@@ -895,18 +811,18 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         SKNode *n = [self nodeAtPoint:[touch locationInNode:self]];
         if([n.name containsString:@"lowCNode"])
         {
-            [self childNodeWithName:@"lowCNode"].alpha = 0.3f;
+            [self childNodeWithName:@"lowCNode"].alpha = 0.0f;
         }else if([n.name containsString:@"lowDNode"]){
-            [self childNodeWithName:@"lowDNode"].alpha = 0.3f;
+            [self childNodeWithName:@"lowDNode"].alpha = 0.0f;
 
         }else if([n.name containsString:@"lowENode"]){
-            [self childNodeWithName:@"lowENode"].alpha = 0.3f;
+            [self childNodeWithName:@"lowENode"].alpha = 0.0f;
 
         }else if([n.name containsString:@"lowFNode"]){
-            [self childNodeWithName:@"lowFNode"].alpha = 0.3f;
+            [self childNodeWithName:@"lowFNode"].alpha = 0.0f;
 
         }else if([n.name containsString:@"lowGNode"]){
-            [self childNodeWithName:@"lowGNode"].alpha = 0.3f;
+            [self childNodeWithName:@"lowGNode"].alpha = 0.0f;
 
         }else if([n.name containsString:@"highANode"]){
             [self childNodeWithName:@"highANode"].alpha = 0.3f;
@@ -933,6 +849,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     }
 }
 
+
+/**
+ * The main method behind the Guitar Hero style defense when enemies attack
+ */
 -(void)checkDefenseForKey:(NSString *)keyName{
     NSString *noteName = [NSString stringWithFormat:@"%@*", keyName];
     NSMutableArray *noteArray = [[NSMutableArray alloc] init];
@@ -1014,10 +934,449 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
 }
 
+
+#pragma mark- animations
+
+-(void)animateBowTie{
+    
+    SKAction *moveUp = [SKAction moveByX:0 y:3 duration:1.0f];
+    SKAction *moveDown = [SKAction moveByX:0 y:-3 duration:1.0f];
+    SKAction *floatAction = [SKAction sequence:@[moveUp, moveDown]];
+    [self.bowTie runAction:[SKAction repeatActionForever:floatAction]];
+    
+}
+
+#pragma mark- checks
+
+/**
+ * Checks to see if the user has touched a sign or NPC
+ */
+-(void)checkInteractables:(NSString *)keyNode{
+    
+    for(Interactable *interactable in self.interactableArray)
+    {
+        double playerMidX = CGRectGetMidX(self.player.frame);
+        double keyMidX = CGRectGetMidX([self childNodeWithName:keyNode].frame);
+    
+        if([keyNode isEqualToString:interactable.keyNode] && self.touchDown &&
+           (
+            ((playerMidX - keyMidX < [self childNodeWithName:@"highCNode"].frame.size.width)&&(playerMidX-keyMidX > -10))
+            ||
+            ((keyMidX - playerMidX < [self childNodeWithName:@"highCNode"].frame.size.width)&&(keyMidX-playerMidX > -10))
+            ))
+        {
+            NSLog(@"It's happening");
+            SKLabelNode *signLabel = (SKLabelNode *)[self childNodeWithName:@"signLabel"];
+            signLabel.text = interactable.displayText;
+            signLabel.fontColor = [UIColor whiteColor];
+            signLabel.alpha = 1.0f;
+            signLabel.zPosition = 2.0f;
+            SKSpriteNode *signPost = (SKSpriteNode *)[self childNodeWithName:@"signPost"];
+            signPost.hidden = NO;
+            signPost.alpha = 1.0f;
+            signPost.zPosition = 2.0f;
+        }
+
+    }
+}
+
+
+/**
+ * Checks to see if the user has played an enemy's Resonant Melody back at it
+ */
+-(void)checkResonantMelody{
+    for(Enemy *enemy in self.enemyArray){
+        BOOL shatter = NO;
+        NSUInteger length = enemy.resonantArray.count;
+        switch (length) {
+            case 1:
+                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.player.mode isEqualToString:@"Resonance"]);
+                break;
+            case 2:
+                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.player.mode isEqualToString:@"Resonance"]);
+                break;
+            case 3:
+                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:2]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:2] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.player.mode isEqualToString:@"Resonance"]);
+                break;
+            case 4:
+                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:3]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:2]]) && ([[self.keyPressArray objectAtIndex:2] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:3] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.player.mode isEqualToString:@"Resonance"]);
+                break;
+            case 7:
+                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:6]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:5]]) && ([[self.keyPressArray objectAtIndex:2] isEqualToString:[enemy.resonantArray objectAtIndex:4]]) && ([[self.keyPressArray objectAtIndex:3] isEqualToString:[enemy.resonantArray objectAtIndex:3]]) && ([[self.keyPressArray objectAtIndex:4] isEqualToString:[enemy.resonantArray objectAtIndex:2]]) && ([[self.keyPressArray objectAtIndex:5] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:6] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.player.mode isEqualToString:@"Resonance"]);
+                break;
+            default:
+                break;
+        }
+        if(shatter)
+        {
+            NSString *soundFile = [[NSBundle mainBundle] pathForResource:@"shatter" ofType:@"aif"];
+            SystemSoundID soundID;
+            AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath:soundFile], &soundID);
+            AudioServicesPlaySystemSound(soundID);
+            enemy.hidden = YES;
+            [enemy removeFromParent];
+            SKLabelNode *enemyHealthBar = (SKLabelNode*)[enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]];
+            enemyHealthBar.alpha = 0.0f;
+            enemyHealthBar.hidden = YES;
+            
+            if(self.currentRoomNumber == 7){
+                [self childNodeWithName:@"treeSprite"].hidden = YES;
+                [[self childNodeWithName:@"treeSprite"] removeFromParent];
+            }
+            
+           // NSString *myParticlePath = [[NSBundle mainBundle] pathForResource:@"glassShatter" ofType:@"sks"];
+            //SKEmitterNode *myParticle = [NSKeyedUnarchiver unarchiveObjectWithFile:myParticlePath];
+            //myParticle.position = self.boss.position;
+           // [self addChild:myParticle];
+            //ADD A HUGE SHATTERING LABEL HERE
+        }
+    }
+}
+
+/**
+ *  Checks to see if the user has cleared all necessary flags in order to advance to the next room
+ */
+-(void)checkRoomTransitions{
+    
+    SKSpriteNode *rightArrow = (SKSpriteNode *)[self childNodeWithName:@"rightArrow"];
+    SKSpriteNode *leftArrow = (SKSpriteNode *)[self childNodeWithName:@"leftArrow"];
+    rightArrow.hidden = NO;
+    leftArrow.hidden = NO;
+    rightArrow.alpha = 1.0f;
+    leftArrow.alpha = 1.0f;
+    
+    if(self.currentRoomNumber == 1){
+        
+        leftArrow.alpha = 0.0f;
+        leftArrow.hidden = YES;
+        
+    }else if(self.currentRoomNumber == 2){
+        
+        if([self childNodeWithName:@"enemy1"] && ([self childNodeWithName:@"enemy1"].hidden == NO) && !(self.roomCleared >= 2)){
+            rightArrow.alpha = 0.0f;
+            rightArrow.hidden = YES;
+        }
+        
+    }else if(self.currentRoomNumber == 3){
+        if([self childNodeWithName:@"enemy2"] && ([self childNodeWithName:@"enemy2"].hidden == NO) && !(self.roomCleared >= 3)){
+            rightArrow.alpha = 0.0f;
+            rightArrow.hidden = YES;
+        }
+    }else if(self.currentRoomNumber == 4){
+        if([self childNodeWithName:@"enemy1"] && ([self childNodeWithName:@"enemy1"].hidden == NO) && [self childNodeWithName:@"enemy2"] && ([self childNodeWithName:@"enemy2"].hidden == NO) && !(self.roomCleared >= 4)){
+            rightArrow.alpha = 0.0f;
+            rightArrow.hidden = YES;
+        }
+    }else if(self.currentRoomNumber == 6){
+        if([self childNodeWithName:@"bigTree"] && ([self childNodeWithName:@"bigTree"].hidden == NO) && !(self.roomCleared >= 6)){
+            rightArrow.alpha = 0.0f;
+            rightArrow.hidden = YES;
+        }
+    }else if(self.currentRoomNumber == 7){
+        if([self childNodeWithName:@"boss"] && ([self childNodeWithName:@"boss"].hidden == NO) && !(self.roomCleared >= 7)){
+            rightArrow.alpha = 0.0f;
+            rightArrow.hidden = YES;
+        }
+    }
+    
+    
+}
+
+/**
+ * Hides sign/text dialogue
+ */
+-(void)hideInteractables{
+    [self childNodeWithName:@"signLabel"].alpha = 0.0f;
+    [self childNodeWithName:@"signLabel"].zPosition = -2.0f;
+    [self childNodeWithName:@"signPost"].alpha = 0.0f;
+    [self childNodeWithName:@"signPost"].zPosition = -2.0f;
+}
+
+/**
+ * The player has changed his elemental mode by tapping on one of the lower keys
+ */
+-(void)changeModes{
+
+    [self.player changeModeAnimation];
+    
+}
+
+/**
+ * Called whenever the user hits an upper key
+ */
+-(void)shootLaser:(float)keyLaserDamage withNote:(NSString*)laserNote{
+    if(self.shouldShoot && ![self.player.mode isEqualToString:@"Bag"] && ![self.player.mode isEqualToString:@"Resonance"] && self.defending == NO){
+        KeyLaser *keyLaser = [_keyLasers objectAtIndex:_nextKeyLaser];
+        _nextKeyLaser++;
+        if (_nextKeyLaser >= self.keyLasers.count) {
+            
+            _nextKeyLaser = 0;
+        }
+        
+        if(keyLaserDamage < 0.5f){
+            keyLaser.texture = [SKTexture textureWithImage:[UIImage imageNamed:@"redNote.png"]];
+        }else{
+            keyLaser.texture = [SKTexture textureWithImage:[UIImage imageNamed:@"note1.png"]];
+        }
+        keyLaser.damage = keyLaserDamage;
+        if([self.player.mode isEqualToString:@"Defense"]){
+            keyLaser.note = laserNote;
+        }else{
+            keyLaser.note = @"";
+        }
+        keyLaser.position = CGPointMake(self.player.position.x+keyLaser.size.width/2,self.player.position.y+0);
+        keyLaser.hidden = NO;
+        [keyLaser removeAllActions];
+        
+        
+        CGPoint location = CGPointMake(self.frame.size.width, self.player.position.y);
+        SKAction *laserMoveAction = [SKAction moveByX:self.frame.size.width y:0 duration:0.75f];
+        SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
+            keyLaser.hidden = YES;
+        }];
+        
+        SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
+        
+        [keyLaser runAction:moveLaserActionWithDone withKey:@"laserFired"];
+    }
+}
+
+
+#pragma mark- combos
+/**
+ *  Checks to see if the user has played a correct sequence of notes on the upper keys in order to perform a combo
+ */
+-(void)checkCombo{
+    
+    if(self.shouldShoot && self.defending == NO){
+        BOOL comboSuccess = NO;
+        if([self.player.mode isEqualToString: @"Fire"])
+        {
+            NSArray *combo1 = self.fireComboArray[0];
+            if((self.player.fireMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]])){
+                SKSpriteNode *fireball = [SKSpriteNode spriteNodeWithImageNamed:@"fireball_0001"];
+                [self.player fireballAnimation:fireball];
+                fireball.size = CGSizeMake(75, 75);
+                fireball.position = CGPointMake(self.player.position.x+fireball.size.width/2,self.player.position.y+0);
+                fireball.name = @"fireball";
+                [self addChild:fireball];
+                SKAction *laserMoveAction = [SKAction moveByX:self.frame.size.width y:0 duration:2.0f];
+                SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
+                    fireball.hidden = YES;
+                }];
+                
+                SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
+                
+                [fireball runAction:moveLaserActionWithDone withKey:@"laserFired"];
+                if(self.fireballArray.count > 10){
+                    [self.fireballArray removeObjectAtIndex:0];
+                }
+                [self.fireballArray addObject:fireball];
+                self.player.fireMP -= 1;
+                comboSuccess = YES;
+
+            }
+            
+            NSArray *combo2 = self.fireComboArray[1];
+            if((self.player.fireMP >= 2) &&([self.keyPressArray[1] isEqualToString:combo2[2]]) && ([self.keyPressArray[2] isEqualToString:combo2[1]]) && ([self.keyPressArray[3] isEqualToString:combo2[0]]) && !self.flameOn)
+               {
+                   self.flameOn = YES;
+                   SKSpriteNode *flame = [SKSpriteNode spriteNodeWithImageNamed:@"fireball.png"];
+                   flame.size = CGSizeMake([self childNodeWithName:@"highCNode"].frame.size.width, 1);
+                   flame.position = CGPointMake(CGRectGetMidX([self childNodeWithName:[NSString stringWithFormat:@"%@", self.keyPressArray[0]]].frame), CGRectGetMaxY([self childNodeWithName:@"highCNode"].frame));
+                   flame.name = @"flame";
+                   [self addChild:flame];
+                   SKAction *growAction = [SKAction resizeToHeight:self.frame.size.height duration:0.2f];
+                   SKAction *shrinkAction = [SKAction resizeToHeight:0 duration:0.2f];
+                   
+                   SKAction *doneAction = [SKAction runBlock:(dispatch_block_t)^() {
+                       flame.hidden = YES;
+                       [flame removeFromParent];
+                       self.flameOn = NO;
+                   }];
+                   
+                   SKAction *moveLaserActionWithDone = [SKAction sequence:@[growAction, shrinkAction, doneAction]];
+                   
+                   [flame runAction:moveLaserActionWithDone withKey:@"laserFired"];
+                   self.player.fireMP -= 2;
+                   comboSuccess = YES;
+
+               }
+        }
+        if([self.player.mode isEqualToString: @"Music"])
+        {
+            NSArray *combo1 = self.musicComboArray[0];
+            if((self.player.musicMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]]) && self.filterInt == 100)
+            {
+                //We increase the player's health by a certain amount each beat. This is done in the beat function
+                filter->enable(true);
+                self.filterInt = 0;
+                self.player.musicMP-= 1;
+                comboSuccess = YES;
+            
+            }
+        }
+        if([self.player.mode isEqualToString: @"Wind"])
+        {
+            NSLog(@"Wind");
+            NSArray *combo1 = self.windComboArray[0];
+            if((self.player.windMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]]) && self.filterInt == 100)
+            {
+                
+                SKSpriteNode *whiplashSprite = [SKSpriteNode spriteNodeWithImageNamed:@"cut_b_0001.png"];
+                whiplashSprite.size = CGSizeMake(75, 75);
+                whiplashSprite.position = CGPointMake(self.player.position.x + 20, self.player.position.y);
+                whiplashSprite.zPosition = self.player.zPosition + 0.1f;
+                [self addChild:whiplashSprite];
+                [self.player whiplashAnimation:whiplashSprite];
+                SKAction *wait = [SKAction waitForDuration:0.25f];
+                [whiplashSprite runAction:wait completion:^{
+                    [whiplashSprite removeFromParent];
+                }];
+                int firstEnemy = true;
+                for(Enemy *enemy in self.enemyArray){
+                    if(firstEnemy == true){
+                        enemy.health -= 30.0f;
+                        firstEnemy = false;
+                    }
+                }
+
+                self.player.windMP -= 1;
+                comboSuccess = YES;
+                
+            }
+        }
+        if([self.player.mode isEqualToString: @"Water"])
+        {
+            NSArray *combo1 = self.waterComboArray[0];
+            if((self.player.waterMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]])){
+                SKSpriteNode *watergun = [SKSpriteNode spriteNodeWithImageNamed:@"watergun_0001.png"];
+                [self.player watergunAnimation:watergun];
+                watergun.name = @"watergun";
+                watergun.size = CGSizeMake(75, 75);
+                watergun.position = CGPointMake(self.player.position.x+watergun.size.width/2,self.player.position.y+0);
+                [self addChild:watergun];
+                SKAction *laserMoveAction = [SKAction moveByX:self.frame.size.width y:0 duration:1.0f];
+                [watergun runAction:laserMoveAction completion:^{
+                    [watergun removeFromParent];
+                }];
+                self.player.waterMP -= 1;
+                comboSuccess = YES;
+                
+            }
+        }
+        
+        if(comboSuccess){
+            self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
+            [self setAvailableComboNotes];
+        }
+    
+    }
+}
+
+/**
+ * The list of available combos
+ */
+-(void)loadCombos{
+    
+    NSArray *fireCombo0 = @[@"highCNode", @"highDNode", @"highENode"];
+    NSArray *fireCombo1 = @[@"highCNode", @"highENode", @"highGNode"];
+    self.fireComboArray = @[fireCombo0, fireCombo1];
+    self.fireComboDictionary = @{@"🔥":@[@"highCNode", @"highDNode", @"highENode"]};
+    
+    NSArray *musicCombo0 = @[@"highENode", @"highFNode",@"highGNode"];
+    self.musicComboArray = @[musicCombo0];
+    self.musicComboDictionary = @{@"🎵":@[@"highENode", @"highFNode", @"highGNode"]};
+    
+    NSArray *windCombo0 = @[@"highDNode", @"highENode", @"highDNode"];
+    self.windComboArray = @[windCombo0];
+    self.windComboDictionary = @{@"💨":windCombo0};
+    
+    NSArray *earthCombo0 = @[@"highGNode", @"highFNode", @"highENode"];
+    self.earthComboArray = @[earthCombo0];
+    self.earthComboDictionary = @{@"Rock":earthCombo0};
+    
+    NSArray *waterCombo0 = @[@"highENode", @"highCNode", @"highCNode"];
+    self.waterComboArray = @[waterCombo0];
+    self.waterComboDictionary = @{@"💦":waterCombo0};
+
+    
+
+}
+
+/**
+ * Adds a filter sweep to the backing track and has a chance to stun enemies for a couple of beats
+ */
+-(void)sleepCombo{
+    for(Enemy *enemy in self.enemyArray){
+        int randomInt = arc4random() % enemy.sleepChance;
+        if(randomInt == 0){
+            enemy.canShoot = NO;
+            enemy.canMove = NO;
+            NSLog(@"SLEEP!");
+            
+            //Add a little sleep label that lets you know it hit
+            SKLabelNode *sleepLabel;
+            sleepLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+            sleepLabel.name = @"sleepLabel";
+            sleepLabel.text = @"Sleep!";
+            sleepLabel.fontSize = 20;
+            sleepLabel.fontColor = [SKColor greenColor];
+            [enemy addChild:sleepLabel];
+            sleepLabel.position = CGPointMake(0, enemy.size.height/2 + 15);
+            
+            SKAction *fadeAction = [SKAction fadeAlphaTo:0.0f duration:0.5];
+            SKAction *moveUp = [SKAction moveToY:sleepLabel.frame.origin.y+10 duration:0.5];
+            SKAction *removeLabel = [SKAction removeFromParent];
+            SKAction *hideLabel = [SKAction hide];
+            SKAction *fadeUp = [SKAction group:@[moveUp, fadeAction]];
+            SKAction *labelAnim = [SKAction sequence:@[fadeUp, hideLabel, removeLabel]];
+            [sleepLabel runAction:labelAnim];
+
+        }else{
+            //Add a label that lets you know you missed
+            SKLabelNode *sleepLabel;
+            sleepLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
+            sleepLabel.name = @"sleepLabel";
+            sleepLabel.text = @"Miss!";
+            sleepLabel.fontSize = 20;
+            sleepLabel.fontColor = [SKColor greenColor];
+            [enemy addChild:sleepLabel];
+            sleepLabel.position = CGPointMake(0, enemy.size.height/2 + 15);
+
+            SKAction *fadeAction = [SKAction fadeAlphaTo:0.0f duration:0.5];
+            SKAction *moveUp = [SKAction moveToY:sleepLabel.frame.origin.y+10 duration:0.5];
+            SKAction *removeLabel = [SKAction removeFromParent];
+            SKAction *hideLabel = [SKAction hide];
+            SKAction *fadeUp = [SKAction group:@[moveUp, fadeAction]];
+            SKAction *labelAnim = [SKAction sequence:@[fadeUp, hideLabel, removeLabel]];
+            [sleepLabel runAction:labelAnim];
+            
+        }
+    }
+    
+}
+
+
+-(void)endSleepCombo{
+    for(Enemy *enemy in self.enemyArray){
+        
+        if(!enemy.hidden){
+            enemy.canShoot = YES;
+        }
+            enemy.canMove = YES;
+    }
+}
+
+
+/**
+ * Sets the notes that the user can play on the upper keys in order to perform combos. These are dynamic with each upper key press, and change
+ * depending on which mode/element the player is currently
+ */
 -(void)setAvailableComboNotes{
     if(self.defending == NO){
         if([self.player.mode isEqualToString:@"Fire"]){
-            NSDictionary *beginningCombos = @{@"Fireball":@"highCNode"};
+            NSDictionary *beginningCombos = @{@"🔥":@"highCNode"};
             if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
                 self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
             }else{
@@ -1053,7 +1412,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                                 NSLog(@"Key press array i:%@, combox:%@", self.keyPressArray[i], combo[x]);
                                 NSLog(@"Furthest int:%d", furthestInt);
                                 matching = YES;
-
+                                
                             }
                             x++;
                         }
@@ -1071,8 +1430,8 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 }
             }
         }else if([self.player.mode isEqualToString:@"Music"]){
-
-            NSDictionary *beginningCombos = @{@"Rest":@"highENode"};
+            
+            NSDictionary *beginningCombos = @{@"🎵":@"highENode"};
             if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
                 self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
             }else{
@@ -1127,7 +1486,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             }
         }else if([self.player.mode isEqualToString:@"Wind"]){
             
-            NSDictionary *beginningCombos = @{@"Whiplash":@"highDNode"};
+            NSDictionary *beginningCombos = @{@"💨":@"highDNode"};
             if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
                 self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
             }else{
@@ -1182,7 +1541,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
             }
         }else if([self.player.mode isEqualToString:@"Water"]){
             
-            NSDictionary *beginningCombos = @{@"Watergun":@"highENode"};
+            NSDictionary *beginningCombos = @{@"💦":@"highENode"};
             if([[self.keyPressArray objectAtIndex:0] isEqualToString:@""]){
                 self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:beginningCombos];
             }else{
@@ -1291,12 +1650,15 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 }
             }
         }
-    
-    
+        
+        
         [self setAvailableComboBlocks];
     }
 }
 
+/**
+ * Gives visual representations on the upper keys of which notes the user can press to perform combos
+ */
 -(void)setAvailableComboBlocks{
     
     NSMutableDictionary *keySpacing = [[NSMutableDictionary alloc] init];
@@ -1308,32 +1670,32 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         SKSpriteNode *keyNode = (SKSpriteNode *)[self childNodeWithName:[self.availableComboNoteDictionary objectForKey:key]];
         SKLabelNode *keyNodeLabel = (SKLabelNode *)[self childNodeWithName:[NSString stringWithFormat:@"%@Label", keyNode.name]];
         
-        int ySpacing = 0;
+        int ySpacing = 10;
         if([keySpacing objectForKey:[self.availableComboNoteDictionary objectForKey:key]]){
             int numOfKeys = [[keySpacing objectForKey:[self.availableComboNoteDictionary objectForKey:key]] intValue];
-            ySpacing = 20 * numOfKeys;
+            ySpacing = 30 * numOfKeys;
             [keySpacing setObject:[NSNumber numberWithInt:(numOfKeys++)] forKey:[self.availableComboNoteDictionary objectForKey:key]];
         }else{
             [keySpacing setObject:@1 forKey:[self.availableComboNoteDictionary objectForKey:key]];
         }
         
-        SKSpriteNode *comboBlock = [SKSpriteNode spriteNodeWithColor:[UIColor redColor] size:CGSizeMake([self childNodeWithName:@"highANode"].frame.size.width, 20)];
-        if([self.player.mode isEqualToString:@"Fire"]){
-            comboBlock.color = [UIColor redColor];
-        }else if([self.player.mode isEqualToString:@"Music"]){
-            comboBlock.color = [UIColor purpleColor];
-        }else if([self.player.mode isEqualToString:@"Wind"]){
-            comboBlock.color = [UIColor grayColor];
-        }else if([self.player.mode isEqualToString:@"Water"]){
-            comboBlock.color = [UIColor blueColor];
-        }else if([self.player.mode isEqualToString:@"Earth"]){
-            comboBlock.color = [UIColor greenColor];
-        }
+        SKSpriteNode *comboBlock = [SKSpriteNode spriteNodeWithColor:[UIColor clearColor] size:CGSizeMake([self childNodeWithName:@"highANode"].frame.size.width, 20)];
+        //        if([self.player.mode isEqualToString:@"Fire"]){
+        //            comboBlock.color = [UIColor redColor];
+        //        }else if([self.player.mode isEqualToString:@"Music"]){
+        //            comboBlock.color = [UIColor purpleColor];
+        //        }else if([self.player.mode isEqualToString:@"Wind"]){
+        //            comboBlock.color = [UIColor grayColor];
+        //        }else if([self.player.mode isEqualToString:@"Water"]){
+        //            comboBlock.color = [UIColor blueColor];
+        //        }else if([self.player.mode isEqualToString:@"Earth"]){
+        //            comboBlock.color = [UIColor greenColor];
+        //        }
         comboBlock.name = [NSString stringWithFormat:@"%@Combo%@", keyNode.name, key];
         comboBlock.position = CGPointMake(CGRectGetMidX(keyNode.frame), CGRectGetMaxY(keyNodeLabel.frame) + (comboBlock.frame.size.height/2.0f) + ySpacing);
         comboBlock.zPosition = keyNode.zPosition + 0.1;
         [self addChild:comboBlock];
-        ySpacing += 20;
+        ySpacing += 30;
         
         [self.availableComboBlockArray addObject:comboBlock];
         
@@ -1347,469 +1709,20 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         [self addChild:comboNameLabel];
         [self.availableComboBlockArray addObject:comboNameLabel];
     }
-
+    
     self.availableComboNoteDictionary = [NSMutableDictionary dictionaryWithDictionary:@{}];
-
-
+    
+    
 }
 
+/**
+ * Called when the user either misses a combo or completes one. Resets the available combos back to the first note
+ */
 -(void)resetCombos{
     [self removeChildrenInArray:self.availableComboBlockArray];
     NSLog(@"Combo note array:%@", self.availableComboNoteDictionary);
     self.availableComboBlockArray = [[NSMutableArray alloc] init];
     self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
-}
-
-#pragma mark- animations
--(void)animateCharacter{
-    self.isAnimating = YES;
-    if([self.player.mode isEqualToString:@"Attack"]){
-        NSArray *animatedImages = [NSArray arrayWithObjects:
-                                   [SKTexture textureWithImageNamed:@"dalf1.png"],
-                                   [SKTexture textureWithImageNamed:@"dalf03.png"],
-                                   [SKTexture textureWithImageNamed:@"dalf02.png"],
-                                   [SKTexture textureWithImageNamed:@"dalf02.png"],
-                                   [SKTexture textureWithImageNamed:@"dalf03.png"],
-                                   [SKTexture textureWithImageNamed:@"dalf1.png"],
-                                   nil];
-        SKAction *animate = [SKAction animateWithTextures:animatedImages timePerFrame: 0.075];
-        [self.player runAction:animate withKey:@"dalfAnimation"];
-        self.isAnimating = NO;
-    }else{
-        self.isAnimating = NO;
-    }
-
-}
-
--(void)animateBowTie{
-    
-    SKAction *moveUp = [SKAction moveByX:0 y:3 duration:1.0f];
-    SKAction *moveDown = [SKAction moveByX:0 y:-3 duration:1.0f];
-    SKAction *floatAction = [SKAction sequence:@[moveUp, moveDown]];
-    [self.bowTie runAction:[SKAction repeatActionForever:floatAction]];
-    
-  /* NSArray *animatedImages = [NSArray arrayWithObjects:
-                               [SKTexture textureWithImageNamed:@"Botie1.png"],
-                               [SKTexture textureWithImageNamed:@"Botie8.png"],
-                               [SKTexture textureWithImageNamed:@"Botie9.png"],
-                               [SKTexture textureWithImageNamed:@"Botie10.png"],
-                               [SKTexture textureWithImageNamed:@"Botie11.png"],
-                              [SKTexture textureWithImageNamed:@"Botie12.png"],
-                              [SKTexture textureWithImageNamed:@"Botie13.png"],
-                              [SKTexture textureWithImageNamed:@"Botie14.png"],
-                              [SKTexture textureWithImageNamed:@"Botie15.png"],
-                              [SKTexture textureWithImageNamed:@"Botie16.png"],
-                              [SKTexture textureWithImageNamed:@"Botie17.png"],
-                              [SKTexture textureWithImageNamed:@"Botie16.png"],
-                              [SKTexture textureWithImageNamed:@"Botie15.png"],
-                              [SKTexture textureWithImageNamed:@"Botie14.png"],
-                              [SKTexture textureWithImageNamed:@"Botie13.png"],
-                              [SKTexture textureWithImageNamed:@"Botie12.png"],
-                              [SKTexture textureWithImageNamed:@"Botie11.png"],
-                              [SKTexture textureWithImageNamed:@"Botie10.png"],
-                              [SKTexture textureWithImageNamed:@"Botie9.png"],
-                              [SKTexture textureWithImageNamed:@"Botie8.png"],
-                              [SKTexture textureWithImageNamed:@"Botie1.png"],
-                               nil];
-    SKAction *animateB = [SKAction animateWithTextures:animatedImages timePerFrame: 0.05 resize:NO restore:NO];
-    [self.bowTie runAction:[SKAction repeatActionForever:animateB]];*/
-
-    
-}
-
-#pragma mark- checks
-
--(void)checkInteractables:(NSString *)keyNode{
-    
-    for(Interactable *interactable in self.interactableArray)
-    {
-        double playerMidX = CGRectGetMidX(self.player.frame);
-        double keyMidX = CGRectGetMidX([self childNodeWithName:keyNode].frame);
-    
-        if([keyNode isEqualToString:interactable.keyNode] && self.touchDown &&
-           (
-            ((playerMidX - keyMidX < [self childNodeWithName:@"highCNode"].frame.size.width)&&(playerMidX-keyMidX > -10))
-            ||
-            ((keyMidX - playerMidX < [self childNodeWithName:@"highCNode"].frame.size.width)&&(keyMidX-playerMidX > -10))
-            ))
-        {
-            NSLog(@"It's happening");
-            SKLabelNode *signLabel = (SKLabelNode *)[self childNodeWithName:@"signLabel"];
-            signLabel.text = interactable.displayText;
-            signLabel.fontColor = [UIColor whiteColor];
-            signLabel.alpha = 1.0f;
-            signLabel.zPosition = 2.0f;
-            SKSpriteNode *signPost = (SKSpriteNode *)[self childNodeWithName:@"signPost"];
-            signPost.hidden = NO;
-            signPost.alpha = 1.0f;
-            signPost.zPosition = 2.0f;
-        }
-
-    }
-}
-
--(void)checkResonantMelody{
-    for(Enemy *enemy in self.enemyArray){
-        BOOL shatter = NO;
-        NSUInteger length = enemy.resonantArray.count;
-        switch (length) {
-            case 1:
-                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.player.mode isEqualToString:@"Resonance"]);
-                break;
-            case 2:
-                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.player.mode isEqualToString:@"Resonance"]);
-                break;
-            case 3:
-                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:2]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:2] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.player.mode isEqualToString:@"Resonance"]);
-                break;
-            case 4:
-                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:3]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:2]]) && ([[self.keyPressArray objectAtIndex:2] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:3] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.player.mode isEqualToString:@"Resonance"]);
-                break;
-            case 7:
-                shatter = (([[self.keyPressArray objectAtIndex:0] isEqualToString:[enemy.resonantArray objectAtIndex:6]]) && ([[self.keyPressArray objectAtIndex:1] isEqualToString:[enemy.resonantArray objectAtIndex:5]]) && ([[self.keyPressArray objectAtIndex:2] isEqualToString:[enemy.resonantArray objectAtIndex:4]]) && ([[self.keyPressArray objectAtIndex:3] isEqualToString:[enemy.resonantArray objectAtIndex:3]]) && ([[self.keyPressArray objectAtIndex:4] isEqualToString:[enemy.resonantArray objectAtIndex:2]]) && ([[self.keyPressArray objectAtIndex:5] isEqualToString:[enemy.resonantArray objectAtIndex:1]]) && ([[self.keyPressArray objectAtIndex:6] isEqualToString:[enemy.resonantArray objectAtIndex:0]]) && [self.player.mode isEqualToString:@"Resonance"]);
-                break;
-            default:
-                break;
-        }
-        if(shatter)
-        {
-            NSString *soundFile = [[NSBundle mainBundle] pathForResource:@"shatter" ofType:@"aif"];
-            SystemSoundID soundID;
-            AudioServicesCreateSystemSoundID((__bridge CFURLRef)[NSURL fileURLWithPath:soundFile], &soundID);
-            AudioServicesPlaySystemSound(soundID);
-            enemy.hidden = YES;
-            [enemy removeFromParent];
-            SKLabelNode *enemyHealthBar = (SKLabelNode*)[enemy childNodeWithName:[NSString stringWithFormat:@"%@Bar", enemy.name]];
-            enemyHealthBar.alpha = 0.0f;
-            enemyHealthBar.hidden = YES;
-            
-            if(self.currentRoomNumber == 7){
-                [self childNodeWithName:@"treeSprite"].hidden = YES;
-                [[self childNodeWithName:@"treeSprite"] removeFromParent];
-            }
-            
-           // NSString *myParticlePath = [[NSBundle mainBundle] pathForResource:@"glassShatter" ofType:@"sks"];
-            //SKEmitterNode *myParticle = [NSKeyedUnarchiver unarchiveObjectWithFile:myParticlePath];
-            //myParticle.position = self.boss.position;
-           // [self addChild:myParticle];
-            //ADD A HUGE SHATTERING LABEL HERE
-        }
-    }
-}
-
--(void)checkRoomTransitions{
-    
-    SKSpriteNode *rightArrow = (SKSpriteNode *)[self childNodeWithName:@"rightArrow"];
-    SKSpriteNode *leftArrow = (SKSpriteNode *)[self childNodeWithName:@"leftArrow"];
-    rightArrow.hidden = NO;
-    leftArrow.hidden = NO;
-    rightArrow.alpha = 1.0f;
-    leftArrow.alpha = 1.0f;
-    
-    if(self.currentRoomNumber == 1){
-        
-        leftArrow.alpha = 0.0f;
-        leftArrow.hidden = YES;
-        
-    }else if(self.currentRoomNumber == 2){
-        
-        if([self childNodeWithName:@"enemy1"] && ([self childNodeWithName:@"enemy1"].hidden == NO) && !(self.roomCleared >= 2)){
-            rightArrow.alpha = 0.0f;
-            rightArrow.hidden = YES;
-        }
-        
-    }else if(self.currentRoomNumber == 3){
-        if([self childNodeWithName:@"enemy2"] && ([self childNodeWithName:@"enemy2"].hidden == NO) && !(self.roomCleared >= 3)){
-            rightArrow.alpha = 0.0f;
-            rightArrow.hidden = YES;
-        }
-    }else if(self.currentRoomNumber == 4){
-        if([self childNodeWithName:@"enemy1"] && ([self childNodeWithName:@"enemy1"].hidden == NO) && [self childNodeWithName:@"enemy2"] && ([self childNodeWithName:@"enemy2"].hidden == NO) && !(self.roomCleared >= 4)){
-            rightArrow.alpha = 0.0f;
-            rightArrow.hidden = YES;
-        }
-    }else if(self.currentRoomNumber == 6){
-        if([self childNodeWithName:@"bigTree"] && ([self childNodeWithName:@"bigTree"].hidden == NO) && !(self.roomCleared >= 6)){
-            rightArrow.alpha = 0.0f;
-            rightArrow.hidden = YES;
-        }
-    }else if(self.currentRoomNumber == 7){
-        if([self childNodeWithName:@"boss"] && ([self childNodeWithName:@"boss"].hidden == NO) && !(self.roomCleared >= 7)){
-            rightArrow.alpha = 0.0f;
-            rightArrow.hidden = YES;
-        }
-    }
-    
-    
-}
-
-
--(void)hideInteractables{
-    [self childNodeWithName:@"signLabel"].alpha = 0.0f;
-    [self childNodeWithName:@"signLabel"].zPosition = -2.0f;
-    [self childNodeWithName:@"signPost"].alpha = 0.0f;
-    [self childNodeWithName:@"signPost"].zPosition = -2.0f;
-}
-
--(void)changeModes{
-
-    [self.player changeModeAnimation];
-    
-}
-
-
--(void)shootLaser:(float)keyLaserDamage withNote:(NSString*)laserNote{
-    if(self.shouldShoot && ![self.player.mode isEqualToString:@"Bag"] && ![self.player.mode isEqualToString:@"Resonance"] && self.defending == NO){
-        KeyLaser *keyLaser = [_keyLasers objectAtIndex:_nextKeyLaser];
-        _nextKeyLaser++;
-        if (_nextKeyLaser >= self.keyLasers.count) {
-            
-            _nextKeyLaser = 0;
-        }
-        
-        if(keyLaserDamage < 0.5f){
-            keyLaser.texture = [SKTexture textureWithImage:[UIImage imageNamed:@"redNote.png"]];
-        }else{
-            keyLaser.texture = [SKTexture textureWithImage:[UIImage imageNamed:@"note1.png"]];
-        }
-        keyLaser.damage = keyLaserDamage;
-        if([self.player.mode isEqualToString:@"Defense"]){
-            keyLaser.note = laserNote;
-        }else{
-            keyLaser.note = @"";
-        }
-        keyLaser.position = CGPointMake(self.player.position.x+keyLaser.size.width/2,self.player.position.y+0);
-        keyLaser.hidden = NO;
-        [keyLaser removeAllActions];
-        
-        
-        CGPoint location = CGPointMake(self.frame.size.width, self.player.position.y);
-        SKAction *laserMoveAction = [SKAction moveByX:self.frame.size.width y:0 duration:0.75f];
-        SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
-            keyLaser.hidden = YES;
-        }];
-        
-        SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
-        
-        [keyLaser runAction:moveLaserActionWithDone withKey:@"laserFired"];
-    }
-}
-
-
-#pragma mark- combos
-
--(void)checkCombo{
-    
-    if(self.shouldShoot && self.defending == NO){
-        BOOL comboSuccess = NO;
-        if([self.player.mode isEqualToString: @"Fire"])
-        {
-            NSArray *combo1 = self.fireComboArray[0];
-            if((self.fireMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]])){
-                SKSpriteNode *fireball = [SKSpriteNode spriteNodeWithImageNamed:@"fireball_0001"];
-                [self.player fireballAnimation:fireball];
-                fireball.size = CGSizeMake(75, 75);
-                fireball.position = CGPointMake(self.player.position.x+fireball.size.width/2,self.player.position.y+0);
-                fireball.name = @"fireball";
-                [self addChild:fireball];
-                SKAction *laserMoveAction = [SKAction moveByX:self.frame.size.width y:0 duration:2.0f];
-                SKAction *laserDoneAction = [SKAction runBlock:(dispatch_block_t)^() {
-                    fireball.hidden = YES;
-                }];
-                
-                SKAction *moveLaserActionWithDone = [SKAction sequence:@[laserMoveAction,laserDoneAction]];
-                
-                [fireball runAction:moveLaserActionWithDone withKey:@"laserFired"];
-                if(self.fireballArray.count > 10){
-                    [self.fireballArray removeObjectAtIndex:0];
-                }
-                [self.fireballArray addObject:fireball];
-                self.fireMP -= 1;
-                comboSuccess = YES;
-
-            }
-            
-            NSArray *combo2 = self.fireComboArray[1];
-            if((self.fireMP >= 2) &&([self.keyPressArray[1] isEqualToString:combo2[2]]) && ([self.keyPressArray[2] isEqualToString:combo2[1]]) && ([self.keyPressArray[3] isEqualToString:combo2[0]]) && !self.flameOn)
-               {
-                   self.flameOn = YES;
-                   SKSpriteNode *flame = [SKSpriteNode spriteNodeWithImageNamed:@"fireball.png"];
-                   flame.size = CGSizeMake([self childNodeWithName:@"highCNode"].frame.size.width, 1);
-                   flame.position = CGPointMake(CGRectGetMidX([self childNodeWithName:[NSString stringWithFormat:@"%@", self.keyPressArray[0]]].frame), CGRectGetMaxY([self childNodeWithName:@"highCNode"].frame));
-                   flame.name = @"flame";
-                   [self addChild:flame];
-                   SKAction *growAction = [SKAction resizeToHeight:self.frame.size.height duration:0.2f];
-                   SKAction *shrinkAction = [SKAction resizeToHeight:0 duration:0.2f];
-                   
-                   SKAction *doneAction = [SKAction runBlock:(dispatch_block_t)^() {
-                       flame.hidden = YES;
-                       [flame removeFromParent];
-                       self.flameOn = NO;
-                   }];
-                   
-                   SKAction *moveLaserActionWithDone = [SKAction sequence:@[growAction, shrinkAction, doneAction]];
-                   
-                   [flame runAction:moveLaserActionWithDone withKey:@"laserFired"];
-                   self.fireMP -= 2;
-                   comboSuccess = YES;
-
-               }
-        }
-        if([self.player.mode isEqualToString: @"Music"])
-        {
-            NSArray *combo1 = self.musicComboArray[0];
-            if((self.musicMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]]) && self.filterInt == 100)
-            {
-                //We increase the player's health by a certain amount each beat. This is done in the beat function
-                filter->enable(true);
-                self.filterInt = 0;
-                self.musicMP-= 1;
-                comboSuccess = YES;
-            
-            }
-        }
-        if([self.player.mode isEqualToString: @"Wind"])
-        {
-            NSLog(@"Wind");
-            NSArray *combo1 = self.windComboArray[0];
-            if((self.windMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]]) && self.filterInt == 100)
-            {
-                
-                SKSpriteNode *whiplashSprite = [SKSpriteNode spriteNodeWithImageNamed:@"cut_b_0001.png"];
-                whiplashSprite.size = CGSizeMake(75, 75);
-                whiplashSprite.position = CGPointMake(self.player.position.x + 20, self.player.position.y);
-                whiplashSprite.zPosition = self.player.zPosition + 0.1f;
-                [self addChild:whiplashSprite];
-                [self.player whiplashAnimation:whiplashSprite];
-                SKAction *wait = [SKAction waitForDuration:0.25f];
-                [whiplashSprite runAction:wait completion:^{
-                    [whiplashSprite removeFromParent];
-                }];
-                int firstEnemy = true;
-                for(Enemy *enemy in self.enemyArray){
-                    if(firstEnemy == true){
-                        enemy.health -= 30.0f;
-                        firstEnemy = false;
-                    }
-                }
-
-                self.windMP -= 1;
-                comboSuccess = YES;
-                
-            }
-        }
-        if([self.player.mode isEqualToString: @"Water"])
-        {
-            NSArray *combo1 = self.waterComboArray[0];
-            if((self.waterMP >= 1) &&([self.keyPressArray[0] isEqualToString:combo1[2]]) && ([self.keyPressArray[1] isEqualToString:combo1[1]]) && ([self.keyPressArray[2] isEqualToString:combo1[0]])){
-                SKSpriteNode *watergun = [SKSpriteNode spriteNodeWithImageNamed:@"watergun_0001.png"];
-                [self.player watergunAnimation:watergun];
-                watergun.name = @"watergun";
-                watergun.size = CGSizeMake(75, 75);
-                watergun.position = CGPointMake(self.player.position.x+watergun.size.width/2,self.player.position.y+0);
-                [self addChild:watergun];
-                SKAction *laserMoveAction = [SKAction moveByX:self.frame.size.width y:0 duration:1.0f];
-                [watergun runAction:laserMoveAction completion:^{
-                    [watergun removeFromParent];
-                }];
-                self.waterMP -= 1;
-                comboSuccess = YES;
-                
-            }
-        }
-        
-        if(comboSuccess){
-            self.keyPressArray = [NSMutableArray arrayWithObjects:@"",@"",@"",@"",@"",@"",@"",@"",@"",@"", nil];
-            [self setAvailableComboNotes];
-        }
-    
-    }
-}
-
--(void)loadCombos{
-    
-    NSArray *fireCombo0 = @[@"highCNode", @"highDNode", @"highENode"];
-    NSArray *fireCombo1 = @[@"highCNode", @"highENode", @"highGNode"];
-    self.fireComboArray = @[fireCombo0, fireCombo1];
-    self.fireComboDictionary = @{@"Fireball":@[@"highCNode", @"highDNode", @"highENode"]};
-    
-    NSArray *musicCombo0 = @[@"highENode", @"highFNode",@"highGNode"];
-    self.musicComboArray = @[musicCombo0];
-    self.musicComboDictionary = @{@"Rest":@[@"highENode", @"highFNode", @"highGNode"]};
-    
-    NSArray *windCombo0 = @[@"highDNode", @"highENode", @"highDNode"];
-    self.windComboArray = @[windCombo0];
-    self.windComboDictionary = @{@"Whiplash":windCombo0};
-    
-    NSArray *earthCombo0 = @[@"highGNode", @"highFNode", @"highENode"];
-    self.earthComboArray = @[earthCombo0];
-    self.earthComboDictionary = @{@"Rock":earthCombo0};
-    
-    NSArray *waterCombo0 = @[@"highENode", @"highCNode", @"highCNode"];
-    self.waterComboArray = @[waterCombo0];
-    self.waterComboDictionary = @{@"Watergun":waterCombo0};
-
-    
-
-}
-
--(void)sleepCombo{
-    for(Enemy *enemy in self.enemyArray){
-        int randomInt = arc4random() % enemy.sleepChance;
-        if(randomInt == 0){
-            enemy.canShoot = NO;
-            enemy.canMove = NO;
-            NSLog(@"SLEEP!");
-            
-            //Add a little sleep label that lets you know it hit
-            SKLabelNode *sleepLabel;
-            sleepLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-            sleepLabel.name = @"sleepLabel";
-            sleepLabel.text = @"Sleep!";
-            sleepLabel.fontSize = 20;
-            sleepLabel.fontColor = [SKColor greenColor];
-            [enemy addChild:sleepLabel];
-            sleepLabel.position = CGPointMake(0, enemy.size.height/2 + 15);
-            
-            SKAction *fadeAction = [SKAction fadeAlphaTo:0.0f duration:0.5];
-            SKAction *moveUp = [SKAction moveToY:sleepLabel.frame.origin.y+10 duration:0.5];
-            SKAction *removeLabel = [SKAction removeFromParent];
-            SKAction *hideLabel = [SKAction hide];
-            SKAction *fadeUp = [SKAction group:@[moveUp, fadeAction]];
-            SKAction *labelAnim = [SKAction sequence:@[fadeUp, hideLabel, removeLabel]];
-            [sleepLabel runAction:labelAnim];
-
-        }else{
-            //Add a label that lets you know you missed
-            SKLabelNode *sleepLabel;
-            sleepLabel = [[SKLabelNode alloc] initWithFontNamed:@"Futura-CondensedMedium"];
-            sleepLabel.name = @"sleepLabel";
-            sleepLabel.text = @"Miss!";
-            sleepLabel.fontSize = 20;
-            sleepLabel.fontColor = [SKColor greenColor];
-            [enemy addChild:sleepLabel];
-            sleepLabel.position = CGPointMake(0, enemy.size.height/2 + 15);
-
-            SKAction *fadeAction = [SKAction fadeAlphaTo:0.0f duration:0.5];
-            SKAction *moveUp = [SKAction moveToY:sleepLabel.frame.origin.y+10 duration:0.5];
-            SKAction *removeLabel = [SKAction removeFromParent];
-            SKAction *hideLabel = [SKAction hide];
-            SKAction *fadeUp = [SKAction group:@[moveUp, fadeAction]];
-            SKAction *labelAnim = [SKAction sequence:@[fadeUp, hideLabel, removeLabel]];
-            [sleepLabel runAction:labelAnim];
-            
-        }
-    }
-    
-}
--(void)endSleepCombo{
-    for(Enemy *enemy in self.enemyArray){
-        
-        if(!enemy.hidden){
-            enemy.canShoot = YES;
-        }
-            enemy.canMove = YES;
-    }
 }
 
 #pragma mark- update
@@ -1826,7 +1739,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     self.lastBeat = playerBack->msElapsedSinceLastBeat;
     double closestBeat = (playerBack->closestBeatMs(CACurrentMediaTime()*1000, 0)) - CACurrentMediaTime()*1000;
 //    NSLog(@"Closest Beat : %f", closestBeat - CACurrentMediaTime()*1000);
-    NSLog(@"last beat:%f, bpm:%f", self.lastBeat, closestBeat);
+//    NSLog(@"last beat:%f, bpm:%f", self.lastBeat, closestBeat);
     if(self.lastBeat == (60.0f/self.BPM)*1000){
         NSLog(@"2Beat");
     }
@@ -1835,7 +1748,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         for(Enemy *enemy in self.moveablesArray){
             if([enemy intersectsNode:[self childNodeWithName:@"player"]]&&!enemy.hidden&&(enemy.zPosition==1.0f))
             {
-                self.playerHealth--;
+                self.player.health--;
                 enemy.health = 0;
                 enemy.hidden = YES;
                 [self childNodeWithName:[NSString stringWithFormat:@"%@Label", enemy.name]].hidden = YES;
@@ -1928,7 +1841,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
                 if([shot intersectsNode:self.player])
                 {
                     if(!shot.hidden){
-                        self.playerHealth -= shot.damage;
+                        self.player.health -= shot.damage;
                         shot.hidden = YES;
                     }
                 }else if([self childNodeWithName:@"wall"] && [shot intersectsNode:[self childNodeWithName:@"wall"]])
@@ -1983,42 +1896,38 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
         }
         
     
-        SKAction *resizeHealth = [SKAction resizeToWidth:((self.playerHealth/self.playerHealthMax) * self.healthBarFillMaxWidth) duration:0.2f];
+        SKAction *resizeHealth = [SKAction resizeToWidth:((self.player.health/self.player.healthMax) * self.healthBarFillMaxWidth) duration:0.2f];
         [self.healthBarFill runAction:resizeHealth];
         
-        SKAction *resizeMP = [SKAction resizeToWidth:((self.playerMP/self.playerMPMax) * self.mpBarFillMaxWidth) duration:0.2f];
-        [self.mpBarFill runAction:resizeMP];
         
         float keyNodeHeight = [self childNodeWithName:@"lowCNode"].frame.size.height - 1;
         SKSpriteNode *fireBar = (SKSpriteNode *)[self childNodeWithName:@"lowCNodeMPBAR"];
-        SKAction *resizeMPBar = [SKAction resizeToHeight:((self.fireMP/self.fireMPMax) * keyNodeHeight) duration:0.2];
+        SKAction *resizeMPBar = [SKAction resizeToHeight:((self.player.fireMP/self.player.fireMPMax) * keyNodeHeight) duration:0.2];
         [fireBar runAction:resizeMPBar];
         
         SKSpriteNode *windBar = (SKSpriteNode *)[self childNodeWithName:@"lowDNodeMPBAR"];
-        SKAction *resizeMPBarWind = [SKAction resizeToHeight:((self.windMP/self.windMPMax) * keyNodeHeight) duration:0.2];
+        SKAction *resizeMPBarWind = [SKAction resizeToHeight:((self.player.windMP/self.player.windMPMax) * keyNodeHeight) duration:0.2];
         [windBar runAction:resizeMPBarWind];
         
         SKSpriteNode *waterBar = (SKSpriteNode *)[self childNodeWithName:@"lowENodeMPBAR"];
-        SKAction *resizeMPBarWater = [SKAction resizeToHeight:((self.waterMP/self.waterMPMax) * keyNodeHeight) duration:0.2];
+        SKAction *resizeMPBarWater = [SKAction resizeToHeight:((self.player.waterMP/self.player.waterMPMax) * keyNodeHeight) duration:0.2];
         [waterBar runAction:resizeMPBarWater];
         
         SKSpriteNode *earthBar = (SKSpriteNode *)[self childNodeWithName:@"lowFNodeMPBAR"];
-        SKAction *resizeMPBarEarth = [SKAction resizeToHeight:((self.earthMP/self.earthMPMax) * keyNodeHeight) duration:0.2];
+        SKAction *resizeMPBarEarth = [SKAction resizeToHeight:((self.player.earthMP/self.player.earthMPMax) * keyNodeHeight) duration:0.2];
         [earthBar runAction:resizeMPBarEarth];
         
         SKSpriteNode *musicBar = (SKSpriteNode *)[self childNodeWithName:@"lowGNodeMPBAR"];
-        SKAction *resizeMPBarMusic = [SKAction resizeToHeight:((self.musicMP/self.musicMPMax) * keyNodeHeight) duration:0.2];
+        SKAction *resizeMPBarMusic = [SKAction resizeToHeight:((self.player.musicMP/self.player.musicMPMax) * keyNodeHeight) duration:0.2];
         [musicBar runAction:resizeMPBarMusic];
         
-        self.playerHealthLabel.text = [NSString stringWithFormat:@"Player Health: %.2f", self.playerHealth];
-        self.attackMPLabel.text = [NSString stringWithFormat:@"Adagio MP: %.2f", self.attackMP];
-        self.defenseMPLabel.text = [NSString stringWithFormat:@"Brio MP: %.2f", self.defenseMP];
-        self.magicMPLabel.text = [NSString stringWithFormat:@"Vif MP: %.2f", self.magicMP];
-        if(self.playerHealth <= 0){
+        self.playerHealthLabel.text = [NSString stringWithFormat:@"Player Health: %.2f", self.player.health];
+
+        if(self.player.health <= 0){
             self.gameOver = YES;
             [self gameOver:@"playerDied"];
-            self.playerHealth = 0;
-            SKAction *resizeHealth = [SKAction resizeToWidth:((self.playerHealth/self.playerHealthMax) * self.healthBarFillMaxWidth) duration:0.2f];
+            self.player.health = 0;
+            SKAction *resizeHealth = [SKAction resizeToWidth:((self.player.health/self.player.healthMax) * self.healthBarFillMaxWidth) duration:0.2f];
             [self.healthBarFill runAction:resizeHealth];
         }
     }
@@ -2029,6 +1938,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 
 #pragma mark- tempo methods
 
+/**
+ * Used to keep track of the beat. Attempts to adjust any delay due to framerate lag
+ */
 -(void)beatTimer: (NSTimer *) timer{
     NSLog(@"Beat");
     double lastBeat = playerBack->msElapsedSinceLastBeat;
@@ -2057,6 +1969,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     }
 }
 
+/**
+ * Called with every beat in the music
+ */
 -(void)beat{
 
     if(self.firstBeat){
@@ -2148,27 +2063,33 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
      [self centerOnNode:camera];*/
 }
 
+/**
+ * Refills each MP bar by the amount specified
+ * @param amount The amount to fill each MP bar
+ */
 -(void)refillMP:(NSString *)bar by:(float)amount{
     if([bar isEqualToString:@"All"]){
-        if(self.fireMP <= self.fireMPMax - 1){
-            self.fireMP += amount;
+        if(self.player.fireMP <= self.player.fireMPMax - 1){
+            self.player.fireMP += amount;
         }
-        if(self.waterMP <= self.waterMPMax - 1){
-            self.waterMP += amount;
+        if(self.player.waterMP <= self.player.waterMPMax - 1){
+            self.player.waterMP += amount;
         }
-        if(self.windMP <= self.windMPMax - 1){
-            self.windMP += amount;
+        if(self.player.windMP <= self.player.windMPMax - 1){
+            self.player.windMP += amount;
         }
-        if(self.earthMP <= self.earthMPMax - 1){
-            self.earthMP += amount;
+        if(self.player.earthMP <= self.player.earthMPMax - 1){
+            self.player.earthMP += amount;
         }
-        if(self.musicMP <= self.musicMPMax - 1){
-            self.musicMP += amount;
+        if(self.player.musicMP <= self.player.musicMPMax - 1){
+            self.player.musicMP += amount;
         }
     }
 }
 
-
+/**
+ * Hides any Guitar Hero style defense markers floating down the screen. Called once the enemy's attack is over
+ */
 -(void)hideDefenseMarkers{
     self.defending = NO;
     [self enumerateChildNodesWithName:@"*Marker" usingBlock:^(SKNode *node, BOOL *stop) {
@@ -2179,6 +2100,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     [self setAvailableComboNotes];
 }
 
+/**
+ * Shows all Guitar Hero style defense markers floating down the screen. Called at the beginning of the enemy's atack
+ */
 -(void)showDefenseMarkers{
     self.defending = YES;
     SKLabelNode *defendLabel = [SKLabelNode labelNodeWithText:@"Defend!"];
@@ -2199,15 +2123,12 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
 }
 
-- (void) centerOnNode: (SKNode *) node
-{
-    CGPoint cameraPositionInScene = [node.scene convertPoint:node.position fromNode:node.parent];
-    node.parent.position = CGPointMake(node.parent.position.x -
-                                       cameraPositionInScene.x,
-                                       node.parent.position.y - cameraPositionInScene.y);
-}
-
 #pragma mark- Move Player
+
+/**
+ * Moves the player across the screen to the specified key node
+ * @param keyNode The key node we wish to move the player to
+ */
 -(void)movePlayer:(NSString *)keyNode{
 
     if([self.player.mode isEqualToString:@"Bag"] && self.shouldPlayerMove){
@@ -2230,6 +2151,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
 }
 
+/**
+ *
+ */
 -(void)getPlayerCurrentKey{
     for(SKSpriteNode *key in self.keyArray){
         if((self.player.position.x > CGRectGetMinX(key.frame))&&(self.player.position.x < CGRectGetMaxX(key.frame))){
@@ -2239,6 +2163,10 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 }
 
 #pragma mark- Enemy Methods
+
+/**
+ * Used to move enemies across the screen on beat
+ */
 -(void)moveEnemies{
     
     SKAction *moveAngle = [[SKAction alloc] init];
@@ -2298,6 +2226,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
 }
 
+/**
+ * Used to start the Guitar Hero styled Enemy Attack
+ */
 -(void)enemyAttack:(NSMutableDictionary *) enemyAttack{
     
     for(Enemy *enemy in self.enemyArray){
@@ -2356,7 +2287,9 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
 }
 
-
+/**
+ * Performs the actual physical enemy attack, such as shooting needles
+ */
 -(void)enemyAttack{
     
     [self enumerateChildNodesWithName:@"*AttackLabel" usingBlock:^(SKNode *node, BOOL *stop) {
@@ -2495,12 +2428,18 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     }
 }
 
+/**
+ * Returns a random melodic note
+ */
 -(NSString *)getRandomNote{
     
     NSArray *noteArray = @[@"A", @"B", @"C", @"D", @"E", @"F", @"G"];
     return [noteArray objectAtIndex: arc4random() % [noteArray count]];
 }
 
+/**
+ * Removes any defeated enemies from the scene
+ */
 -(void)removeDefeatedEnemies{
     
     for(Enemy *enemy in self.enemyToDeleteArray){
@@ -2513,14 +2452,16 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     
 }
 
-#pragma mark - keyboard key nodes
+#pragma mark - Keyboard Key Nodes
+
+//THE LOW KEYS ON THE KEYBOARD
 
 -(SKSpriteNode *)lowCNode
 {
     SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake(self.frame.size.width/12, self.frame.size.height/2.25)];
     keyNode.position = CGPointMake(([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
-    keyNode.alpha = 0.3;
+    keyNode.alpha = 0.0;
     keyNode.name = @"lowCNode";//how the node is identified later
     keyNode.zPosition = 3.0;
     
@@ -2531,7 +2472,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
 {
     SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake(self.frame.size.width/12, self.frame.size.height/2.25)];
-    keyNode.alpha = 0.3f;
+    keyNode.alpha = 0.0f;
     keyNode.position = CGPointMake(1*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
     keyNode.name = @"lowDNode";//how the node is identified later
     keyNode.zPosition = 3.0;
@@ -2543,7 +2484,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake(self.frame.size.width/12, self.frame.size.height/2.25)];
     keyNode.position = CGPointMake(2*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
-    keyNode.alpha = 0.3f;
+    keyNode.alpha = 0.0f;
     keyNode.name = @"lowENode";//how the node is identified later
     keyNode.zPosition = 3.0;
     return keyNode;
@@ -2555,7 +2496,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake([[UIScreen mainScreen] bounds].size.width/12, [[UIScreen mainScreen] bounds].size.height/2.25)];
     keyNode.position = CGPointMake(3*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5, (self.frame.size.height/2) - (self.frame.size.height/3.4));
-    keyNode.alpha = 0.3F;
+    keyNode.alpha = 0.0f;
     keyNode.name = @"lowFNode";//how the node is identified later
     keyNode.zPosition = 3.0;
     return keyNode;
@@ -2566,11 +2507,13 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     SKTexture *keyTexture = [SKTexture textureWithImage:[UIImage imageNamed:@"blankKey"]];
     SKSpriteNode *keyNode = [SKSpriteNode spriteNodeWithTexture:keyTexture size:CGSizeMake([[UIScreen mainScreen] bounds].size.width/12, self.frame.size.height/2.25)];
     keyNode.position = CGPointMake(4*self.yPositionIncrement + ([[UIScreen mainScreen] bounds].size.width/12)*0.5,(self.frame.size.height/2) - (self.frame.size.height/3.4));
-    keyNode.alpha = 0.3f;
+    keyNode.alpha = 0.0f;
     keyNode.name = @"lowGNode";//how the node is identified later
     keyNode.zPosition = 3.0;
     return keyNode;
 }
+
+//THE HIGH KEYS ON THE KEYBOARD
 
 - (SKSpriteNode *)highANode
 {
@@ -2718,7 +2661,7 @@ static const float headroom = powf(10.0f, -HEADROOM_DECIBEL * 0.025);
     keyNameLabel.zPosition = keyNode.zPosition - 0.1;
 }
 
-#pragma mark- cutscenes
+#pragma mark- Cutscenes
 
 -(void)playCutscene: (NSString *)sceneName{
     self.cutscene = YES;
@@ -2896,6 +2839,9 @@ static inline float floatToFrequency(float value) {
 
 #pragma mark- Room Loading
 
+/**
+ * Loads the specified room number
+ */
 -(void)loadNextRoom:(int)roomNumber{
     [self hideDefenseMarkers];
     [self removeChildrenInArray:self.enemyArray];
@@ -2950,6 +2896,9 @@ static inline float floatToFrequency(float value) {
     
 }
 
+/**
+ * The user has moved backwards into the previous room
+ */
 -(void)loadPreviousRoom:(int)roomNumber{
     [self hideDefenseMarkers];
     [self removeChildrenInArray:self.enemyArray];
@@ -3005,6 +2954,9 @@ static inline float floatToFrequency(float value) {
     
 }
 
+/**
+ * The user has moved forward into the next room
+ */
 -(void)loadRoom:(int)roomNumber{
     
     self.enemyMoveInt = 1;
@@ -3061,7 +3013,7 @@ static inline float floatToFrequency(float value) {
         enemy2.zPosition = 1.0f;
         enemy2.health = 150;
         enemy2.healthMax = 150;
-        enemy2.attackDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"denemy2":@1.0, @"eenemy2":@2.0, @"fenemy2":@3.0, @"end":@8.5, @"name":@"Needle Shot", @"maxAttackDamage":@2.0, @"currentAttackDamage":@2.0}];
+        enemy2.attackDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"denemy2":@1.0, @"eenemy2":@2.0, @"fenemy2":@3.0, @"end":@8.5, @"name":@"💢", @"maxAttackDamage":@2.0, @"currentAttackDamage":@2.0}];
         enemy2.hidden = NO;
         enemy2.canShoot = YES;
         enemy2.canMove = YES;
@@ -3092,7 +3044,7 @@ static inline float floatToFrequency(float value) {
         enemy1.canMove = YES;
         enemy1.sleepChance = 2;
         enemy1.type = @"angle";
-        enemy1.attackDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"eenemy1":@1.0, @"fenemy1":@2.0, @"genemy1":@3.0, @"end":@8.75, @"name":@"Needle Shot", @"maxAttackDamage":@2.0, @"currentAttackDamage":@2.0}];
+        enemy1.attackDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"eenemy1":@1.0, @"fenemy1":@2.0, @"genemy1":@3.0, @"end":@8.75, @"name":@"💢", @"maxAttackDamage":@2.0, @"currentAttackDamage":@2.0}];
         enemy1.resonantArray = @[@"highANode", @"highBNode", @"highCNode", @"highDNode"];
         [self addChild:enemy1];
         
@@ -3103,7 +3055,7 @@ static inline float floatToFrequency(float value) {
         enemy2.zPosition = 1.0f;
         enemy2.health = 150;
         enemy2.healthMax = 150;
-        enemy2.attackDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"cenemy2":@1.0, @"denemy2":@2.0, @"eenemy2":@3.0, @"end":@8.75, @"name":@"Needle Shot", @"maxAttackDamage":@2.0, @"currentAttackDamage":@2.0}];
+        enemy2.attackDictionary = [NSMutableDictionary dictionaryWithDictionary:@{@"cenemy2":@1.0, @"denemy2":@2.0, @"eenemy2":@3.0, @"end":@8.75, @"name":@"💢", @"maxAttackDamage":@2.0, @"currentAttackDamage":@2.0}];
         enemy2.hidden = NO;
         enemy2.canShoot = YES;
         enemy2.canMove = YES;

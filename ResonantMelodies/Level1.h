@@ -22,31 +22,11 @@
 @interface Level1 : SKScene
 
 //Player Properties
-@property (strong, nonatomic) NSString *mode;
 @property (strong, nonatomic) Hero *player;
-@property (strong, nonatomic) SKNode *smallNode;
 @property (nonatomic) BOOL shouldPlayerMove;
 @property (strong, nonatomic) NSString *currentPlayerKey;
 
 @property (nonatomic) CGFloat playerMaxX;
-
-//Player Stats
-@property (nonatomic) float playerHealth;
-@property (nonatomic) float playerHealthMax;
-@property (nonatomic) float playerExperience;
-@property (nonatomic) float playerLevel;
-@property (nonatomic) float playerToNextLevel;
-@property (nonatomic) float playerMP;
-@property (nonatomic) float playerMPMax;
-@property (nonatomic) float attackMP;
-@property (nonatomic) float attackMPMax;
-@property (nonatomic) float magicMP;
-@property (nonatomic) float magicMPMax;
-@property (nonatomic) float defenseMP;
-@property (nonatomic) float defenseMPMax;
-@property (nonatomic) float attackLevel;
-@property (nonatomic) float defenseLevel;
-@property (nonatomic) float magicLevel;
 
 //Combo Properties
 @property (strong, nonatomic) NSArray *attackArray;
@@ -66,16 +46,7 @@
 @property (strong, nonatomic) NSMutableArray *fireballArray;
 @property (strong, nonatomic) NSMutableArray *availableComboBlockArray;
 @property (strong, nonatomic) NSMutableDictionary *availableComboNoteDictionary;
-@property (nonatomic) float fireMP;
-@property (nonatomic) float fireMPMax;
-@property (nonatomic) float windMP;
-@property (nonatomic) float windMPMax;
-@property (nonatomic) float waterMP;
-@property (nonatomic) float waterMPMax;
-@property (nonatomic) float earthMP;
-@property (nonatomic) float earthMPMax;
-@property (nonatomic) float musicMP;
-@property (nonatomic) float musicMPMax;
+
 @property (nonatomic) BOOL flameOn;
 @property (nonatomic) int filterInt;
 

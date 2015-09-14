@@ -12,6 +12,23 @@
 
 @property (strong, nonatomic) NSString *mode;
 
+//Hero Stats
+@property (nonatomic) float health;
+@property (nonatomic) float healthMax;
+@property (nonatomic) float experience;
+@property (nonatomic) float level;
+@property (nonatomic) float toNextLevel;
+@property (nonatomic) float fireMP;
+@property (nonatomic) float fireMPMax;
+@property (nonatomic) float windMP;
+@property (nonatomic) float windMPMax;
+@property (nonatomic) float waterMP;
+@property (nonatomic) float waterMPMax;
+@property (nonatomic) float earthMP;
+@property (nonatomic) float earthMPMax;
+@property (nonatomic) float musicMP;
+@property (nonatomic) float musicMPMax;
+
 //Character animation arrays
 @property (strong, nonatomic) NSArray *musicModeAdagioWalkingFrames;
 @property (strong, nonatomic) NSArray *musicModeAdagioIdleFrames;
